@@ -1,135 +1,101 @@
 import { NextResponse } from "next/server";
-import { ChatService } from "@/server/chat/chat-service";
-import { ChatProviderError } from "@/server/providers/chat-provider";
-import type { ChatMessage } from "@/shared/chat-types";
+import {
+  PersistentChatService,
+  PersistentChatServiceError,
+} from "@/server/chat/persistent-chat-service";
+import {
+  handlePersistenceError,
+  jsonError,
+  readJsonObject,
+  validateUuid,
+} from "@/server/api/persistence-route-utils";
 
 export const dynamic = "force-dynamic";
 
-const maxMessages = 40;
-const maxMessageLength = 8000;
+const maxContentLength = 8000;
 
 type ValidationResult =
   | {
       ok: true;
-      messages: ChatMessage[];
+      conversationId: string;
+      content: string;
     }
   | {
       ok: false;
-      error: string;
-    };
-
-type MessageValidationResult =
-  | {
-      ok: true;
-      message: ChatMessage;
-    }
-  | {
-      ok: false;
-      error: string;
+      response: NextResponse;
     };
 
 export async function POST(request: Request) {
-  let body: unknown;
+  const body = await readJsonObject(request);
 
-  try {
-    body = await request.json();
-  } catch {
-    return jsonError("Request body must be valid JSON.", 400);
+  if (!body) {
+    return jsonError("Request body must be a JSON object.", 400);
   }
 
   const validation = validateChatRequest(body);
 
   if (!validation.ok) {
-    return jsonError(validation.error, 400);
+    return validation.response;
   }
 
   try {
-    const result = await new ChatService().sendMessage(validation.messages);
+    const result = await new PersistentChatService().sendMessage({
+      conversationId: validation.conversationId,
+      content: validation.content,
+    });
 
     return NextResponse.json(result);
   } catch (error) {
-    if (error instanceof ChatProviderError) {
+    if (error instanceof PersistentChatServiceError) {
       return jsonError(error.message, error.status);
     }
 
-    return jsonError("Chat request failed.", 500);
+    return handlePersistenceError(error);
   }
 }
 
-function validateChatRequest(body: unknown): ValidationResult {
-  if (!body || typeof body !== "object") {
-    return { ok: false, error: "Request body must be an object." };
-  }
+function validateChatRequest(body: Record<string, unknown>): ValidationResult {
+  const conversationId = body.conversationId;
 
-  const messages = (body as { messages?: unknown }).messages;
-
-  if (!Array.isArray(messages) || messages.length === 0) {
-    return { ok: false, error: "messages must be a non-empty array." };
-  }
-
-  if (messages.length > maxMessages) {
-    return { ok: false, error: `messages cannot exceed ${maxMessages} items.` };
-  }
-
-  const parsed: ChatMessage[] = [];
-
-  for (const [index, message] of messages.entries()) {
-    const parsedMessage = parseMessage(message, index);
-
-    if (!parsedMessage.ok) {
-      return parsedMessage;
-    }
-
-    parsed.push(parsedMessage.message);
-  }
-
-  if (!parsed.some((message) => message.role === "user")) {
-    return { ok: false, error: "messages must include at least one user message." };
-  }
-
-  return { ok: true, messages: parsed };
-}
-
-function parseMessage(
-  message: unknown,
-  index: number,
-): MessageValidationResult {
-  if (!message || typeof message !== "object") {
-    return { ok: false, error: `messages[${index}] must be an object.` };
-  }
-
-  const record = message as Record<string, unknown>;
-
-  if (record.role !== "user" && record.role !== "assistant") {
+  if (typeof conversationId !== "string") {
     return {
       ok: false,
-      error: `messages[${index}].role must be "user" or "assistant".`,
+      response: jsonError("conversationId must be a string.", 400),
     };
   }
 
-  if (typeof record.content !== "string" || !record.content.trim()) {
+  const uuidError = validateUuid(conversationId);
+
+  if (uuidError) {
+    return { ok: false, response: uuidError };
+  }
+
+  if (typeof body.content !== "string") {
     return {
       ok: false,
-      error: `messages[${index}].content must be a non-empty string.`,
+      response: jsonError("content must be a string.", 400),
     };
   }
 
-  if (record.content.length > maxMessageLength) {
+  const content = body.content.trim();
+
+  if (!content) {
+    return { ok: false, response: jsonError("content cannot be empty.", 400) };
+  }
+
+  if (content.length > maxContentLength) {
     return {
       ok: false,
-      error: `messages[${index}].content cannot exceed ${maxMessageLength} characters.`,
+      response: jsonError(
+        `content cannot exceed ${maxContentLength} characters.`,
+        400,
+      ),
     };
   }
 
   return {
     ok: true,
-    message: {
-      role: record.role,
-      content: record.content,
-    },
+    conversationId,
+    content,
   };
-}
-
-function jsonError(error: string, status: number) {
-  return NextResponse.json({ error }, { status });
 }

@@ -9,6 +9,29 @@ export type { ChatCompletionResult, ChatMessage, ChatStopReason, ChatUsage };
 
 export type UiChatMessage = ChatMessage & {
   id: string;
+  createdAt?: string;
+  model?: string | null;
+  status?: "pending";
   stopReason?: ChatStopReason;
   usage?: ChatUsage;
+};
+
+export type ConversationSummary = {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  lastMessageAt: string | null;
+};
+
+export type PersistedChatMessage = {
+  id: string;
+  conversationId: string;
+  role: "user" | "assistant";
+  content: string;
+  model: string | null;
+  stopReason: ChatStopReason | null;
+  inputTokens: number | null;
+  outputTokens: number | null;
+  createdAt: string;
 };

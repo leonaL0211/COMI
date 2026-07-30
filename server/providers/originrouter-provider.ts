@@ -40,7 +40,10 @@ export class OriginRouterProvider implements ChatProvider {
       throw new ChatProviderError("AI service request failed.", 502);
     }
 
-    return parseOriginRouterResponse(response);
+    return {
+      ...(await parseOriginRouterResponse(response)),
+      model: this.config.model,
+    };
   }
 }
 

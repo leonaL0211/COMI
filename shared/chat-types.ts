@@ -15,6 +15,7 @@ export type ChatUsage = {
 
 export type ChatCompletionResult = {
   text: string;
+  model?: string | null;
   stopReason: ChatStopReason;
   usage?: ChatUsage;
 };
