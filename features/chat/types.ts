@@ -16,14 +16,6 @@ export type UiChatMessage = ChatMessage & {
   usage?: ChatUsage;
 };
 
-export type ConversationSummary = {
-  id: string;
-  title: string;
-  createdAt: string;
-  updatedAt: string;
-  lastMessageAt: string | null;
-};
-
 export type PersistedChatMessage = {
   id: string;
   conversationId: string;
