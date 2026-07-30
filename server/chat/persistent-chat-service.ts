@@ -2,6 +2,8 @@ import { ChatService } from "@/server/chat/chat-service";
 import { ChatProviderError } from "@/server/providers/chat-provider";
 import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
 import { SupabaseMessageRepository } from "@/server/repositories/supabase-message-repository";
+import { buildChatContext } from "@/server/summary/context-builder";
+import { SummaryService } from "@/server/summary/summary-service";
 import type {
   Conversation,
   ConversationRepository,
@@ -34,6 +36,7 @@ export class PersistentChatService {
       new SupabaseConversationRepository(),
     private readonly messages: MessageRepository = new SupabaseMessageRepository(),
     private readonly chatService?: ChatService,
+    private readonly summaryService: SummaryService = new SummaryService(),
   ) {}
 
   async sendMessage(input: {
@@ -57,7 +60,17 @@ export class PersistentChatService {
         lastMessageAt: userMessage.createdAt,
       })) ?? existingConversation;
     const history = await this.messages.listByConversation(input.conversationId);
-    const completion = await this.createCompletion(history);
+    const summaryResult = await this.summaryService.summarizeIfNeeded({
+      conversationId: input.conversationId,
+      messages: history,
+      currentUserMessageId: userMessage.id,
+    });
+    const chatContext = buildChatContext({
+      messages: history,
+      currentUserMessageId: userMessage.id,
+      summaryResult,
+    });
+    const completion = await this.createCompletion(chatContext);
     const assistantContent = completion.text.trim();
 
     if (!assistantContent) {
@@ -87,15 +100,10 @@ export class PersistentChatService {
     };
   }
 
-  private async createCompletion(history: PersistedMessage[]) {
-    const chatHistory: ChatMessage[] = history.map((message) => ({
-      role: message.role,
-      content: message.content,
-    }));
-
+  private async createCompletion(messages: ChatMessage[]) {
     try {
       return await (this.chatService ?? new ChatService()).sendMessage(
-        chatHistory,
+        messages,
       );
     } catch (error) {
       if (error instanceof ChatProviderError) {
