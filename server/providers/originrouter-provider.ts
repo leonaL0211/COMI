@@ -19,7 +19,7 @@ export class OriginRouterProvider implements ChatProvider {
     this.config = config;
   }
 
-  async createChatCompletion({ messages }: ChatProviderRequest) {
+  async createChatCompletion({ maxOutputTokens, messages }: ChatProviderRequest) {
     let response: Response;
 
     try {
@@ -32,7 +32,7 @@ export class OriginRouterProvider implements ChatProvider {
         body: JSON.stringify({
           model: this.config.model,
           messages: messages.map(toOriginRouterMessage),
-          max_tokens: this.config.maxOutputTokens,
+          max_tokens: maxOutputTokens ?? this.config.maxOutputTokens,
           stream: false,
         }),
       });
