@@ -1,5 +1,6 @@
 import { ChatService } from "@/server/chat/chat-service";
 import { buildMemoryContextMessage } from "@/server/memory/memory-context-builder";
+import { MemoryService } from "@/server/memory/memory-service";
 import { ChatProviderError } from "@/server/providers/chat-provider";
 import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
 import { SupabaseMemoryRepository } from "@/server/repositories/supabase-memory-repository";
@@ -41,6 +42,7 @@ export class PersistentChatService {
     private readonly chatService?: ChatService,
     private readonly summaryService: SummaryService = new SummaryService(),
     private readonly memories: MemoryRepository = new SupabaseMemoryRepository(),
+    private readonly memoryService?: MemoryService,
   ) {}
 
   async sendMessage(input: {
@@ -101,6 +103,8 @@ export class PersistentChatService {
         lastMessageAt: assistantMessage.createdAt,
       })) ?? userTouchedConversation;
 
+    await this.extractMemoryFromTurn({ userMessage, assistantMessage });
+
     return {
       conversation,
       userMessage,
@@ -130,6 +134,19 @@ export class PersistentChatService {
       return buildMemoryContextMessage(await this.memories.list());
     } catch {
       return null;
+    }
+  }
+
+  private async extractMemoryFromTurn(input: {
+    userMessage: PersistedMessage;
+    assistantMessage: PersistedMessage;
+  }) {
+    try {
+      await (this.memoryService ?? new MemoryService(this.memories)).extractFromTurn(
+        input,
+      );
+    } catch {
+      // Automatic memory extraction must never affect the completed chat turn.
     }
   }
 }
