@@ -1,6 +1,8 @@
 import { ChatService } from "@/server/chat/chat-service";
+import { buildMemoryContextMessage } from "@/server/memory/memory-context-builder";
 import { ChatProviderError } from "@/server/providers/chat-provider";
 import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
+import { SupabaseMemoryRepository } from "@/server/repositories/supabase-memory-repository";
 import { SupabaseMessageRepository } from "@/server/repositories/supabase-message-repository";
 import { buildChatContext } from "@/server/summary/context-builder";
 import { SummaryService } from "@/server/summary/summary-service";
@@ -12,6 +14,7 @@ import type {
   MessageRepository,
   PersistedMessage,
 } from "@/server/repositories/message-repository";
+import type { MemoryRepository } from "@/server/repositories/memory-repository";
 import type { ChatMessage } from "@/shared/chat-types";
 
 export type PersistentChatResult = {
@@ -37,6 +40,7 @@ export class PersistentChatService {
     private readonly messages: MessageRepository = new SupabaseMessageRepository(),
     private readonly chatService?: ChatService,
     private readonly summaryService: SummaryService = new SummaryService(),
+    private readonly memories: MemoryRepository = new SupabaseMemoryRepository(),
   ) {}
 
   async sendMessage(input: {
@@ -70,7 +74,11 @@ export class PersistentChatService {
       currentUserMessageId: userMessage.id,
       summaryResult,
     });
-    const completion = await this.createCompletion(chatContext);
+    const memoryContextMessage = await this.loadMemoryContextMessage();
+    const completion = await this.createCompletion([
+      ...(memoryContextMessage ? [memoryContextMessage] : []),
+      ...chatContext,
+    ]);
     const assistantContent = completion.text.trim();
 
     if (!assistantContent) {
@@ -114,6 +122,14 @@ export class PersistentChatService {
       }
 
       throw error;
+    }
+  }
+
+  private async loadMemoryContextMessage() {
+    try {
+      return buildMemoryContextMessage(await this.memories.list());
+    } catch {
+      return null;
     }
   }
 }
