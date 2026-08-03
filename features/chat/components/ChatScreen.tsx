@@ -1,14 +1,28 @@
 "use client";
 
-import { FormEvent, useCallback, useState } from "react";
+import {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ConversationSidebar } from "@/features/conversations/components/ConversationSidebar";
 import { useConversations } from "@/features/conversations/hooks/useConversations";
 import { MemoryPanel } from "@/features/memory/components/MemoryPanel";
 import type { ConversationSummary } from "@/features/conversations/types";
 import { useChat } from "../hooks/useChat";
+import { AppShell } from "./AppShell";
+import { ChatComposer } from "./ChatComposer";
+import { ChatHeader } from "./ChatHeader";
+import { MessageList } from "./MessageList";
 
 export function ChatScreen() {
   const [isMemoryPanelOpen, setIsMemoryPanelOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [composerHeight, setComposerHeight] = useState(112);
+  const composerRef = useRef<HTMLDivElement | null>(null);
   const conversations = useConversations();
   const {
     conversations: conversationList,
@@ -32,6 +46,32 @@ export function ChatScreen() {
     onConversationChanged: refreshConversationList,
   });
   const isConversationInteractionDisabled = chat.isSending || isCreating;
+  const currentConversationTitle = useMemo(
+    () =>
+      conversationList.find(
+        (conversation) => conversation.id === currentConversationId,
+      )?.title ?? "新对话",
+    [conversationList, currentConversationId],
+  );
+
+  useEffect(() => {
+    const composer = composerRef.current;
+
+    if (!composer || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) {
+        setComposerHeight(Math.ceil(entry.contentRect.height));
+      }
+    });
+
+    observer.observe(composer);
+    setComposerHeight(Math.ceil(composer.getBoundingClientRect().height));
+
+    return () => observer.disconnect();
+  }, []);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -40,6 +80,24 @@ export function ChatScreen() {
     }
 
     void chat.sendMessage();
+  }
+
+  async function handleCreateConversation() {
+    const created = await createConversation();
+
+    if (created) {
+      setIsSidebarOpen(false);
+    }
+  }
+
+  function handleSelectConversation(conversationId: string) {
+    selectConversation(conversationId);
+    setIsSidebarOpen(false);
+  }
+
+  function handleOpenMemoryPanel() {
+    setIsSidebarOpen(false);
+    setIsMemoryPanelOpen(true);
   }
 
   async function handleRename(conversation: ConversationSummary) {
@@ -61,33 +119,19 @@ export function ChatScreen() {
       return;
     }
 
-    await deleteConversation(conversation.id);
+    const deleted = await deleteConversation(conversation.id);
+
+    if (deleted) {
+      setIsSidebarOpen(false);
+    }
   }
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-4 px-4 py-6">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Berry Chat v2</h1>
-          <p className="mt-1 text-sm text-zinc-600">
-            Phase 2C multi-conversation persistence test.
-          </p>
-        </div>
-        <button
-          className="self-start rounded border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-800"
-          type="button"
-          onClick={() => setIsMemoryPanelOpen(true)}
-        >
-          长期记忆
-        </button>
-      </header>
-
-      <MemoryPanel
-        isOpen={isMemoryPanelOpen}
-        onClose={() => setIsMemoryPanelOpen(false)}
-      />
-
-      <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
+    <AppShell
+      composerHeight={composerHeight}
+      isSidebarOpen={isSidebarOpen}
+      onCloseSidebar={() => setIsSidebarOpen(false)}
+      sidebar={
         <ConversationSidebar
           conversations={conversationList}
           currentConversationId={currentConversationId}
@@ -96,75 +140,49 @@ export function ChatScreen() {
           isInteractionDisabled={isConversationInteractionDisabled}
           error={error}
           onCreate={() => {
-            void createConversation();
+            void handleCreateConversation();
           }}
-          onSelect={selectConversation}
+          onSelect={handleSelectConversation}
           onRename={(conversation) => {
             void handleRename(conversation);
           }}
           onDelete={(conversation) => {
             void handleDelete(conversation);
           }}
+          onClose={() => setIsSidebarOpen(false)}
         />
-
-        <section className="flex min-h-0 flex-1 flex-col gap-3 rounded border border-zinc-200 bg-white p-4">
-          {chat.isLoadingMessages ? (
-            <p className="text-sm text-zinc-500">Loading messages...</p>
-          ) : chat.messages.length === 0 ? (
-            <p className="text-sm text-zinc-500">
-              Send a message or create a conversation.
-            </p>
-          ) : (
-            chat.messages.map((message) => (
-              <article
-                key={message.id}
-                className="rounded border border-zinc-200 bg-zinc-50 p-3"
-              >
-                <div className="mb-1 text-xs font-semibold uppercase text-zinc-500">
-                  {message.role}
-                </div>
-                <p className="whitespace-pre-wrap text-sm leading-6 text-zinc-900">
-                  {message.content}
-                </p>
-                {message.status === "pending" ? (
-                  <p className="mt-2 text-xs text-zinc-500">
-                    This reply has not been saved yet.
-                  </p>
-                ) : null}
-                {message.stopReason === "max_tokens" ? (
-                  <p className="mt-2 text-xs text-amber-700">
-                    Reply reached the output length limit.
-                  </p>
-                ) : null}
-              </article>
-            ))
-          )}
-          {chat.error ? (
-            <p className="text-sm text-red-600">{chat.error}</p>
-          ) : null}
-        </section>
-      </div>
-
-      <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
-        <label className="text-sm font-medium" htmlFor="chat-input">
-          Message
-        </label>
-        <textarea
-          id="chat-input"
-          className="min-h-28 resize-y rounded border border-zinc-300 p-3 text-sm outline-none focus:border-zinc-500"
+      }
+      header={
+        <ChatHeader
+          title={currentConversationTitle}
+          onOpenSidebar={() => setIsSidebarOpen(true)}
+          onOpenMemoryPanel={handleOpenMemoryPanel}
+        />
+      }
+      messageList={
+        <MessageList
+          messages={chat.messages}
+          isLoading={chat.isLoadingMessages}
+          error={chat.error}
+        />
+      }
+      composer={
+        <ChatComposer
+          composerRef={composerRef}
           value={chat.input}
-          onChange={(event) => chat.setInput(event.target.value)}
-          placeholder="Type a message..."
-          disabled={chat.isSending || chat.isLoadingMessages || isCreating}
+          isSending={chat.isSending}
+          isDisabled={chat.isSending || chat.isLoadingMessages || isCreating}
+          canSend={chat.canSend && !isCreating}
+          onChange={chat.setInput}
+          onSubmit={handleSubmit}
         />
-        <button
-          className="self-end rounded bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
-          type="submit"
-          disabled={!chat.canSend || isCreating}
-        >
-          {chat.isSending ? "Sending..." : "Send"}
-        </button>
-      </form>
-    </main>
+      }
+      memoryPanel={
+        <MemoryPanel
+          isOpen={isMemoryPanelOpen}
+          onClose={() => setIsMemoryPanelOpen(false)}
+        />
+      }
+    />
   );
 }

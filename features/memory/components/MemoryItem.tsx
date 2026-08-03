@@ -38,7 +38,7 @@ export function MemoryItem({
 
   async function handleDelete() {
     const confirmed = window.confirm(
-      "确定删除这条长期记忆吗？删除后，小草莓不会再从记忆库中读取它。",
+      "确定删除这条长期记忆吗？删除后，Berry Chat 不会再从记忆库中读取它。",
     );
 
     if (!confirmed) {
@@ -68,24 +68,26 @@ export function MemoryItem({
   }
 
   return (
-    <li className="rounded border border-zinc-200 bg-white p-3">
+    <li className="memory-card p-3">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold text-zinc-900">{memory.title}</h3>
+            <h3 className="text-sm font-semibold text-[var(--foreground)]">
+              {memory.title}
+            </h3>
             {memory.isPinned ? (
-              <span className="rounded bg-zinc-900 px-2 py-0.5 text-xs text-white">
+              <span className="rounded-[var(--radius-pill)] bg-[var(--accent)] px-2 py-0.5 text-xs text-[var(--accent-foreground)]">
                 已置顶
               </span>
             ) : null}
           </div>
-          <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-zinc-800">
+          <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-[var(--foreground)]">
             {memory.content}
           </p>
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-500">
+      <div className="mt-3 flex flex-wrap gap-2 text-xs text-[var(--muted-foreground)]">
         <span>{categoryLabels[memory.category]}</span>
         <span>重要度 {memory.importance} 级</span>
         <span>{memory.source === "auto" ? "自动记住" : "手动添加"}</span>
@@ -93,7 +95,7 @@ export function MemoryItem({
 
       <div className="mt-3 flex flex-wrap gap-3">
         <button
-          className="text-xs text-zinc-700 disabled:cursor-not-allowed disabled:text-zinc-400"
+          className="text-xs text-[var(--muted-foreground)] hover:text-[var(--accent)] disabled:text-[var(--muted-foreground)]"
           type="button"
           disabled={isBusy}
           onClick={() => void onTogglePin(memory)}
@@ -101,7 +103,7 @@ export function MemoryItem({
           {memory.isPinned ? "取消置顶" : "置顶"}
         </button>
         <button
-          className="text-xs text-zinc-700 disabled:cursor-not-allowed disabled:text-zinc-400"
+          className="text-xs text-[var(--muted-foreground)] hover:text-[var(--accent)] disabled:text-[var(--muted-foreground)]"
           type="button"
           disabled={isBusy}
           onClick={() => setIsEditing(true)}
@@ -109,7 +111,7 @@ export function MemoryItem({
           编辑
         </button>
         <button
-          className="text-xs text-red-600 disabled:cursor-not-allowed disabled:text-zinc-400"
+          className="text-xs text-[var(--danger)] disabled:text-[var(--muted-foreground)]"
           type="button"
           disabled={isBusy}
           onClick={() => void handleDelete()}
@@ -120,4 +122,3 @@ export function MemoryItem({
     </li>
   );
 }
-

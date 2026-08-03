@@ -21,14 +21,13 @@ export function ConversationItem({
 }: ConversationItemProps) {
   return (
     <li
-      className={`rounded border p-2 ${
-        isCurrent
-          ? "border-zinc-900 bg-zinc-100"
-          : "border-zinc-200 bg-white"
-      }`}
+      className={[
+        "conversation-item",
+        isCurrent ? "conversation-item-current" : "",
+      ].join(" ")}
     >
       <button
-        className="block w-full text-left text-sm font-medium text-zinc-900 disabled:cursor-not-allowed disabled:text-zinc-400"
+        className="block w-full truncate text-left text-sm font-medium text-[var(--foreground)] disabled:text-[var(--muted-foreground)]"
         type="button"
         disabled={isDisabled}
         onClick={() => onSelect(conversation.id)}
@@ -37,7 +36,7 @@ export function ConversationItem({
       </button>
       <div className="mt-2 flex gap-2">
         <button
-          className="text-xs text-zinc-600 disabled:cursor-not-allowed disabled:text-zinc-400"
+          className="text-xs text-[var(--muted-foreground)] hover:text-[var(--accent)] disabled:text-[var(--muted-foreground)]"
           type="button"
           disabled={isDisabled}
           onClick={() => onRename(conversation)}
@@ -45,7 +44,7 @@ export function ConversationItem({
           Rename
         </button>
         <button
-          className="text-xs text-red-600 disabled:cursor-not-allowed disabled:text-zinc-400"
+          className="text-xs text-[var(--danger)] disabled:text-[var(--muted-foreground)]"
           type="button"
           disabled={isDisabled}
           onClick={() => onDelete(conversation)}

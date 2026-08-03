@@ -69,17 +69,14 @@ export function MemoryForm({
   }
 
   return (
-    <form
-      className="flex flex-col gap-3 rounded border border-zinc-200 bg-zinc-50 p-3"
-      onSubmit={handleSubmit}
-    >
+    <form className="memory-card flex flex-col gap-3 p-3" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-zinc-700" htmlFor="memory-title">
+        <label className="text-xs font-medium text-[var(--muted-foreground)]" htmlFor="memory-title">
           标题
         </label>
         <input
           id="memory-title"
-          className="rounded border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+          className="rounded-[var(--radius-small)] border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           disabled={isSaving}
@@ -88,14 +85,14 @@ export function MemoryForm({
 
       <div className="flex flex-col gap-1">
         <label
-          className="text-xs font-medium text-zinc-700"
+          className="text-xs font-medium text-[var(--muted-foreground)]"
           htmlFor="memory-content"
         >
           正文
         </label>
         <textarea
           id="memory-content"
-          className="min-h-28 resize-y rounded border border-zinc-300 px-3 py-2 text-sm leading-6 outline-none focus:border-zinc-500"
+          className="min-h-28 resize-y rounded-[var(--radius-small)] border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-2 text-sm leading-6 text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
           value={content}
           onChange={(event) => setContent(event.target.value)}
           disabled={isSaving}
@@ -105,14 +102,14 @@ export function MemoryForm({
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="flex flex-col gap-1">
           <label
-            className="text-xs font-medium text-zinc-700"
+            className="text-xs font-medium text-[var(--muted-foreground)]"
             htmlFor="memory-category"
           >
             分类
           </label>
           <select
             id="memory-category"
-            className="rounded border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+            className="rounded-[var(--radius-small)] border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
             value={category}
             onChange={(event) => setCategory(event.target.value as MemoryCategory)}
             disabled={isSaving}
@@ -127,14 +124,14 @@ export function MemoryForm({
 
         <div className="flex flex-col gap-1">
           <label
-            className="text-xs font-medium text-zinc-700"
+            className="text-xs font-medium text-[var(--muted-foreground)]"
             htmlFor="memory-importance"
           >
             重要度
           </label>
           <select
             id="memory-importance"
-            className="rounded border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+            className="rounded-[var(--radius-small)] border border-[var(--border)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--foreground)] outline-none focus:border-[var(--accent)]"
             value={importance}
             onChange={(event) =>
               setImportance(Number(event.target.value) as MemoryImportance)
@@ -150,7 +147,7 @@ export function MemoryForm({
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-zinc-700">
+      <label className="flex items-center gap-2 text-sm text-[var(--foreground)]">
         <input
           type="checkbox"
           checked={isPinned}
@@ -160,11 +157,11 @@ export function MemoryForm({
         置顶这条记忆
       </label>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
 
       <div className="flex justify-end gap-2">
         <button
-          className="rounded border border-zinc-300 px-3 py-2 text-sm text-zinc-700 disabled:cursor-not-allowed disabled:text-zinc-400"
+          className="ui-button ui-button-secondary disabled:text-[var(--muted-foreground)]"
           type="button"
           onClick={onCancel}
           disabled={isSaving}
@@ -172,7 +169,7 @@ export function MemoryForm({
           取消
         </button>
         <button
-          className="rounded bg-zinc-900 px-3 py-2 text-sm font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-400"
+          className="ui-button ui-button-primary disabled:bg-[var(--muted)] disabled:text-[var(--muted-foreground)]"
           type="submit"
           disabled={isSaving}
         >
@@ -226,4 +223,3 @@ function validateForm(input: MemoryFormInput):
     },
   };
 }
-
