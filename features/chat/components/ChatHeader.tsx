@@ -1,16 +1,20 @@
+import type { Ref } from "react";
+
 type ChatHeaderProps = {
   title: string;
+  headerRef: Ref<HTMLElement>;
   onOpenSidebar: () => void;
   onOpenMemoryPanel: () => void;
 };
 
 export function ChatHeader({
   title,
+  headerRef,
   onOpenSidebar,
   onOpenMemoryPanel,
 }: ChatHeaderProps) {
   return (
-    <header className="chat-header">
+    <header ref={headerRef} className="chat-header">
       <div className="chat-header-inner">
         <button
           className="mobile-sidebar-trigger"

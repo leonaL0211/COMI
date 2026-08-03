@@ -1,5 +1,6 @@
 "use client";
 
+import { Popover } from "@/features/ui/Popover";
 import type { ConversationSummary } from "../types";
 
 type ConversationItemProps = {
@@ -27,31 +28,53 @@ export function ConversationItem({
       ].join(" ")}
     >
       <button
-        className="block w-full truncate text-left text-sm font-medium text-[var(--foreground)] disabled:text-[var(--muted-foreground)]"
+        className="conversation-title-button"
         type="button"
         disabled={isDisabled}
         onClick={() => onSelect(conversation.id)}
       >
         {conversation.title}
       </button>
-      <div className="mt-2 flex gap-2">
+      <Popover
+        ariaLabel="会话操作"
+        trigger={(triggerProps) => (
+          <button
+            {...triggerProps}
+            className="ui-icon-button"
+            type="button"
+            aria-label={`打开 ${conversation.title} 的操作菜单`}
+            disabled={isDisabled}
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="size-5"
+              fill="currentColor"
+            >
+              <circle cx="5" cy="12" r="1.8" />
+              <circle cx="12" cy="12" r="1.8" />
+              <circle cx="19" cy="12" r="1.8" />
+            </svg>
+          </button>
+        )}
+      >
         <button
-          className="text-xs text-[var(--muted-foreground)] hover:text-[var(--accent)] disabled:text-[var(--muted-foreground)]"
+          className="popover-menu-item"
           type="button"
-          disabled={isDisabled}
+          role="menuitem"
           onClick={() => onRename(conversation)}
         >
-          Rename
+          重命名
         </button>
         <button
-          className="text-xs text-[var(--danger)] disabled:text-[var(--muted-foreground)]"
+          className="popover-menu-item popover-menu-item-danger"
           type="button"
-          disabled={isDisabled}
+          role="menuitem"
           onClick={() => onDelete(conversation)}
         >
-          Delete
+          删除会话
         </button>
-      </div>
+      </Popover>
     </li>
   );
 }

@@ -21,7 +21,9 @@ import { MessageList } from "./MessageList";
 export function ChatScreen() {
   const [isMemoryPanelOpen, setIsMemoryPanelOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(76);
   const [composerHeight, setComposerHeight] = useState(112);
+  const headerRef = useRef<HTMLElement | null>(null);
   const composerRef = useRef<HTMLDivElement | null>(null);
   const conversations = useConversations();
   const {
@@ -73,6 +75,25 @@ export function ChatScreen() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const header = headerRef.current;
+
+    if (!header || typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) {
+        setHeaderHeight(Math.ceil(entry.contentRect.height));
+      }
+    });
+
+    observer.observe(header);
+    setHeaderHeight(Math.ceil(header.getBoundingClientRect().height));
+
+    return () => observer.disconnect();
+  }, []);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (isCreating) {
@@ -93,6 +114,15 @@ export function ChatScreen() {
   function handleSelectConversation(conversationId: string) {
     selectConversation(conversationId);
     setIsSidebarOpen(false);
+  }
+
+  function handleCloseSidebar() {
+    setIsSidebarOpen(false);
+    window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLButtonElement>(".mobile-sidebar-trigger")
+        ?.focus();
+    });
   }
 
   function handleOpenMemoryPanel() {
@@ -128,9 +158,10 @@ export function ChatScreen() {
 
   return (
     <AppShell
+      headerHeight={headerHeight}
       composerHeight={composerHeight}
       isSidebarOpen={isSidebarOpen}
-      onCloseSidebar={() => setIsSidebarOpen(false)}
+      onCloseSidebar={handleCloseSidebar}
       sidebar={
         <ConversationSidebar
           conversations={conversationList}
@@ -149,11 +180,12 @@ export function ChatScreen() {
           onDelete={(conversation) => {
             void handleDelete(conversation);
           }}
-          onClose={() => setIsSidebarOpen(false)}
+          onClose={handleCloseSidebar}
         />
       }
       header={
         <ChatHeader
+          headerRef={headerRef}
           title={currentConversationTitle}
           onOpenSidebar={() => setIsSidebarOpen(true)}
           onOpenMemoryPanel={handleOpenMemoryPanel}

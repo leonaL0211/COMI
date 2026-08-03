@@ -32,9 +32,9 @@ export function ConversationSidebar({
 }: ConversationSidebarProps) {
   return (
     <aside className="conversation-sidebar">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-[var(--foreground)]">
-          Conversations
+          会话
         </h2>
         <div className="flex items-center gap-2">
           <button
@@ -43,7 +43,7 @@ export function ConversationSidebar({
             disabled={isCreating || isInteractionDisabled}
             onClick={onCreate}
           >
-            {isCreating ? "Creating..." : "New"}
+            {isCreating ? "新建中" : "新建"}
           </button>
           {onClose ? (
             <button

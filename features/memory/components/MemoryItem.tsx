@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Popover } from "@/features/ui/Popover";
 import { MemoryForm } from "./MemoryForm";
 import type { Memory, MemoryFormInput, MemoryCategory } from "../types";
 
@@ -69,8 +70,8 @@ export function MemoryItem({
 
   return (
     <li className="memory-card p-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-sm font-semibold text-[var(--foreground)]">
               {memory.title}
@@ -85,39 +86,63 @@ export function MemoryItem({
             {memory.content}
           </p>
         </div>
+        <Popover
+          ariaLabel="记忆操作"
+          trigger={(triggerProps) => (
+            <button
+              {...triggerProps}
+              className="ui-icon-button"
+              type="button"
+              aria-label={`打开 ${memory.title} 的操作菜单`}
+              disabled={isBusy}
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="size-5"
+                fill="currentColor"
+              >
+                <circle cx="5" cy="12" r="1.8" />
+                <circle cx="12" cy="12" r="1.8" />
+                <circle cx="19" cy="12" r="1.8" />
+              </svg>
+            </button>
+          )}
+        >
+          <button
+            className="popover-menu-item"
+            type="button"
+            role="menuitem"
+            onClick={() => setIsEditing(true)}
+          >
+            编辑
+          </button>
+          <button
+            className="popover-menu-item"
+            type="button"
+            role="menuitem"
+            onClick={() => void onTogglePin(memory)}
+          >
+            {memory.isPinned ? "取消置顶" : "置顶"}
+          </button>
+          <button
+            className="popover-menu-item popover-menu-item-danger"
+            type="button"
+            role="menuitem"
+            onClick={() => void handleDelete()}
+          >
+            删除记忆
+          </button>
+        </Popover>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2 text-xs text-[var(--muted-foreground)]">
         <span>{categoryLabels[memory.category]}</span>
         <span>重要度 {memory.importance} 级</span>
-        <span>{memory.source === "auto" ? "自动记住" : "手动添加"}</span>
-      </div>
-
-      <div className="mt-3 flex flex-wrap gap-3">
-        <button
-          className="text-xs text-[var(--muted-foreground)] hover:text-[var(--accent)] disabled:text-[var(--muted-foreground)]"
-          type="button"
-          disabled={isBusy}
-          onClick={() => void onTogglePin(memory)}
-        >
-          {memory.isPinned ? "取消置顶" : "置顶"}
-        </button>
-        <button
-          className="text-xs text-[var(--muted-foreground)] hover:text-[var(--accent)] disabled:text-[var(--muted-foreground)]"
-          type="button"
-          disabled={isBusy}
-          onClick={() => setIsEditing(true)}
-        >
-          编辑
-        </button>
-        <button
-          className="text-xs text-[var(--danger)] disabled:text-[var(--muted-foreground)]"
-          type="button"
-          disabled={isBusy}
-          onClick={() => void handleDelete()}
-        >
-          {isDeleting ? "删除中..." : "删除"}
-        </button>
+        <span className="memory-source-badge">
+          {memory.source === "auto" ? "自动记住" : "手动添加"}
+        </span>
+        {isDeleting ? <span>删除中...</span> : null}
       </div>
     </li>
   );

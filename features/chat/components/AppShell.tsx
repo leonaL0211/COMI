@@ -1,4 +1,7 @@
+"use client";
+
 import type { CSSProperties, ReactNode } from "react";
+import { useEffect } from "react";
 
 type AppShellProps = {
   sidebar: ReactNode;
@@ -6,6 +9,7 @@ type AppShellProps = {
   messageList: ReactNode;
   composer: ReactNode;
   memoryPanel: ReactNode;
+  headerHeight: number;
   composerHeight: number;
   isSidebarOpen: boolean;
   onCloseSidebar: () => void;
@@ -17,15 +21,38 @@ export function AppShell({
   messageList,
   composer,
   memoryPanel,
+  headerHeight,
   composerHeight,
   isSidebarOpen,
   onCloseSidebar,
 }: AppShellProps) {
+  useEffect(() => {
+    if (!isSidebarOpen) {
+      return;
+    }
+
+    const closeButton = document.querySelector<HTMLButtonElement>(
+      ".mobile-sidebar-close",
+    );
+    closeButton?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onCloseSidebar();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isSidebarOpen, onCloseSidebar]);
+
   return (
     <main
       className="app-shell"
       style={
         {
+          "--header-height": `${headerHeight}px`,
           "--composer-height": `${composerHeight}px`,
         } as CSSProperties
       }
