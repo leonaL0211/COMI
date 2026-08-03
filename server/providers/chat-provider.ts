@@ -3,6 +3,7 @@ import type { ChatCompletionResult, ChatMessage } from "@/shared/chat-types";
 export type ChatProviderRequest = {
   messages: ChatMessage[];
   maxOutputTokens?: number;
+  model?: string;
 };
 
 export interface ChatProvider {

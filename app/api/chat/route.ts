@@ -9,6 +9,11 @@ import {
   readJsonObject,
   validateUuid,
 } from "@/server/api/persistence-route-utils";
+import {
+  DEFAULT_CHAT_MODEL,
+  isChatModelKey,
+  type ChatModelKey,
+} from "@/shared/chat-models";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +24,7 @@ type ValidationResult =
       ok: true;
       conversationId: string;
       content: string;
+      model: ChatModelKey;
     }
   | {
       ok: false;
@@ -42,6 +48,7 @@ export async function POST(request: Request) {
     const result = await new PersistentChatService().sendMessage({
       conversationId: validation.conversationId,
       content: validation.content,
+      model: validation.model,
     });
 
     return NextResponse.json(result);
@@ -93,9 +100,19 @@ function validateChatRequest(body: Record<string, unknown>): ValidationResult {
     };
   }
 
+  const model = body.model ?? DEFAULT_CHAT_MODEL;
+
+  if (!isChatModelKey(model)) {
+    return {
+      ok: false,
+      response: jsonError("model must be sonnet or opus.", 400),
+    };
+  }
+
   return {
     ok: true,
     conversationId,
     content,
+    model,
   };
 }

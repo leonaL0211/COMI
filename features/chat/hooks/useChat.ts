@@ -4,6 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listMessages, sendChatMessage } from "../api";
 import type { PersistedChatMessage, UiChatMessage } from "../types";
 import type { ConversationSummary } from "@/features/conversations/types";
+import {
+  DEFAULT_CHAT_MODEL,
+  type ChatModelKey,
+} from "@/shared/chat-models";
 
 type UseChatInput = {
   conversationId: string | null;
@@ -120,89 +124,96 @@ export function useChat({
     }
   }, []);
 
-  const sendMessage = useCallback(async () => {
-    const content = input.trim();
+  const sendMessage = useCallback(
+    async (model: ChatModelKey = DEFAULT_CHAT_MODEL) => {
+      const content = input.trim();
 
-    if (!content || sendInFlightRef.current || isLoadingMessages) {
-      return;
-    }
+      if (!content || sendInFlightRef.current || isLoadingMessages) {
+        return;
+      }
 
-    sendInFlightRef.current = true;
-    setIsSending(true);
-    setError(null);
+      sendInFlightRef.current = true;
+      setIsSending(true);
+      setError(null);
 
-    let targetConversationId = currentConversationIdRef.current;
-    const temporaryUserId = createId();
-    const temporaryAssistantId = createId();
+      let targetConversationId = currentConversationIdRef.current;
+      const temporaryUserId = createId();
+      const temporaryAssistantId = createId();
 
-    try {
-      if (!targetConversationId) {
-        const created = await ensureConversation();
+      try {
+        if (!targetConversationId) {
+          const created = await ensureConversation();
 
-        if (!created) {
-          return;
+          if (!created) {
+            return;
+          }
+
+          targetConversationId = created.id;
+          currentConversationIdRef.current = created.id;
         }
 
-        targetConversationId = created.id;
-        currentConversationIdRef.current = created.id;
-      }
+        setMessages((current) => [
+          ...current,
+          {
+            id: temporaryUserId,
+            role: "user",
+            content,
+          },
+          {
+            id: temporaryAssistantId,
+            role: "assistant",
+            content: "Waiting for reply...",
+            status: "pending",
+          },
+        ]);
+        setInput("");
 
-      setMessages((current) => [
-        ...current,
-        {
-          id: temporaryUserId,
-          role: "user",
+        const result = await sendChatMessage(
+          targetConversationId,
           content,
-        },
-        {
-          id: temporaryAssistantId,
-          role: "assistant",
-          content: "Waiting for reply...",
-          status: "pending",
-        },
-      ]);
-      setInput("");
-
-      const result = await sendChatMessage(targetConversationId, content);
-
-      if (currentConversationIdRef.current === targetConversationId) {
-        setMessages((current) =>
-          current.map((message) => {
-            if (message.id === temporaryUserId) {
-              return toUiMessage(result.userMessage);
-            }
-
-            if (message.id === temporaryAssistantId) {
-              return toUiMessage(result.assistantMessage);
-            }
-
-            return message;
-          }),
+          model,
         );
-      }
-    } catch (sendError) {
-      if (targetConversationId) {
+
         if (currentConversationIdRef.current === targetConversationId) {
           setMessages((current) =>
-            current.filter((message) => message.id !== temporaryAssistantId),
-          );
-          await refreshMessages(targetConversationId);
-        }
-      }
+            current.map((message) => {
+              if (message.id === temporaryUserId) {
+                return toUiMessage(result.userMessage);
+              }
 
-      setError(getErrorMessage(sendError, "Chat request failed."));
-    } finally {
-      await onConversationChanged();
-      sendInFlightRef.current = false;
-      setIsSending(false);
-    }
-  }, [
-    ensureConversation,
-    input,
-    isLoadingMessages,
-    onConversationChanged,
-    refreshMessages,
-  ]);
+              if (message.id === temporaryAssistantId) {
+                return toUiMessage(result.assistantMessage);
+              }
+
+              return message;
+            }),
+          );
+        }
+      } catch (sendError) {
+        if (targetConversationId) {
+          if (currentConversationIdRef.current === targetConversationId) {
+            setMessages((current) =>
+              current.filter((message) => message.id !== temporaryAssistantId),
+            );
+            await refreshMessages(targetConversationId);
+          }
+        }
+
+        setError(getErrorMessage(sendError, "Chat request failed."));
+      } finally {
+        await onConversationChanged();
+        sendInFlightRef.current = false;
+        setIsSending(false);
+      }
+    },
+    [
+      ensureConversation,
+      input,
+      isLoadingMessages,
+      onConversationChanged,
+      refreshMessages,
+    ],
+  );
 
   return {
     messages,

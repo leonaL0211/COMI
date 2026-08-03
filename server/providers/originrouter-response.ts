@@ -25,6 +25,7 @@ export async function parseOriginRouterResponse(
 
   return {
     text,
+    model: getString(data.model),
     stopReason: mapStopReason(data),
     usage: extractUsage(data),
   };

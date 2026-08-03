@@ -6,7 +6,10 @@ import { berryChatSystemPrompt } from "./system-prompt";
 export class ChatService {
   constructor(private readonly provider: ChatProvider = new OriginRouterProvider()) {}
 
-  async sendMessage(messages: ChatMessage[]): Promise<ChatCompletionResult> {
+  async sendMessage(
+    messages: ChatMessage[],
+    options: { model?: string } = {},
+  ): Promise<ChatCompletionResult> {
     return this.provider.createChatCompletion({
       messages: [
         {
@@ -15,6 +18,7 @@ export class ChatService {
         },
         ...messages,
       ],
+      model: options.model,
     });
   }
 }

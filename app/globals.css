@@ -143,6 +143,18 @@ select:focus-visible {
   gap: 16px;
 }
 
+.chat-header-title {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.chat-header-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+
 .chat-header-kicker {
   color: var(--muted-foreground);
   font-size: 12px;
@@ -235,6 +247,51 @@ select:focus-visible {
   background: var(--surface-strong);
   color: var(--foreground);
   box-shadow: 0 8px 22px rgba(118, 93, 85, 0.08);
+}
+
+.model-selector-button {
+  display: inline-flex;
+  min-height: 40px;
+  max-width: 128px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  color: var(--foreground);
+  box-shadow: 0 8px 22px rgba(118, 93, 85, 0.08);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+  padding: 8px 12px;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.model-selector-button span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model-selector-button:hover,
+.model-selector-button:focus-visible {
+  background: var(--accent-soft);
+}
+
+.model-selector-button:active {
+  transform: translateY(1px);
+}
+
+.model-selector-button:disabled {
+  color: var(--muted-foreground);
+  opacity: 0.56;
+  transform: none;
 }
 
 .ui-button-soft {
@@ -680,6 +737,18 @@ select:focus-visible {
   color: var(--danger);
 }
 
+.model-menu-item {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.model-menu-check {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
 .memory-backdrop {
   position: fixed;
   inset: 0;
@@ -820,5 +889,24 @@ select:focus-visible {
 
   .memory-backdrop {
     padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-header-inner {
+    gap: 8px;
+  }
+
+  .chat-header-actions {
+    gap: 6px;
+  }
+
+  .model-selector-button {
+    max-width: 102px;
+    padding-inline: 10px;
+  }
+
+  .chat-memory-button {
+    padding-inline: 10px;
   }
 }

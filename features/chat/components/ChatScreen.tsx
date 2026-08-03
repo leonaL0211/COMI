@@ -13,6 +13,7 @@ import { useConversations } from "@/features/conversations/hooks/useConversation
 import { MemoryPanel } from "@/features/memory/components/MemoryPanel";
 import type { ConversationSummary } from "@/features/conversations/types";
 import { useChat } from "../hooks/useChat";
+import { useModelPreference } from "../hooks/useModelPreference";
 import { AppShell } from "./AppShell";
 import { ChatComposer } from "./ChatComposer";
 import { ChatHeader } from "./ChatHeader";
@@ -25,6 +26,7 @@ export function ChatScreen() {
   const [composerHeight, setComposerHeight] = useState(112);
   const headerRef = useRef<HTMLElement | null>(null);
   const composerRef = useRef<HTMLDivElement | null>(null);
+  const { selectedModel, setSelectedModel } = useModelPreference();
   const conversations = useConversations();
   const {
     conversations: conversationList,
@@ -100,7 +102,7 @@ export function ChatScreen() {
       return;
     }
 
-    void chat.sendMessage();
+    void chat.sendMessage(selectedModel);
   }
 
   async function handleCreateConversation() {
@@ -187,6 +189,9 @@ export function ChatScreen() {
         <ChatHeader
           headerRef={headerRef}
           title={currentConversationTitle}
+          selectedModel={selectedModel}
+          isModelSelectorDisabled={chat.isSending}
+          onSelectModel={setSelectedModel}
           onOpenSidebar={() => setIsSidebarOpen(true)}
           onOpenMemoryPanel={handleOpenMemoryPanel}
         />

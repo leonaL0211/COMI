@@ -1,4 +1,5 @@
 import type { ConversationSummary } from "@/features/conversations/types";
+import type { ChatModelKey } from "@/shared/chat-models";
 import type { PersistedChatMessage } from "./types";
 
 type ApiError = {
@@ -27,7 +28,11 @@ export async function listMessages(
   return data.messages;
 }
 
-export async function sendChatMessage(conversationId: string, content: string) {
+export async function sendChatMessage(
+  conversationId: string,
+  content: string,
+  model: ChatModelKey,
+) {
   return fetchJson<ChatResponse>("/api/chat", {
     method: "POST",
     headers: {
@@ -36,6 +41,7 @@ export async function sendChatMessage(conversationId: string, content: string) {
     body: JSON.stringify({
       conversationId,
       content,
+      model,
     }),
   });
 }

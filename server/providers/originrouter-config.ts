@@ -1,4 +1,5 @@
 import { ChatProviderError } from "./chat-provider";
+import { resolveDefaultChatProviderModelId } from "./chat-model-resolver";
 
 export type OriginRouterConfig = {
   apiKey: string;
@@ -8,7 +9,6 @@ export type OriginRouterConfig = {
 };
 
 const defaultBaseUrl = "https://api.originrouter.com/v1";
-const defaultModel = "claude-sonnet-4-6";
 const defaultMaxOutputTokens = 8192;
 
 export function getOriginRouterConfig(): OriginRouterConfig {
@@ -27,10 +27,7 @@ export function getOriginRouterConfig(): OriginRouterConfig {
       process.env.CLAUDE_API_BASE_URL ??
       process.env.ORIGINROUTER_API_BASE_URL ??
       defaultBaseUrl,
-    model:
-      process.env.CLAUDE_MODEL_ID ??
-      process.env.ORIGINROUTER_MODEL_ID ??
-      defaultModel,
+    model: resolveDefaultChatProviderModelId(),
     maxOutputTokens: readMaxOutputTokens(),
   };
 }

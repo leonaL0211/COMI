@@ -19,8 +19,13 @@ export class OriginRouterProvider implements ChatProvider {
     this.config = config;
   }
 
-  async createChatCompletion({ maxOutputTokens, messages }: ChatProviderRequest) {
+  async createChatCompletion({
+    maxOutputTokens,
+    messages,
+    model,
+  }: ChatProviderRequest) {
     let response: Response;
+    const requestModel = model ?? this.config.model;
 
     try {
       response = await fetch(getChatCompletionsUrl(this.config.baseUrl), {
@@ -30,7 +35,7 @@ export class OriginRouterProvider implements ChatProvider {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: this.config.model,
+          model: requestModel,
           messages: messages.map(toOriginRouterMessage),
           max_tokens: maxOutputTokens ?? this.config.maxOutputTokens,
           stream: false,
@@ -40,9 +45,11 @@ export class OriginRouterProvider implements ChatProvider {
       throw new ChatProviderError("AI service request failed.", 502);
     }
 
+    const result = await parseOriginRouterResponse(response);
+
     return {
-      ...(await parseOriginRouterResponse(response)),
-      model: this.config.model,
+      ...result,
+      model: result.model ?? requestModel,
     };
   }
 }

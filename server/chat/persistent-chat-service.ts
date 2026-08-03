@@ -16,7 +16,9 @@ import type {
   PersistedMessage,
 } from "@/server/repositories/message-repository";
 import type { MemoryRepository } from "@/server/repositories/memory-repository";
+import { resolveChatProviderModelId } from "@/server/providers/chat-model-resolver";
 import type { ChatMessage } from "@/shared/chat-types";
+import type { ChatModelKey } from "@/shared/chat-models";
 
 export type PersistentChatResult = {
   conversation: Conversation;
@@ -48,6 +50,7 @@ export class PersistentChatService {
   async sendMessage(input: {
     conversationId: string;
     content: string;
+    model: ChatModelKey;
   }): Promise<PersistentChatResult> {
     const existingConversation = await this.conversations.findById(
       input.conversationId,
@@ -77,10 +80,10 @@ export class PersistentChatService {
       summaryResult,
     });
     const memoryContextMessage = await this.loadMemoryContextMessage();
-    const completion = await this.createCompletion([
-      ...(memoryContextMessage ? [memoryContextMessage] : []),
-      ...chatContext,
-    ]);
+    const completion = await this.createCompletion(
+      [...(memoryContextMessage ? [memoryContextMessage] : []), ...chatContext],
+      resolveChatProviderModelId(input.model),
+    );
     const assistantContent = completion.text.trim();
 
     if (!assistantContent) {
@@ -112,10 +115,11 @@ export class PersistentChatService {
     };
   }
 
-  private async createCompletion(messages: ChatMessage[]) {
+  private async createCompletion(messages: ChatMessage[], model: string) {
     try {
       return await (this.chatService ?? new ChatService()).sendMessage(
         messages,
+        { model },
       );
     } catch (error) {
       if (error instanceof ChatProviderError) {
