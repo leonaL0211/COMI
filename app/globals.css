@@ -651,6 +651,15 @@ select:focus-visible {
   padding-right: 2px;
 }
 
+.logout-area {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
 .conversation-item {
   position: relative;
   display: flex;
@@ -794,6 +803,54 @@ select:focus-visible {
   background: var(--accent-soft);
   padding: 2px 7px;
   color: var(--foreground);
+}
+
+.login-page {
+  display: grid;
+  min-height: 100dvh;
+  overflow: hidden;
+  place-items: center;
+  padding: max(18px, env(safe-area-inset-top)) 16px
+    max(18px, env(safe-area-inset-bottom));
+}
+
+.login-card {
+  display: flex;
+  width: min(100%, 380px);
+  flex-direction: column;
+  gap: 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-large);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-floating);
+  padding: 24px;
+  backdrop-filter: blur(16px) saturate(1.04);
+  -webkit-backdrop-filter: blur(16px) saturate(1.04);
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.login-field input {
+  min-height: 46px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-medium);
+  background: var(--surface);
+  color: var(--foreground);
+  padding: 10px 12px;
+}
+
+.login-error {
+  color: var(--danger);
+  font-size: 13px;
+  line-height: 20px;
+  text-align: center;
 }
 
 @keyframes popover-in {
