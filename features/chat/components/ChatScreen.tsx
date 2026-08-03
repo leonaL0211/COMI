@@ -1,12 +1,14 @@
 "use client";
 
-import { FormEvent, useCallback } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { ConversationSidebar } from "@/features/conversations/components/ConversationSidebar";
 import { useConversations } from "@/features/conversations/hooks/useConversations";
+import { MemoryPanel } from "@/features/memory/components/MemoryPanel";
 import type { ConversationSummary } from "@/features/conversations/types";
 import { useChat } from "../hooks/useChat";
 
 export function ChatScreen() {
+  const [isMemoryPanelOpen, setIsMemoryPanelOpen] = useState(false);
   const conversations = useConversations();
   const {
     conversations: conversationList,
@@ -64,12 +66,26 @@ export function ChatScreen() {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-4 px-4 py-6">
-      <header>
-        <h1 className="text-2xl font-semibold">Berry Chat v2</h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Phase 2C multi-conversation persistence test.
-        </p>
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Berry Chat v2</h1>
+          <p className="mt-1 text-sm text-zinc-600">
+            Phase 2C multi-conversation persistence test.
+          </p>
+        </div>
+        <button
+          className="self-start rounded border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-800"
+          type="button"
+          onClick={() => setIsMemoryPanelOpen(true)}
+        >
+          长期记忆
+        </button>
       </header>
+
+      <MemoryPanel
+        isOpen={isMemoryPanelOpen}
+        onClose={() => setIsMemoryPanelOpen(false)}
+      />
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 md:flex-row">
         <ConversationSidebar
