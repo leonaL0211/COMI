@@ -1,6 +1,7 @@
 import type { PersistedMessage } from "@/server/repositories/message-repository";
 import type { ChatMessage } from "@/shared/chat-types";
 import type { MemoryExtractionPromptMemory } from "./memory-types";
+import { describeStickerContentForModel } from "@/shared/stickers/sticker-catalog";
 
 export function buildMemoryExtractionPrompt(input: {
   existingMemories: MemoryExtractionPromptMemory[];
@@ -35,12 +36,14 @@ export function buildMemoryExtractionPrompt(input: {
         JSON.stringify(input.existingMemories),
         "",
         "CURRENT USER MESSAGE",
-        input.userMessage.content,
+        describeStickerContentForModel(input.userMessage.content, "user"),
         "",
         "CURRENT ASSISTANT MESSAGE",
-        input.assistantMessage.content,
+        describeStickerContentForModel(
+          input.assistantMessage.content,
+          "assistant",
+        ),
       ].join("\n"),
     },
   ];
 }
-

@@ -14,6 +14,10 @@ import { MemoryPanel } from "@/features/memory/components/MemoryPanel";
 import type { ConversationSummary } from "@/features/conversations/types";
 import { useChat } from "../hooks/useChat";
 import { useModelPreference } from "../hooks/useModelPreference";
+import {
+  createStickerToken,
+  type StickerId,
+} from "@/shared/stickers/sticker-catalog";
 import { AppShell } from "./AppShell";
 import { ChatComposer } from "./ChatComposer";
 import { ChatHeader } from "./ChatHeader";
@@ -22,6 +26,7 @@ import { MessageList } from "./MessageList";
 export function ChatScreen() {
   const [isMemoryPanelOpen, setIsMemoryPanelOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isStickerPickerOpen, setIsStickerPickerOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(76);
   const [composerHeight, setComposerHeight] = useState(56);
   const headerRef = useRef<HTMLElement | null>(null);
@@ -102,10 +107,12 @@ export function ChatScreen() {
       return;
     }
 
+    setIsStickerPickerOpen(false);
     void chat.sendMessage(selectedModel);
   }
 
   async function handleCreateConversation() {
+    setIsStickerPickerOpen(false);
     const created = await createConversation();
 
     if (created) {
@@ -114,6 +121,7 @@ export function ChatScreen() {
   }
 
   function handleSelectConversation(conversationId: string) {
+    setIsStickerPickerOpen(false);
     selectConversation(conversationId);
     setIsSidebarOpen(false);
   }
@@ -129,7 +137,17 @@ export function ChatScreen() {
 
   function handleOpenMemoryPanel() {
     setIsSidebarOpen(false);
+    setIsStickerPickerOpen(false);
     setIsMemoryPanelOpen(true);
+  }
+
+  function handleSendSticker(stickerId: StickerId) {
+    if (chat.isSending || chat.isLoadingMessages || isCreating) {
+      return;
+    }
+
+    setIsStickerPickerOpen(false);
+    void chat.sendMessage(selectedModel, createStickerToken(stickerId));
   }
 
   async function handleRename(conversation: ConversationSummary) {
@@ -210,8 +228,14 @@ export function ChatScreen() {
           isSending={chat.isSending}
           isDisabled={chat.isSending || chat.isLoadingMessages || isCreating}
           canSend={chat.canSend && !isCreating}
+          isStickerPickerOpen={isStickerPickerOpen}
           onChange={chat.setInput}
           onSubmit={handleSubmit}
+          onToggleStickerPicker={() =>
+            setIsStickerPickerOpen((isOpen) => !isOpen)
+          }
+          onCloseStickerPicker={() => setIsStickerPickerOpen(false)}
+          onSendSticker={handleSendSticker}
         />
       }
       memoryPanel={

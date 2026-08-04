@@ -13,6 +13,35 @@ type MessageListProps = {
 
 export function MessageList({ messages, isLoading, error }: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const shouldStickToBottomRef = useRef(true);
+
+  function isNearBottom(scrollContainer: HTMLDivElement) {
+    return (
+      scrollContainer.scrollHeight -
+        scrollContainer.scrollTop -
+        scrollContainer.clientHeight <
+      96
+    );
+  }
+
+  function handleScroll() {
+    const scrollContainer = scrollRef.current;
+
+    if (scrollContainer) {
+      shouldStickToBottomRef.current = isNearBottom(scrollContainer);
+    }
+  }
+
+  function handleStickerLoad() {
+    const scrollContainer = scrollRef.current;
+
+    if (scrollContainer && shouldStickToBottomRef.current) {
+      scrollContainer.scrollTo({
+        top: scrollContainer.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
@@ -30,7 +59,12 @@ export function MessageList({ messages, isLoading, error }: MessageListProps) {
   return (
     <section className="message-list-shell">
       <GlassFade position="top" />
-      <div ref={scrollRef} className="message-list" aria-label="聊天记录">
+      <div
+        ref={scrollRef}
+        className="message-list"
+        aria-label="聊天记录"
+        onScroll={handleScroll}
+      >
         {isLoading ? (
           <div className="empty-state">正在加载消息...</div>
         ) : messages.length === 0 ? (
@@ -43,12 +77,18 @@ export function MessageList({ messages, isLoading, error }: MessageListProps) {
         ) : (
           <div className="message-list-inner">
             {messages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
+              <MessageBubble
+                key={message.id}
+                message={message}
+                onStickerLoad={handleStickerLoad}
+              />
             ))}
             {error ? <p className="chat-error">{error}</p> : null}
           </div>
         )}
-        {messages.length === 0 && error ? <p className="chat-error">{error}</p> : null}
+        {messages.length === 0 && error ? (
+          <p className="chat-error">{error}</p>
+        ) : null}
       </div>
       <GlassFade position="bottom" />
     </section>

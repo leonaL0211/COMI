@@ -1,6 +1,7 @@
 import type { ChatMessage } from "@/shared/chat-types";
 import type { PersistedMessage } from "@/server/repositories/message-repository";
 import type { SummaryServiceResult } from "./types";
+import { describeStickerContentForModel } from "@/shared/stickers/sticker-catalog";
 
 export function buildChatContext(input: {
   messages: PersistedMessage[];
@@ -49,6 +50,6 @@ export function buildChatContext(input: {
 function toChatMessages(messages: PersistedMessage[]): ChatMessage[] {
   return messages.map((message) => ({
     role: message.role,
-    content: message.content,
+    content: describeStickerContentForModel(message.content, message.role),
   }));
 }

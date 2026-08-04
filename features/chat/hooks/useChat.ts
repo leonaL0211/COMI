@@ -125,8 +125,12 @@ export function useChat({
   }, []);
 
   const sendMessage = useCallback(
-    async (model: ChatModelKey = DEFAULT_CHAT_MODEL) => {
-      const content = input.trim();
+    async (
+      model: ChatModelKey = DEFAULT_CHAT_MODEL,
+      contentOverride?: string,
+    ) => {
+      const isOverrideSend = typeof contentOverride === "string";
+      const content = (contentOverride ?? input).trim();
 
       if (!content || sendInFlightRef.current || isLoadingMessages) {
         return;
@@ -166,7 +170,10 @@ export function useChat({
             status: "pending",
           },
         ]);
-        setInput("");
+
+        if (!isOverrideSend) {
+          setInput("");
+        }
 
         const result = await sendChatMessage(
           targetConversationId,
