@@ -323,8 +323,7 @@ select:focus-visible {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: calc(var(--header-height, 76px) + 16px) 16px
-    calc(var(--composer-height, 56px) + env(safe-area-inset-bottom) + 18px);
+  padding: calc(var(--header-height, 76px) + 16px) 16px 18px;
   scroll-padding-top: calc(var(--header-height, 76px) + 16px);
   scroll-behavior: smooth;
 }
@@ -419,12 +418,11 @@ select:focus-visible {
 }
 
 .chat-composer-shell {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
+  position: relative;
   z-index: 30;
+  flex: 0 0 auto;
   background: transparent;
-  padding: 8px 12px max(8px, env(safe-area-inset-bottom));
+  padding: 6px 12px max(8px, env(safe-area-inset-bottom));
 }
 
 .chat-composer {
@@ -591,7 +589,7 @@ select:focus-visible {
 
 .glass-fade-bottom {
   bottom: 0;
-  height: calc(var(--composer-height, 56px) + env(safe-area-inset-bottom) + 54px);
+  height: 76px;
 }
 
 .glass-fade-bottom::before {
@@ -1188,7 +1186,7 @@ select:focus-visible {
 
   .chat-composer-shell {
     padding-inline: 28px;
-    padding-bottom: 16px;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .memory-backdrop {
