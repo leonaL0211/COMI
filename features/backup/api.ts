@@ -1,10 +1,16 @@
 "use client";
 
+import {
+  LegacyV1AdapterError,
+  normalizeBackupForRestore,
+} from "./legacy-v1-adapter";
+import type { LegacyV1MigrationReport } from "./legacy-v1-types";
+
 const BACKUP_EXPORT_URL = "/api/backup/export";
 const BACKUP_PREVIEW_URL = "/api/backup/preview";
 const BACKUP_IMPORT_URL = "/api/backup/import";
 const FALLBACK_BACKUP_FILENAME_PREFIX = "berry-chat-backup";
-export const MAX_BACKUP_FILE_BYTES = 10 * 1024 * 1024;
+export const MAX_BACKUP_FILE_BYTES = 50 * 1024 * 1024;
 
 export type BackupExportResult =
   | {
@@ -106,6 +112,7 @@ export type BackupApiResult<T> =
   | {
       status: "ok";
       data: T;
+      legacyReport?: LegacyV1MigrationReport;
     }
   | {
       status: "unauthorized";
@@ -122,8 +129,8 @@ export type BackupApiResult<T> =
 export async function previewBackup(
   file: File,
 ): Promise<BackupApiResult<BackupPreviewSuccess>> {
-  const backup = await readBackupFile(file);
-  const response = await postBackupJson(BACKUP_PREVIEW_URL, backup);
+  const normalized = await readBackupFile(file);
+  const response = await postBackupJson(BACKUP_PREVIEW_URL, normalized.backup);
 
   if (response.status === 401) {
     return { status: "unauthorized" };
@@ -132,7 +139,11 @@ export async function previewBackup(
   const payload = await readJsonResponse(response);
 
   if (response.ok && isBackupPreviewSuccess(payload)) {
-    return { status: "ok", data: payload };
+    return {
+      status: "ok",
+      data: payload,
+      legacyReport: normalized.legacyReport ?? undefined,
+    };
   }
 
   if (response.status === 422 && isBackupPreviewFailure(payload)) {
@@ -148,10 +159,10 @@ export async function previewBackup(
 export async function importBackupMerge(
   file: File,
 ): Promise<BackupApiResult<BackupImportSuccess>> {
-  const backup = await readBackupFile(file);
+  const normalized = await readBackupFile(file);
   const response = await postBackupJson(BACKUP_IMPORT_URL, {
     mode: "merge",
-    backup,
+    backup: normalized.backup,
   });
 
   if (response.status === 401) {
@@ -176,7 +187,7 @@ export async function importBackupMerge(
 
 export function validateBackupFileSelection(file: File) {
   if (file.size > MAX_BACKUP_FILE_BYTES) {
-    return "备份文件超过 10 MiB。";
+    return "备份文件超过 50 MiB。";
   }
 
   const lowerName = file.name.toLowerCase();
@@ -249,7 +260,7 @@ async function readBackupFile(file: File) {
   const body = await file.arrayBuffer();
 
   if (body.byteLength > MAX_BACKUP_FILE_BYTES) {
-    throw new BackupFileError("备份文件超过 10 MiB。");
+    throw new BackupFileError("备份文件超过 50 MiB。");
   }
 
   let text: string;
@@ -260,10 +271,22 @@ async function readBackupFile(file: File) {
     throw new BackupFileError("备份文件不是有效的 UTF-8 JSON。");
   }
 
+  let parsed: unknown;
+
   try {
-    return JSON.parse(text) as unknown;
+    parsed = JSON.parse(text) as unknown;
   } catch {
     throw new BackupFileError("备份文件不是有效的 JSON。");
+  }
+
+  try {
+    return await normalizeBackupForRestore(parsed);
+  } catch (error) {
+    if (error instanceof LegacyV1AdapterError) {
+      throw new BackupFileError(error.message);
+    }
+
+    throw error;
   }
 }
 
@@ -292,7 +315,7 @@ function getBackupErrorMessage(status: number) {
     case 409:
       return "备份与当前数据存在冲突，未恢复任何内容。";
     case 413:
-      return "备份文件超过 10 MiB。";
+      return "转换后的备份仍然过大，暂时无法恢复。";
     case 415:
       return "请选择 Berry Chat JSON 备份文件。";
     case 422:

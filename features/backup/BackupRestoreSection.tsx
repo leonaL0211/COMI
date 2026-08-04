@@ -14,6 +14,7 @@ import {
   type BackupPreviewFailure,
   type BackupPreviewSuccess,
 } from "./api";
+import type { LegacyV1MigrationReport } from "./legacy-v1-types";
 import { BackupImportResult } from "./BackupImportResult";
 import {
   BackupPreviewSummary,
@@ -22,7 +23,11 @@ import {
 
 type PreviewState =
   | { status: "idle" }
-  | { status: "valid"; data: BackupPreviewSuccess }
+  | {
+      status: "valid";
+      data: BackupPreviewSuccess;
+      legacyReport: LegacyV1MigrationReport | null;
+    }
   | { status: "invalid"; data: BackupPreviewFailure };
 
 const emptyPreview: PreviewState = { status: "idle" };
@@ -110,7 +115,11 @@ export function BackupRestoreSection() {
         return;
       }
 
-      setPreviewState({ status: "valid", data: result.data });
+      setPreviewState({
+        status: "valid",
+        data: result.data,
+        legacyReport: result.legacyReport ?? null,
+      });
     } catch (caughtError) {
       if (isMountedRef.current) {
         setError(getClientErrorMessage(caughtError));
@@ -176,7 +185,7 @@ export function BackupRestoreSection() {
       <div className="backup-section-copy">
         <p className="backup-section-title">恢复备份</p>
         <p className="backup-popover-help">
-          选择 Berry Chat v2 导出的 JSON 文件。恢复只会合并缺失数据，不会覆盖或删除当前内容。
+          选择 Berry Chat v2 导出的 JSON 文件，或旧版 Berry Chat v1 JSON 数据。恢复只会合并缺失数据，不会覆盖或删除当前内容。
         </p>
       </div>
 
@@ -222,7 +231,10 @@ export function BackupRestoreSection() {
       {error ? <p className="backup-error">{error}</p> : null}
 
       {previewState.status === "valid" ? (
-        <BackupPreviewSummary preview={previewState.data} />
+        <BackupPreviewSummary
+          preview={previewState.data}
+          legacyReport={previewState.legacyReport}
+        />
       ) : null}
       {previewState.status === "invalid" ? (
         <BackupValidationIssues
@@ -245,7 +257,7 @@ export function BackupRestoreSection() {
               onChange={(event) => setIsConfirmed(event.target.checked)}
             />
             <span>
-              我确认以合并模式恢复，不覆盖或删除当前数据。
+              我确认以合并模式迁移，不覆盖或删除当前数据。
             </span>
           </label>
           <button
