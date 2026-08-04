@@ -1,5 +1,6 @@
 "use client";
 
+import { useLayoutEffect, useRef } from "react";
 import type { FormEvent, Ref } from "react";
 
 type ChatComposerProps = {
@@ -21,6 +22,19 @@ export function ChatComposer({
   onChange,
   onSubmit,
 }: ChatComposerProps) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+
+    if (!textarea) {
+      return;
+    }
+
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }, [value]);
+
   return (
     <div ref={composerRef} className="chat-composer-shell">
       <form className="chat-composer" onSubmit={onSubmit}>
@@ -28,13 +42,14 @@ export function ChatComposer({
           消息
         </label>
         <textarea
+          ref={textareaRef}
           id="chat-input"
           className="chat-composer-input"
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder="说点什么..."
           disabled={isDisabled}
-          rows={3}
+          rows={1}
           aria-label="消息"
         />
         <button

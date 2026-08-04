@@ -23,7 +23,7 @@ export function ChatScreen() {
   const [isMemoryPanelOpen, setIsMemoryPanelOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(76);
-  const [composerHeight, setComposerHeight] = useState(112);
+  const [composerHeight, setComposerHeight] = useState(56);
   const headerRef = useRef<HTMLElement | null>(null);
   const composerRef = useRef<HTMLDivElement | null>(null);
   const { selectedModel, setSelectedModel } = useModelPreference();
