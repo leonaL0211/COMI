@@ -33,6 +33,9 @@
   --radius-pill: 999px;
   --sidebar-width: 280px;
   --content-width: 820px;
+  --font-geist-sans: "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial,
+    sans-serif;
+  --font-geist-mono: "Cascadia Code", Consolas, "Microsoft YaHei", monospace;
 }
 
 @theme inline {
@@ -55,6 +58,7 @@
 
 html,
 body {
+  background: var(--background);
   height: 100%;
   min-height: 100%;
   overflow: hidden;
@@ -66,7 +70,7 @@ body {
     radial-gradient(circle at 85% 85%, rgba(234, 223, 213, 0.52), transparent 34%),
     linear-gradient(180deg, var(--background) 0%, var(--background-deep) 100%);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans);
 }
 
 button,
@@ -130,7 +134,7 @@ select:focus-visible {
   z-index: 30;
   flex: 0 0 auto;
   background: transparent;
-  padding: 10px 16px 0;
+  padding: max(10px, env(safe-area-inset-top)) 16px 0;
 }
 
 .chat-header-inner {
@@ -442,6 +446,8 @@ select:focus-visible {
 }
 
 .chat-composer-input {
+  appearance: none;
+  -webkit-appearance: none;
   min-height: 54px;
   min-width: 0;
   flex: 1 1 auto;
@@ -449,10 +455,18 @@ select:focus-visible {
   border: 0;
   background: transparent;
   color: var(--foreground);
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 16px;
+  line-height: 23px;
   outline: none;
-  padding: 8px 8px 8px 10px;
+  padding: 7px 8px 7px 10px;
+}
+
+.chat-composer-input:focus,
+.chat-composer-input:focus-visible,
+.chat-composer-input:active {
+  border-color: transparent;
+  box-shadow: none;
+  outline: 0;
 }
 
 .chat-composer-input::placeholder {
@@ -670,12 +684,20 @@ select:focus-visible {
   width: 100%;
 }
 
+.backup-popover-content {
+  width: min(420px, calc(100vw - 24px));
+  max-width: min(420px, calc(100vw - 24px));
+  max-height: min(680px, calc(100dvh - 24px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 .backup-popover-panel {
   display: flex;
-  width: min(260px, calc(100vw - 32px));
+  width: 100%;
   flex-direction: column;
-  gap: 12px;
-  padding: 4px;
+  gap: 14px;
+  padding: 6px;
 }
 
 .backup-popover-copy {
@@ -703,10 +725,181 @@ select:focus-visible {
   color: var(--muted-foreground);
 }
 
+.backup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.backup-section-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.backup-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  color: var(--foreground);
+}
+
 .backup-export-control {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.backup-restore-section {
+  gap: 11px;
+}
+
+.backup-merge-notice,
+.backup-file-card,
+.backup-preview-card,
+.backup-confirm-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+}
+
+.backup-merge-notice {
+  padding: 10px 11px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.backup-file-input {
+  display: none;
+}
+
+.backup-file-card {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+}
+
+.backup-file-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.backup-muted,
+.backup-error {
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.backup-muted {
+  color: var(--muted-foreground);
+}
+
+.backup-error {
+  color: var(--danger);
+}
+
+.backup-preview-card,
+.backup-confirm-card,
+.backup-import-result {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 11px;
+}
+
+.backup-preview-status {
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.backup-count-grid,
+.backup-result-list,
+.backup-warning-list,
+.backup-issue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.backup-count-row {
+  display: grid;
+  grid-template-columns: minmax(58px, 0.9fr) repeat(4, minmax(54px, 1fr));
+  gap: 6px;
+  align-items: center;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.backup-count-label {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.backup-warning-list,
+.backup-result-list {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.backup-issue-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.backup-issue-list li {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+  border-radius: 10px;
+  background: var(--surface-soft);
+  color: var(--danger);
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 8px;
+}
+
+.backup-issue-list code {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+
+.backup-confirm-card {
+  background: color-mix(in srgb, var(--accent-soft) 36%, var(--surface) 64%);
+}
+
+.backup-confirm-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--foreground);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.backup-confirm-label input {
+  margin-top: 3px;
+  accent-color: var(--accent);
 }
 
 .conversation-item {
@@ -999,6 +1192,12 @@ select:focus-visible {
 }
 
 @media (max-width: 480px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
   .chat-header-inner {
     gap: 8px;
   }

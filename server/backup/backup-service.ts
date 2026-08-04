@@ -1,41 +1,27 @@
-import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
-import { SupabaseMemoryRepository } from "@/server/repositories/supabase-memory-repository";
-import { SupabaseMessageRepository } from "@/server/repositories/supabase-message-repository";
-import { SupabaseSummaryRepository } from "@/server/repositories/supabase-summary-repository";
 import type {
   Conversation,
-  ConversationRepository,
 } from "@/server/repositories/conversation-repository";
 import type {
-  MessageRepository,
   PersistedMessage,
 } from "@/server/repositories/message-repository";
 import type {
   ConversationSummary,
-  SummaryRepository,
 } from "@/server/repositories/summary-repository";
 import type {
   Memory,
-  MemoryRepository,
 } from "@/server/repositories/memory-repository";
 import type { BerryChatBackup } from "./backup-types";
+import { BackupSnapshotService } from "./backup-snapshot-service";
 
 export class BackupService {
   constructor(
-    private readonly conversations: ConversationRepository =
-      new SupabaseConversationRepository(),
-    private readonly messages: MessageRepository = new SupabaseMessageRepository(),
-    private readonly summaries: SummaryRepository = new SupabaseSummaryRepository(),
-    private readonly memories: MemoryRepository = new SupabaseMemoryRepository(),
+    private readonly snapshots: BackupSnapshotService =
+      new BackupSnapshotService(),
   ) {}
 
   async exportBackup(now = new Date()): Promise<BerryChatBackup> {
-    const [conversations, messages, summaries, memories] = await Promise.all([
-      this.conversations.listForBackup(),
-      this.messages.listForBackup(),
-      this.summaries.listForBackup(),
-      this.memories.listForBackup(),
-    ]);
+    const { conversations, messages, summaries, memories } =
+      await this.snapshots.loadSnapshot();
 
     return {
       format: "berry-chat-backup",

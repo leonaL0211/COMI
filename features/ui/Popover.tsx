@@ -20,9 +20,17 @@ type PopoverProps = {
   ariaLabel: string;
   trigger: (props: PopoverTriggerProps) => ReactNode;
   children: ReactNode;
+  contentClassName?: string;
+  closeOnButtonClick?: boolean;
 };
 
-export function Popover({ ariaLabel, trigger, children }: PopoverProps) {
+export function Popover({
+  ariaLabel,
+  trigger,
+  children,
+  contentClassName = "",
+  closeOnButtonClick = true,
+}: PopoverProps) {
   const contentId = useId();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -119,12 +127,15 @@ export function Popover({ ariaLabel, trigger, children }: PopoverProps) {
         <div
           ref={contentRef}
           id={contentId}
-          className="popover-content"
+          className={`popover-content ${contentClassName}`.trim()}
           role="menu"
           aria-label={ariaLabel}
           style={{ top: position.top, left: position.left }}
           onClick={(event) => {
-            if ((event.target as HTMLElement).closest("button")) {
+            if (
+              closeOnButtonClick &&
+              (event.target as HTMLElement).closest("button")
+            ) {
               window.setTimeout(close, 0);
             }
           }}

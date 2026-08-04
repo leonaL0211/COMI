@@ -1,7 +1,3 @@
-import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
-import { SupabaseMemoryRepository } from "@/server/repositories/supabase-memory-repository";
-import { SupabaseMessageRepository } from "@/server/repositories/supabase-message-repository";
-import { SupabaseSummaryRepository } from "@/server/repositories/supabase-summary-repository";
 import type {
   BackupConversation,
   BackupConversationSummary,
@@ -10,22 +6,24 @@ import type {
 } from "./backup-types";
 import type {
   Conversation,
-  ConversationRepository,
 } from "@/server/repositories/conversation-repository";
 import type {
-  MessageRepository,
   PersistedMessage,
 } from "@/server/repositories/message-repository";
 import type {
   ConversationSummary,
-  SummaryRepository,
 } from "@/server/repositories/summary-repository";
 import type {
   Memory,
-  MemoryRepository,
 } from "@/server/repositories/memory-repository";
 import type { BackupImportRepository } from "./backup-import-repository";
 import { SupabaseBackupImportRepository } from "./supabase-backup-import-repository";
+import { RepositoryError } from "@/server/repositories/repository-error";
+import { SupabaseConfigError } from "@/server/supabase/config";
+import {
+  BackupSnapshotError,
+  BackupSnapshotService,
+} from "./backup-snapshot-service";
 import type {
   BackupImportResult,
   BackupPreviewResult,
@@ -45,11 +43,8 @@ type ExistingData = {
 
 export class BackupImportService {
   constructor(
-    private readonly conversations: ConversationRepository =
-      new SupabaseConversationRepository(),
-    private readonly messages: MessageRepository = new SupabaseMessageRepository(),
-    private readonly summaries: SummaryRepository = new SupabaseSummaryRepository(),
-    private readonly memories: MemoryRepository = new SupabaseMemoryRepository(),
+    private readonly snapshots: BackupSnapshotService =
+      new BackupSnapshotService(),
     private readonly importer: BackupImportRepository =
       new SupabaseBackupImportRepository(),
   ) {}
@@ -93,12 +88,15 @@ export class BackupImportService {
   }
 
   private async loadExistingData(): Promise<ExistingData> {
-    const [conversations, messages, summaries, memories] = await Promise.all([
-      this.conversations.listForBackup(),
-      this.messages.listForBackup(),
-      this.summaries.listForBackup(),
-      this.memories.listForBackup(),
-    ]);
+    let rows: Awaited<ReturnType<BackupSnapshotService["loadSnapshot"]>>;
+
+    try {
+      rows = await this.snapshots.loadSnapshot();
+    } catch (error) {
+      throw toBackupServiceError(error);
+    }
+
+    const { conversations, messages, summaries, memories } = rows;
 
     return {
       conversations: new Map(
@@ -121,6 +119,30 @@ export class BackupImportService {
       ),
     };
   }
+}
+
+function toBackupServiceError(error: unknown) {
+  if (error instanceof BackupImportError) {
+    return error;
+  }
+
+  if (
+    error instanceof BackupSnapshotError ||
+    error instanceof RepositoryError ||
+    error instanceof SupabaseConfigError
+  ) {
+    return new BackupImportError(
+      "BACKUP_SERVICE_UNAVAILABLE",
+      503,
+      "Backup data is unavailable.",
+    );
+  }
+
+  return new BackupImportError(
+    "BACKUP_IMPORT_FAILED",
+    500,
+    "Backup preview failed.",
+  );
 }
 
 function compareBackup(
