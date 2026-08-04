@@ -44,6 +44,21 @@ export class SupabaseMessageRepository implements MessageRepository {
     return (data ?? []).map(mapMessage);
   }
 
+  async listForBackup() {
+    const { data, error } = await this.client
+      .from("messages")
+      .select(messageColumns)
+      .eq("owner_id", this.ownerId)
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true });
+
+    if (error) {
+      throw toRepositoryError(error, "Failed to list messages.");
+    }
+
+    return (data ?? []).map(mapMessage);
+  }
+
   async createUserMessage(input: { conversationId: string; content: string }) {
     return this.createMessage({
       conversationId: input.conversationId,

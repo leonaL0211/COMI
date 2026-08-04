@@ -39,6 +39,21 @@ export class SupabaseConversationRepository implements ConversationRepository {
     return (data ?? []).map(mapConversation);
   }
 
+  async listForBackup() {
+    const { data, error } = await this.client
+      .from("conversations")
+      .select(conversationColumns)
+      .eq("owner_id", this.ownerId)
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true });
+
+    if (error) {
+      throw toRepositoryError(error, "Failed to list conversations.");
+    }
+
+    return (data ?? []).map(mapConversation);
+  }
+
   async findById(conversationId: string) {
     const { data, error } = await this.client
       .from("conversations")

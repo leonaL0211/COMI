@@ -13,6 +13,7 @@ export type PersistedMessage = {
 };
 
 export interface MessageRepository {
+  listForBackup(): Promise<PersistedMessage[]>;
   listByConversation(conversationId: string): Promise<PersistedMessage[]>;
   createUserMessage(input: {
     conversationId: string;

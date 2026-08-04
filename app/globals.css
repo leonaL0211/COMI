@@ -652,12 +652,61 @@ select:focus-visible {
 }
 
 .logout-area {
-  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.sidebar-utility-area {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   border-top: 1px solid var(--border);
   padding-top: 10px;
+}
+
+.sidebar-utility-area .popover-root {
+  width: 100%;
+}
+
+.backup-popover-panel {
+  display: flex;
+  width: min(260px, calc(100vw - 32px));
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px;
+}
+
+.backup-popover-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.backup-popover-title {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--foreground);
+}
+
+.backup-popover-warning {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--danger);
+}
+
+.backup-popover-help,
+.backup-export-status {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--muted-foreground);
+}
+
+.backup-export-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .conversation-item {

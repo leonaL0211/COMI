@@ -56,6 +56,21 @@ export class SupabaseMemoryRepository implements MemoryRepository {
     return (data ?? []).map(mapMemory);
   }
 
+  async listForBackup() {
+    const { data, error } = await this.client
+      .from("memories")
+      .select(memoryColumns)
+      .eq("owner_id", this.ownerId)
+      .order("created_at", { ascending: true })
+      .order("id", { ascending: true });
+
+    if (error) {
+      throw toRepositoryError(error, "Failed to list memories.");
+    }
+
+    return (data ?? []).map(mapMemory);
+  }
+
   async findById(memoryId: string) {
     assertUuid(memoryId);
 

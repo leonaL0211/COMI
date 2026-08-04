@@ -15,6 +15,7 @@ export type SummaryUpsertInput = {
 };
 
 export interface SummaryRepository {
+  listForBackup(): Promise<ConversationSummary[]>;
   findByConversation(conversationId: string): Promise<ConversationSummary | null>;
   upsert(input: SummaryUpsertInput): Promise<ConversationSummary>;
 }

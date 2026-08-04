@@ -45,6 +45,7 @@ export type MemoryUpdateInput = Partial<{
 
 export interface MemoryRepository {
   list(): Promise<Memory[]>;
+  listForBackup(): Promise<Memory[]>;
   findById(memoryId: string): Promise<Memory | null>;
   create(input: MemoryCreateInput): Promise<Memory>;
   update(memoryId: string, input: MemoryUpdateInput): Promise<Memory>;

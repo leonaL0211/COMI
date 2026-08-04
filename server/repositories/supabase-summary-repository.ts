@@ -44,6 +44,20 @@ export class SupabaseSummaryRepository implements SummaryRepository {
     return data ? mapSummary(data) : null;
   }
 
+  async listForBackup() {
+    const { data, error } = await this.client
+      .from("conversation_summaries")
+      .select(summaryColumns)
+      .eq("owner_id", this.ownerId)
+      .order("conversation_id", { ascending: true });
+
+    if (error) {
+      throw toRepositoryError(error, "Failed to list conversation summaries.");
+    }
+
+    return (data ?? []).map(mapSummary);
+  }
+
   async upsert(input: SummaryUpsertInput) {
     const { data, error } = await this.client
       .from("conversation_summaries")

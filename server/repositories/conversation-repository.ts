@@ -8,6 +8,7 @@ export type Conversation = {
 
 export interface ConversationRepository {
   list(): Promise<Conversation[]>;
+  listForBackup(): Promise<Conversation[]>;
   findById(conversationId: string): Promise<Conversation | null>;
   create(input?: { title?: string }): Promise<Conversation>;
   rename(conversationId: string, title: string): Promise<Conversation | null>;

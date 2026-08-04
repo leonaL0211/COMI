@@ -1,6 +1,7 @@
 "use client";
 
 import { LogoutButton } from "@/features/auth/LogoutButton";
+import { DataBackupPopover } from "@/features/backup/DataBackupPopover";
 import { ConversationItem } from "./ConversationItem";
 import type { ConversationSummary } from "../types";
 
@@ -97,7 +98,10 @@ export function ConversationSidebar({
 
       {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
 
-      <LogoutButton />
+      <div className="sidebar-utility-area">
+        <DataBackupPopover />
+        <LogoutButton />
+      </div>
     </aside>
   );
 }
