@@ -65,12 +65,14 @@ body {
 }
 
 body {
-  background:
-    radial-gradient(circle at 15% 10%, rgba(245, 217, 221, 0.42), transparent 38%),
-    radial-gradient(circle at 85% 85%, rgba(234, 223, 213, 0.52), transparent 34%),
-    linear-gradient(180deg, var(--background) 0%, var(--background-deep) 100%);
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans);
+}
+
+body > * {
+  min-height: 0;
+  background: var(--background);
 }
 
 button,
@@ -113,20 +115,24 @@ select:focus-visible {
 .app-shell {
   display: flex;
   height: 100dvh;
-  min-height: 100dvh;
+  min-height: 0;
   width: 100%;
   overflow: hidden;
+  background: var(--background);
   color: var(--foreground);
 }
 
 .chat-main {
   position: relative;
   z-index: 10;
-  display: flex;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100dvh;
+  min-height: 0;
   min-width: 0;
   flex: 1 1 auto;
-  flex-direction: column;
   overflow: hidden;
+  padding-bottom: 0;
 }
 
 .chat-header {
@@ -323,8 +329,12 @@ select:focus-visible {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: calc(var(--header-height, 76px) + 16px) 16px 18px;
-  scroll-padding-top: calc(var(--header-height, 76px) + 16px);
+  padding: 16px 16px
+    calc(
+      var(--composer-height, 52px) + max(10px, env(safe-area-inset-bottom)) +
+        24px
+    );
+  scroll-padding-top: 16px;
   scroll-behavior: smooth;
 }
 
@@ -417,17 +427,33 @@ select:focus-visible {
   color: var(--danger);
 }
 
-.chat-composer-shell {
-  position: relative;
+.composer-dock {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
   z-index: 30;
-  flex: 0 0 auto;
+  min-height: 0;
+  height: auto;
+  margin: 0;
+  padding: 8px 16px max(8px, env(safe-area-inset-bottom));
   background: transparent;
-  padding: 6px 12px max(8px, env(safe-area-inset-bottom));
+  background-image: none;
+  box-shadow: none;
+  pointer-events: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.composer-dock::before,
+.composer-dock::after {
+  content: none;
+  display: none;
 }
 
 .chat-composer {
   margin-inline: auto;
   display: flex;
+  pointer-events: auto;
   width: min(100%, var(--content-width));
   min-height: 52px;
   align-items: flex-end;
@@ -587,26 +613,13 @@ select:focus-visible {
   );
 }
 
-.glass-fade-bottom {
-  bottom: 0;
-  height: 76px;
-}
-
-.glass-fade-bottom::before {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 247, 239, 0) 0%,
-    rgba(255, 247, 239, 0.12) 34%,
-    rgba(255, 247, 239, 0.38) 72%,
-    rgba(255, 247, 239, 0.62) 100%
-  );
-  mask-image: linear-gradient(to bottom, transparent 0%, black 46%, black 100%);
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    black 46%,
-    black 100%
-  );
+.glass-fade-bottom,
+.glass-fade-bottom::before,
+.glass-fade-bottom::after {
+  content: none;
+  display: none;
+  background: none;
+  height: 0;
 }
 
 .mobile-sidebar-backdrop {
@@ -1144,6 +1157,20 @@ select:focus-visible {
   }
 }
 
+@media (display-mode: standalone) {
+  html,
+  body,
+  body > *,
+  .app-shell,
+  .chat-main {
+    height: 100vh;
+    min-height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    background: var(--background);
+  }
+}
+
 @media (min-width: 768px) {
   .mobile-sidebar-trigger,
   .mobile-sidebar-close,
@@ -1184,9 +1211,9 @@ select:focus-visible {
     padding: 13px 18px;
   }
 
-  .chat-composer-shell {
+  .composer-dock {
+    left: var(--sidebar-width);
     padding-inline: 28px;
-    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .memory-backdrop {

@@ -8,7 +8,7 @@ type ChatComposerProps = {
   isSending: boolean;
   isDisabled: boolean;
   canSend: boolean;
-  composerRef: Ref<HTMLDivElement>;
+  composerRef: Ref<HTMLFormElement>;
   onChange: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
 };
@@ -36,8 +36,8 @@ export function ChatComposer({
   }, [value]);
 
   return (
-    <div ref={composerRef} className="chat-composer-shell">
-      <form className="chat-composer" onSubmit={onSubmit}>
+    <div className="composer-dock">
+      <form ref={composerRef} className="chat-composer" onSubmit={onSubmit}>
         <label className="sr-only" htmlFor="chat-input">
           消息
         </label>
