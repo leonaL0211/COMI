@@ -1,5 +1,5 @@
-import { ChatScreen } from "@/features/chat/components/ChatScreen";
+import { BerryChatEntry } from "@/features/welcome/components/BerryChatEntry";
 
 export default function Home() {
-  return <ChatScreen />;
+  return <BerryChatEntry />;
 }
