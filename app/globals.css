@@ -414,12 +414,23 @@ select:focus-visible {
 
 .message-bubble-user {
   max-width: min(84%, 590px);
-  border: 1px solid rgba(255, 255, 255, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.52);
   border-radius: 22px 22px 10px 22px;
-  background: var(--user-bubble);
-  box-shadow: var(--shadow-soft);
+  background: linear-gradient(
+    135deg,
+    rgba(247, 193, 208, 0.62) 0%,
+    rgba(250, 211, 220, 0.48) 55%,
+    rgba(255, 226, 231, 0.4) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    inset 0 -1px 0 rgba(205, 132, 153, 0.1),
+    0 8px 24px rgba(176, 105, 126, 0.12),
+    0 2px 6px rgba(138, 86, 103, 0.07);
   color: var(--user-bubble-foreground);
   padding: 12px 16px;
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
 }
 
 .message-bubble-assistant {
