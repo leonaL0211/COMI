@@ -7,6 +7,7 @@ type AppShellProps = {
   sidebar: ReactNode;
   header: ReactNode;
   messageList: ReactNode;
+  clawd: ReactNode;
   composer: ReactNode;
   memoryPanel: ReactNode;
   headerHeight: number;
@@ -19,6 +20,7 @@ export function AppShell({
   sidebar,
   header,
   messageList,
+  clawd,
   composer,
   memoryPanel,
   headerHeight,
@@ -77,6 +79,7 @@ export function AppShell({
       <section className="chat-main" aria-label="Berry Chat">
         {header}
         {messageList}
+        {clawd}
         {composer}
       </section>
       {memoryPanel}

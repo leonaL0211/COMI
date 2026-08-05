@@ -22,6 +22,7 @@ import {
 import { AppShell } from "./AppShell";
 import { ChatComposer } from "./ChatComposer";
 import { ChatHeader } from "./ChatHeader";
+import { ClawdCompanion } from "./ClawdCompanion";
 import { MessageList } from "./MessageList";
 
 export function ChatScreen() {
@@ -223,6 +224,19 @@ export function ChatScreen() {
           messages={chat.messages}
           isLoading={chat.isLoadingMessages}
           error={chat.error}
+        />
+      }
+      clawd={
+        <ClawdCompanion
+          mode={
+            chat.isSending
+              ? "typing"
+              : chat.isLoadingMessages
+                ? "reading"
+                : "idle"
+          }
+          headerHeight={headerHeight}
+          composerHeight={composerHeight}
         />
       }
       composer={
