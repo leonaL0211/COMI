@@ -27,9 +27,13 @@ export function ChatHeader({
   onOpenSidebar,
   onOpenMemoryPanel,
 }: ChatHeaderProps) {
+  const modelId =
+    selectedModel === "opus" ? "claude-opus-4-6" : "claude-sonnet-4-6";
+
   return (
     <header ref={headerRef} className="chat-header">
-      <div className="chat-header-inner">
+      <div className="chat-topbar-fade" aria-hidden="true" />
+      <div className="chat-header-inner chat-topbar-content">
         <button
           className="mobile-sidebar-trigger"
           type="button"
@@ -46,80 +50,70 @@ export function ChatHeader({
             strokeLinejoin="round"
             strokeWidth="2"
           >
-            <path d="M4 6h16" />
-            <path d="M4 12h16" />
-            <path d="M4 18h16" />
+            <path d="M4 9h16" />
+            <path d="M4 15h12" />
           </svg>
         </button>
-        <div className="chat-header-title">
-          <p className="chat-header-kicker">Berry Chat v2</p>
-          <h1 className="truncate text-base font-semibold leading-6 text-[var(--foreground)]">
-            {title}
-          </h1>
-        </div>
-        <div className="chat-header-actions">
-          <Popover
-            ariaLabel="选择聊天模型"
-            trigger={(triggerProps) => (
-              <button
-                {...triggerProps}
-                className="model-selector-button"
-                type="button"
-                aria-label="选择聊天模型"
-                aria-haspopup="menu"
-                disabled={isModelSelectorDisabled}
-              >
-                <span>{getChatModelLabel(selectedModel)}</span>
+        <Popover
+          ariaLabel="选择聊天模型"
+          trigger={(triggerProps) => (
+            <button
+              {...triggerProps}
+              className="model-selector-button"
+              type="button"
+              aria-label={`选择聊天模型，当前会话：${title}`}
+              aria-haspopup="menu"
+              disabled={isModelSelectorDisabled}
+            >
+              <span className="model-avatar" aria-hidden="true">
+                AI
+              </span>
+              <span className="model-selector-copy">
+                <span className="model-selector-title">
+                  {getChatModelLabel(selectedModel)}
+                </span>
+                <span className="model-selector-subtitle">{modelId}</span>
+              </span>
+            </button>
+          )}
+        >
+          {CHAT_MODEL_OPTIONS.map((option) => (
+            <button
+              key={option.key}
+              className="popover-menu-item model-menu-item"
+              type="button"
+              role="menuitemradio"
+              aria-checked={option.key === selectedModel}
+              onClick={() => onSelectModel(option.key)}
+            >
+              <span>{option.label}</span>
+              {option.key === selectedModel ? (
                 <svg
                   aria-hidden="true"
                   viewBox="0 0 24 24"
-                  className="size-4"
+                  className="model-menu-check"
                   fill="none"
                   stroke="currentColor"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
                 >
-                  <path d="m6 9 6 6 6-6" />
+                  <path d="M20 6 9 17l-5-5" />
                 </svg>
-              </button>
-            )}
-          >
-            {CHAT_MODEL_OPTIONS.map((option) => (
-              <button
-                key={option.key}
-                className="popover-menu-item model-menu-item"
-                type="button"
-                role="menuitemradio"
-                aria-checked={option.key === selectedModel}
-                onClick={() => onSelectModel(option.key)}
-              >
-                <span>{option.label}</span>
-                {option.key === selectedModel ? (
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    className="model-menu-check"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                  >
-                    <path d="M20 6 9 17l-5-5" />
-                  </svg>
-                ) : null}
-              </button>
-            ))}
-          </Popover>
-          <button
-            className="ui-button ui-button-secondary chat-memory-button min-h-10"
-            type="button"
-            onClick={onOpenMemoryPanel}
-          >
-            长期记忆
-          </button>
-        </div>
+              ) : null}
+            </button>
+          ))}
+        </Popover>
+        <button
+          className="chat-memory-button"
+          type="button"
+          aria-label="打开长期记忆"
+          onClick={onOpenMemoryPanel}
+        >
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+        </button>
       </div>
     </header>
   );
