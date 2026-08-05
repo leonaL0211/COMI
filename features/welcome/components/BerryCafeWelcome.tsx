@@ -71,7 +71,7 @@ export function BerryCafeWelcome({ onEnter }: BerryCafeWelcomeProps) {
 
         <section className="berry-cafe-scene" aria-label="圆圆与小克喝咖啡">
           <Image
-            src="/berry-cafe/icon-date.png.png"
+            src="/berry-cafe/berry-cafe-scene.png"
             alt="圆圆与小克坐在咖啡桌旁"
             width={768}
             height={524}
