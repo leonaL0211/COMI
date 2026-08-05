@@ -14,6 +14,7 @@ import { MemoryPanel } from "@/features/memory/components/MemoryPanel";
 import type { ConversationSummary } from "@/features/conversations/types";
 import { useChat } from "../hooks/useChat";
 import { useModelPreference } from "../hooks/useModelPreference";
+import { useThemePreference } from "../hooks/useThemePreference";
 import {
   createStickerToken,
   type StickerId,
@@ -32,6 +33,7 @@ export function ChatScreen() {
   const headerRef = useRef<HTMLElement | null>(null);
   const composerRef = useRef<HTMLFormElement | null>(null);
   const { selectedModel, setSelectedModel } = useModelPreference();
+  const { selectedTheme, setSelectedTheme } = useThemePreference();
   const conversations = useConversations();
   const {
     conversations: conversationList,
@@ -208,8 +210,10 @@ export function ChatScreen() {
           headerRef={headerRef}
           title={currentConversationTitle}
           selectedModel={selectedModel}
+          selectedTheme={selectedTheme}
           isModelSelectorDisabled={chat.isSending}
           onSelectModel={setSelectedModel}
+          onSelectTheme={setSelectedTheme}
           onOpenSidebar={() => setIsSidebarOpen(true)}
           onOpenMemoryPanel={handleOpenMemoryPanel}
         />

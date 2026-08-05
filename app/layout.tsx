@@ -30,13 +30,41 @@ export const viewport: Viewport = {
   themeColor: "#fff7ef",
 };
 
+const themeInitScript = `
+try {
+  var theme = window.localStorage.getItem("berry-chat-theme") || "milk-tea";
+  var allowed = ["milk-tea", "sea-salt", "sakura-night"];
+  var selected = allowed.indexOf(theme) >= 0 ? theme : "milk-tea";
+  document.documentElement.dataset.theme = selected;
+  var colors = {
+    "milk-tea": "#fff7ef",
+    "sea-salt": "#fff0d6",
+    "sakura-night": "#211b22"
+  };
+  var themeColor = document.querySelector('meta[name="theme-color"]');
+  if (themeColor) {
+    themeColor.setAttribute("content", colors[selected] || colors["milk-tea"]);
+  }
+} catch (error) {
+  document.documentElement.dataset.theme = "milk-tea";
+}
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="h-full antialiased">
+    <html
+      lang="zh-CN"
+      className="h-full antialiased"
+      data-theme="milk-tea"
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         {children}
         <PwaRegistration />

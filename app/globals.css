@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
-:root {
+:root,
+html[data-theme="milk-tea"] {
   --background: #fff7ef;
   --background-deep: #f7e9de;
+  --background-visual:
+    radial-gradient(circle at 15% 10%, rgba(245, 217, 221, 0.42), transparent 38%),
+    radial-gradient(circle at 85% 85%, rgba(214, 210, 196, 0.32), transparent 34%),
+    linear-gradient(180deg, #fff7ef 0%, #f7e9de 100%);
   --foreground: #4f4541;
   --muted: #eadfd5;
   --muted-foreground: #897b75;
@@ -28,8 +33,49 @@
   --topbar-fade-start: rgba(255, 247, 243, 0.96);
   --topbar-fade-middle: rgba(255, 247, 243, 0.76);
   --topbar-fade-soft: rgba(255, 247, 243, 0.34);
-  --topbar-glass: rgba(255, 250, 247, 0.42);
-  --topbar-accent-glass: rgba(213, 121, 153, 0.68);
+  --topbar-fade-end: rgba(255, 247, 243, 0);
+  --topbar-glass-button-bg: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.62),
+    rgba(255, 250, 247, 0.34)
+  );
+  --topbar-glass-button-border: rgba(255, 255, 255, 0.72);
+  --topbar-glass-button-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 6px 18px rgba(120, 91, 99, 0.1);
+  --topbar-icon: #5e504c;
+  --topbar-avatar-bg: linear-gradient(
+    145deg,
+    rgba(122, 96, 108, 0.86),
+    rgba(92, 73, 82, 0.78)
+  );
+  --topbar-avatar-text: rgba(255, 250, 247, 0.92);
+  --topbar-more-button-bg: linear-gradient(
+    145deg,
+    rgba(213, 121, 153, 0.72) 0%,
+    rgba(184, 131, 174, 0.58) 48%,
+    rgba(244, 167, 178, 0.54) 100%
+  );
+  --topbar-more-button-border: rgba(255, 255, 255, 0.54);
+  --topbar-more-button-dot: rgba(255, 250, 247, 0.92);
+  --topbar-more-button-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.52),
+    0 7px 20px rgba(152, 82, 111, 0.16);
+  --user-message-bubble-bg: linear-gradient(
+    135deg,
+    rgba(247, 193, 208, 0.62) 0%,
+    rgba(250, 211, 220, 0.48) 55%,
+    rgba(255, 226, 231, 0.4) 100%
+  );
+  --user-message-bubble-border: rgba(255, 255, 255, 0.52);
+  --user-message-bubble-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.58),
+    inset 0 -1px 0 rgba(205, 132, 153, 0.1),
+    0 8px 24px rgba(176, 105, 126, 0.12),
+    0 2px 6px rgba(138, 86, 103, 0.07);
+  --more-menu-backdrop: rgba(76, 69, 64, 0.16);
+  --more-menu-panel-bg: rgba(255, 250, 245, 0.9);
+  --theme-choice-selected: rgba(201, 130, 145, 0.42);
   --shadow-soft: 0 14px 36px rgba(118, 93, 85, 0.13);
   --shadow-floating: 0 18px 48px rgba(118, 93, 85, 0.17);
   --radius-small: 12px;
@@ -41,6 +87,135 @@
   --font-geist-sans: "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial,
     sans-serif;
   --font-geist-mono: "Cascadia Code", Consolas, "Microsoft YaHei", monospace;
+}
+
+html[data-theme="sea-salt"] {
+  --background: #fff0d6;
+  --background-deep: #fde4d1;
+  --background-visual:
+    radial-gradient(circle at 16% 16%, rgba(252, 204, 204, 0.56), transparent 34%),
+    radial-gradient(circle at 86% 10%, rgba(255, 253, 248, 0.74), transparent 36%),
+    linear-gradient(180deg, #fff0d6 0%, #fff8ea 54%, #fffdf8 100%);
+  --foreground: #442f2d;
+  --muted: #fde4d1;
+  --muted-foreground: #8a6d64;
+  --surface: rgba(255, 253, 248, 0.76);
+  --surface-strong: rgba(255, 253, 248, 0.96);
+  --surface-soft: rgba(252, 204, 204, 0.36);
+  --border: rgba(168, 42, 49, 0.18);
+  --border-strong: rgba(168, 42, 49, 0.28);
+  --accent: #a82a31;
+  --accent-hover: #8f2229;
+  --accent-soft: #fccccc;
+  --accent-foreground: #fffdf8;
+  --danger: #a82a31;
+  --success: #7f946a;
+  --warning: #b5793b;
+  --user-bubble: #fccccc;
+  --user-bubble-foreground: #4c2729;
+  --assistant-foreground: #442f2d;
+  --glass-background: rgba(255, 253, 248, 0.68);
+  --glass-background-strong: rgba(255, 253, 248, 0.92);
+  --glass-border: rgba(255, 246, 235, 0.74);
+  --topbar-fade-start: rgba(255, 240, 214, 0.96);
+  --topbar-fade-middle: rgba(255, 248, 234, 0.74);
+  --topbar-fade-soft: rgba(255, 253, 248, 0.34);
+  --topbar-fade-end: rgba(255, 253, 248, 0);
+  --topbar-glass-button-bg: linear-gradient(
+    145deg,
+    rgba(255, 253, 248, 0.66),
+    rgba(255, 238, 224, 0.36)
+  );
+  --topbar-icon: #6f4a47;
+  --topbar-avatar-bg: linear-gradient(145deg, #a82a31, #7f3337);
+  --topbar-more-button-bg: linear-gradient(
+    145deg,
+    rgba(168, 42, 49, 0.7) 0%,
+    rgba(244, 126, 132, 0.56) 52%,
+    rgba(252, 204, 204, 0.52) 100%
+  );
+  --topbar-more-button-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.52),
+    0 7px 20px rgba(119, 52, 45, 0.15);
+  --more-menu-backdrop: rgba(68, 47, 45, 0.12);
+  --more-menu-panel-bg: rgba(255, 253, 248, 0.92);
+  --theme-choice-selected: rgba(168, 42, 49, 0.3);
+  --shadow-soft: 0 14px 34px rgba(119, 52, 45, 0.14);
+  --shadow-floating: 0 18px 48px rgba(68, 47, 45, 0.16);
+}
+
+html[data-theme="sakura-night"] {
+  --background: #211b22;
+  --background-deep: #171419;
+  --background-visual:
+    radial-gradient(circle at 16% 18%, rgba(226, 166, 184, 0.2), transparent 34%),
+    radial-gradient(circle at 86% 12%, rgba(98, 73, 94, 0.32), transparent 38%),
+    linear-gradient(180deg, #211b22 0%, #171419 100%);
+  --foreground: #f5edf1;
+  --muted: #322833;
+  --muted-foreground: #c9b7c0;
+  --surface: rgba(49, 39, 51, 0.76);
+  --surface-strong: rgba(60, 48, 63, 0.94);
+  --surface-soft: rgba(255, 255, 255, 0.08);
+  --border: rgba(226, 166, 184, 0.24);
+  --border-strong: rgba(226, 166, 184, 0.34);
+  --accent: #e2a6b8;
+  --accent-hover: #f0b6c7;
+  --accent-soft: #4a3542;
+  --accent-foreground: #211b22;
+  --danger: #e09aa4;
+  --success: #9cbd98;
+  --warning: #d1ab72;
+  --user-bubble: #4a3542;
+  --user-bubble-foreground: #f5edf1;
+  --assistant-foreground: #f5edf1;
+  --glass-background: rgba(58, 46, 61, 0.62);
+  --glass-background-strong: rgba(60, 48, 63, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.13);
+  --topbar-fade-start: rgba(33, 27, 34, 0.96);
+  --topbar-fade-middle: rgba(33, 27, 34, 0.76);
+  --topbar-fade-soft: rgba(33, 27, 34, 0.34);
+  --topbar-fade-end: rgba(33, 27, 34, 0);
+  --topbar-glass-button-bg: linear-gradient(
+    145deg,
+    rgba(82, 66, 86, 0.72),
+    rgba(49, 39, 51, 0.38)
+  );
+  --topbar-glass-button-border: rgba(255, 238, 245, 0.18);
+  --topbar-glass-button-shadow:
+    inset 0 1px 0 rgba(255, 238, 245, 0.18),
+    0 8px 20px rgba(0, 0, 0, 0.18);
+  --topbar-icon: #f5edf1;
+  --topbar-avatar-bg: linear-gradient(145deg, #927482, #4a3542);
+  --topbar-avatar-text: #f5edf1;
+  --topbar-more-button-bg: linear-gradient(
+    145deg,
+    rgba(226, 166, 184, 0.66) 0%,
+    rgba(117, 81, 118, 0.56) 52%,
+    rgba(74, 53, 66, 0.62) 100%
+  );
+  --topbar-more-button-border: rgba(255, 238, 245, 0.2);
+  --topbar-more-button-dot: rgba(255, 247, 250, 0.94);
+  --topbar-more-button-shadow:
+    inset 0 1px 0 rgba(255, 238, 245, 0.18),
+    0 9px 24px rgba(0, 0, 0, 0.22);
+  --user-message-bubble-bg: linear-gradient(
+    135deg,
+    rgba(129, 82, 102, 0.58) 0%,
+    rgba(99, 63, 86, 0.46) 58%,
+    rgba(74, 53, 66, 0.4) 100%
+  );
+  --user-message-bubble-border: rgba(255, 238, 245, 0.18);
+  --user-message-bubble-shadow:
+    inset 0 1px 0 rgba(255, 238, 245, 0.18),
+    inset 0 -1px 0 rgba(28, 18, 28, 0.14),
+    0 10px 28px rgba(0, 0, 0, 0.18),
+    0 2px 8px rgba(226, 166, 184, 0.08);
+  --more-menu-backdrop: rgba(0, 0, 0, 0.28);
+  --more-menu-panel-bg: rgba(49, 39, 51, 0.92);
+  --theme-choice-selected: rgba(226, 166, 184, 0.22);
+  --shadow-soft: 0 18px 38px rgba(0, 0, 0, 0.28);
+  --shadow-floating: 0 18px 48px rgba(0, 0, 0, 0.34);
 }
 
 @theme inline {
@@ -63,7 +238,7 @@
 
 html,
 body {
-  background: var(--background);
+  background: var(--background-visual), var(--background);
   height: 100%;
   min-height: 100%;
   overflow: hidden;
@@ -73,7 +248,7 @@ body {
 }
 
 body {
-  background: var(--background);
+  background: var(--background-visual), var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans);
 }
@@ -83,7 +258,7 @@ body > * {
   max-width: 100%;
   min-width: 0;
   min-height: 0;
-  background: var(--background);
+  background: var(--background-visual), var(--background);
 }
 
 button,
@@ -131,7 +306,7 @@ select:focus-visible {
   width: 100%;
   max-width: 100%;
   overflow: hidden;
-  background: var(--background);
+  background: var(--background-visual), var(--background);
   color: var(--foreground);
 }
 
@@ -174,7 +349,7 @@ select:focus-visible {
     var(--topbar-fade-start) 0%,
     var(--topbar-fade-middle) 36%,
     var(--topbar-fade-soft) 68%,
-    rgba(255, 247, 243, 0) 100%
+    var(--topbar-fade-end) 100%
   );
   mask-image: linear-gradient(
     to bottom,
@@ -214,17 +389,11 @@ select:focus-visible {
   height: 48px;
   flex: 0 0 auto;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--topbar-glass-button-border);
   border-radius: var(--radius-pill);
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.62),
-    rgba(255, 250, 247, 0.34)
-  );
+  background: var(--topbar-glass-button-bg);
   color: var(--foreground);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    0 6px 18px rgba(120, 91, 99, 0.1);
+  box-shadow: var(--topbar-glass-button-shadow);
   backdrop-filter: blur(18px) saturate(130%);
   -webkit-backdrop-filter: blur(18px) saturate(130%);
   transition:
@@ -235,7 +404,7 @@ select:focus-visible {
 
 .mobile-sidebar-trigger svg,
 .mobile-sidebar-close svg {
-  color: #5e504c;
+  color: var(--topbar-icon);
 }
 
 .mobile-sidebar-trigger:active,
@@ -340,12 +509,8 @@ select:focus-visible {
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.58);
   border-radius: var(--radius-pill);
-  background: linear-gradient(
-    145deg,
-    rgba(122, 96, 108, 0.86),
-    rgba(92, 73, 82, 0.78)
-  );
-  color: rgba(255, 250, 247, 0.92);
+  background: var(--topbar-avatar-bg);
+  color: var(--topbar-avatar-text);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
     0 6px 16px rgba(96, 69, 78, 0.12);
@@ -411,17 +576,10 @@ select:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.54);
+  border: 1px solid var(--topbar-more-button-border);
   border-radius: var(--radius-pill);
-  background: linear-gradient(
-    145deg,
-    rgba(213, 121, 153, 0.72) 0%,
-    rgba(184, 131, 174, 0.58) 48%,
-    rgba(244, 167, 178, 0.54) 100%
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.52),
-    0 7px 20px rgba(152, 82, 111, 0.16);
+  background: var(--topbar-more-button-bg);
+  box-shadow: var(--topbar-more-button-shadow);
   backdrop-filter: blur(18px) saturate(140%);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
   padding: 0;
@@ -434,12 +592,201 @@ select:focus-visible {
   width: 5px;
   height: 5px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 250, 247, 0.92);
+  background: var(--topbar-more-button-dot);
   box-shadow: 0 1px 2px rgba(110, 62, 82, 0.12);
 }
 
 .chat-memory-button:active {
   transform: scale(0.96);
+}
+
+.more-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 48;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: var(--more-menu-backdrop);
+  padding: 14px 12px max(12px, env(safe-area-inset-bottom));
+  animation: more-menu-backdrop-in 180ms ease both;
+}
+
+.more-menu-panel {
+  display: flex;
+  width: min(100%, 420px);
+  max-height: min(78dvh, 560px);
+  min-width: 0;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--glass-border);
+  border-radius: 28px;
+  background: var(--more-menu-panel-bg);
+  box-shadow: var(--shadow-floating);
+  padding: 10px 14px 16px;
+  animation: more-menu-panel-in 220ms cubic-bezier(0.2, 0.9, 0.22, 1) both;
+  backdrop-filter: blur(20px) saturate(1.08);
+  -webkit-backdrop-filter: blur(20px) saturate(1.08);
+  -webkit-overflow-scrolling: touch;
+}
+
+.more-menu-handle {
+  align-self: center;
+  width: 42px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--muted-foreground) 36%, transparent 64%);
+}
+
+.more-menu-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.more-menu-title,
+.more-menu-section-title {
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.more-menu-close {
+  border-radius: var(--radius-pill);
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 18px;
+  padding: 6px 9px;
+}
+
+.more-menu-close:hover,
+.more-menu-close:focus-visible {
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+.more-menu-memory-item {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--foreground);
+  padding: 12px;
+  text-align: left;
+}
+
+.more-menu-memory-item > span:first-child {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.more-menu-item-title,
+.more-menu-item-subtitle {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.more-menu-item-title {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.more-menu-item-subtitle {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.more-menu-item-arrow {
+  flex: 0 0 auto;
+  color: var(--muted-foreground);
+  font-size: 22px;
+  line-height: 22px;
+}
+
+.more-menu-theme-section {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.theme-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.theme-choice-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--foreground);
+  padding: 9px;
+  text-align: left;
+}
+
+.theme-choice-card-selected {
+  border-color: var(--border-strong);
+  background: var(--theme-choice-selected);
+}
+
+.theme-choice-preview {
+  display: flex;
+  height: 32px;
+  align-items: stretch;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.theme-choice-preview span {
+  flex: 1 1 0;
+}
+
+.theme-choice-name {
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.theme-choice-check {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--surface-strong);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .ui-button-soft {
@@ -523,19 +870,10 @@ select:focus-visible {
 
 .message-bubble-user {
   max-width: min(84%, 590px);
-  border: 1px solid rgba(255, 255, 255, 0.52);
+  border: 1px solid var(--user-message-bubble-border);
   border-radius: 22px 22px 10px 22px;
-  background: linear-gradient(
-    135deg,
-    rgba(247, 193, 208, 0.62) 0%,
-    rgba(250, 211, 220, 0.48) 55%,
-    rgba(255, 226, 231, 0.4) 100%
-  );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.58),
-    inset 0 -1px 0 rgba(205, 132, 153, 0.1),
-    0 8px 24px rgba(176, 105, 126, 0.12),
-    0 2px 6px rgba(138, 86, 103, 0.07);
+  background: var(--user-message-bubble-bg);
+  box-shadow: var(--user-message-bubble-shadow);
   color: var(--user-bubble-foreground);
   padding: 12px 16px;
   backdrop-filter: blur(18px) saturate(130%);
@@ -1462,6 +1800,28 @@ select:focus-visible {
   }
 }
 
+@keyframes more-menu-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes more-menu-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .chat-composer {
     background: var(--surface-strong);
@@ -1506,7 +1866,7 @@ select:focus-visible {
     min-height: 100vh;
     max-height: 100vh;
     overflow: hidden;
-    background: var(--background);
+    background: var(--background-visual), var(--background);
   }
 }
 
@@ -1565,6 +1925,18 @@ select:focus-visible {
   .memory-panel {
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-large);
+  }
+
+  .more-menu-backdrop {
+    align-items: flex-start;
+    justify-content: flex-end;
+    background: transparent;
+    padding: 84px 28px 0;
+  }
+
+  .more-menu-panel {
+    width: 360px;
+    border-radius: 22px;
   }
 }
 
@@ -1642,9 +2014,7 @@ select:focus-visible {
     min-width: 40px;
     height: 40px;
     gap: 3px;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.44),
-      0 5px 15px rgba(152, 82, 111, 0.13);
+    box-shadow: var(--topbar-more-button-shadow);
     padding: 0;
   }
 
