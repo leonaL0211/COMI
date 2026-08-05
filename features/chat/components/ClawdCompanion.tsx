@@ -63,6 +63,9 @@ const idleActions: ClawdAction[] = [
 const clickActions: ClawdAction[] = ["shy", "dizzy", "coffee-hand"];
 const dragThreshold = 6;
 const edgePadding = 12;
+const minWanderDistance = 50;
+const minWanderDurationMs = 10000;
+const maxWanderDurationMs = 32000;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -158,18 +161,22 @@ export function ClawdCompanion({
     return boundsRef.current;
   }, [composerHeight, headerHeight]);
 
-  const applyPosition = useCallback((position: Position, scale = 1) => {
-    const clawd = clawdRef.current;
+  const applyPosition = useCallback(
+    (position: Position, scale = 1, durationMs = 0) => {
+      const clawd = clawdRef.current;
 
-    if (!clawd) {
-      return;
-    }
+      if (!clawd) {
+        return;
+      }
 
-    clawd.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) scale(${scale})`;
-  }, []);
+      clawd.style.setProperty("--clawd-move-duration", `${durationMs}ms`);
+      clawd.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) scale(${scale})`;
+    },
+    [],
+  );
 
   const setClampedPosition = useCallback(
-    (position: Position, scale = 1) => {
+    (position: Position, scale = 1, durationMs = 0) => {
       const bounds = measureBounds();
       const nextPosition = {
         x: clamp(position.x, bounds.minX, bounds.maxX),
@@ -177,10 +184,41 @@ export function ClawdCompanion({
       };
 
       positionRef.current = nextPosition;
-      applyPosition(nextPosition, scale);
+      applyPosition(nextPosition, scale, durationMs);
     },
     [applyPosition, measureBounds],
   );
+
+  function getWanderTarget(bounds: Bounds, origin: Position) {
+    let nextPosition = {
+      x: randomBetween(bounds.minX, bounds.maxX),
+      y: randomBetween(bounds.minY, bounds.maxY),
+    };
+    const firstDistance = Math.hypot(
+      nextPosition.x - origin.x,
+      nextPosition.y - origin.y,
+    );
+
+    if (firstDistance < minWanderDistance) {
+      nextPosition = {
+        x: randomBetween(bounds.minX, bounds.maxX),
+        y: randomBetween(bounds.minY, bounds.maxY),
+      };
+    }
+
+    return nextPosition;
+  }
+
+  function getWanderDurationMs(origin: Position, target: Position) {
+    const distance = Math.hypot(target.x - origin.x, target.y - origin.y);
+    const pixelsPerSecond = randomBetween(8, 14);
+
+    return clamp(
+      (distance / pixelsPerSecond) * 1000,
+      minWanderDurationMs,
+      maxWanderDurationMs,
+    );
+  }
 
   const scheduleWander = useCallback(
     (delay = randomBetween(4000, 8000)) => {
@@ -192,14 +230,14 @@ export function ClawdCompanion({
 
       wanderTimerRef.current = window.setTimeout(() => {
         const bounds = measureBounds();
-        const nextPosition = {
-          x: randomBetween(bounds.minX, bounds.maxX),
-          y: randomBetween(bounds.minY, bounds.maxY),
-        };
+        const origin = positionRef.current;
+        const nextPosition = getWanderTarget(bounds, origin);
+        const durationMs = getWanderDurationMs(origin, nextPosition);
+        const restMs = randomBetween(4000, 9000);
 
         setVisualAction(getRandomItem(idleActions, "idle"));
-        setClampedPosition(nextPosition);
-        scheduleWander();
+        setClampedPosition(nextPosition, 1, durationMs);
+        scheduleWander(durationMs + restMs);
       }, delay);
     },
     [
@@ -222,7 +260,7 @@ export function ClawdCompanion({
         clearWanderTimer();
         setVisualAction("idle");
       } else if (mode === "idle") {
-        scheduleWander(1200);
+        scheduleWander(randomBetween(2000, 4000));
       }
     }
 
@@ -285,7 +323,7 @@ export function ClawdCompanion({
     }
 
     setVisualAction("idle");
-    scheduleWander(2200);
+    scheduleWander(randomBetween(2000, 4000));
   }, [clearActionTimer, clearWanderTimer, mode, scheduleWander, setVisualAction]);
 
   useEffect(
@@ -385,13 +423,13 @@ export function ClawdCompanion({
       setVisualAction(getRandomItem(clickActions, "shy"));
       actionTimerRef.current = window.setTimeout(() => {
         setVisualAction("idle");
-        scheduleWander(1800);
+        scheduleWander(randomBetween(2000, 4000));
       }, 1800);
       return;
     }
 
     if (mode === "idle") {
-      scheduleWander(randomBetween(4000, 8000));
+      scheduleWander(randomBetween(6000, 10000));
     }
   }
 

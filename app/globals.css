@@ -1220,6 +1220,7 @@ select:focus-visible {
 }
 
 .clawd-companion {
+  --clawd-move-duration: 0ms;
   position: absolute;
   top: 0;
   left: 0;
@@ -1236,7 +1237,7 @@ select:focus-visible {
   transform: translate3d(12px, 120px, 0);
   transition:
     filter 180ms ease,
-    transform 1200ms cubic-bezier(0.2, 0.82, 0.22, 1);
+    transform var(--clawd-move-duration) linear;
   -webkit-tap-highlight-color: transparent;
 }
 
