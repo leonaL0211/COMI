@@ -94,7 +94,7 @@ export function ChatHeader({
               disabled={isModelSelectorDisabled}
             >
               <span className="model-avatar" aria-hidden="true">
-                AI
+                <img src="/model-avatars/claude.png" alt="" />
               </span>
               <span className="model-selector-copy">
                 <span className="model-selector-title">
