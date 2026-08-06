@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import type { FormEvent, Ref } from "react";
 import { StickerPicker } from "@/features/stickers/StickerPicker";
 import type { StickerId } from "@/shared/stickers/sticker-catalog";
@@ -33,6 +33,7 @@ export function ChatComposer({
   onSendSticker,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
@@ -42,7 +43,9 @@ export function ChatComposer({
     }
 
     textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight}px`;
+    const nextHeight = Math.min(textarea.scrollHeight, 168);
+    textarea.style.height = `${nextHeight}px`;
+    setIsExpanded(value.includes("\n") || textarea.scrollHeight > 48);
   }, [value]);
 
   return (
@@ -53,7 +56,12 @@ export function ChatComposer({
         onClose={onCloseStickerPicker}
         onSelect={onSendSticker}
       />
-      <form ref={composerRef} className="chat-composer" onSubmit={onSubmit}>
+      <form
+        ref={composerRef}
+        className="chat-composer"
+        data-expanded={isExpanded}
+        onSubmit={onSubmit}
+      >
         <label className="sr-only" htmlFor="chat-input">
           消息
         </label>

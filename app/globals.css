@@ -1333,6 +1333,16 @@ select:focus-visible {
   -webkit-backdrop-filter: blur(14px) saturate(1.04);
 }
 
+.chat-composer[data-expanded="true"] {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  row-gap: 7px;
+  column-gap: 8px;
+  align-items: end;
+  border-radius: 26px;
+  padding: 4px 7px 7px;
+}
+
 .sticker-trigger-button {
   display: inline-grid;
   width: 38px;
@@ -1383,6 +1393,24 @@ select:focus-visible {
   outline: none;
   overflow-y: auto;
   padding: 8px 4px 8px 0;
+}
+
+.chat-composer[data-expanded="true"] .chat-composer-input {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  min-height: 24px;
+  max-height: 168px;
+  padding: 12px 12px 4px;
+}
+
+.chat-composer[data-expanded="true"] .sticker-trigger-button {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.chat-composer[data-expanded="true"] .chat-send-button {
+  grid-column: 3;
+  grid-row: 2;
 }
 
 .chat-composer-input:focus,
