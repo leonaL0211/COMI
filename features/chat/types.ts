@@ -21,6 +21,7 @@ export type PersistedChatMessage = {
   conversationId: string;
   role: "user" | "assistant";
   content: string;
+  clientMessageId: string | null;
   model: string | null;
   stopReason: ChatStopReason | null;
   inputTokens: number | null;

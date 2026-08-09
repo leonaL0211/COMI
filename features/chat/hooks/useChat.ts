@@ -37,10 +37,21 @@ export function useChat({
   const loadAbortRef = useRef<AbortController | null>(null);
   const sendInFlightRef = useRef(false);
   const currentConversationIdRef = useRef<string | null>(conversationId);
+  const retryDraftRef = useRef<{
+    conversationId: string;
+    model: ChatModelKey;
+    clientMessageId: string;
+  } | null>(null);
 
   useEffect(() => {
     currentConversationIdRef.current = conversationId;
+    retryDraftRef.current = null;
   }, [conversationId]);
+
+  const updateInput = useCallback((value: string) => {
+    retryDraftRef.current = null;
+    setInput(value);
+  }, []);
 
   useEffect(() => {
     const requestId = loadRequestIdRef.current + 1;
@@ -143,6 +154,14 @@ export function useChat({
       let targetConversationId = currentConversationIdRef.current;
       const temporaryUserId = createId();
       const temporaryAssistantId = createId();
+      const retryDraft =
+        !isOverrideSend &&
+        targetConversationId &&
+        retryDraftRef.current?.conversationId === targetConversationId &&
+        retryDraftRef.current.model === model
+          ? retryDraftRef.current
+          : null;
+      const clientMessageId = retryDraft?.clientMessageId ?? createId();
 
       try {
         if (!targetConversationId) {
@@ -179,7 +198,10 @@ export function useChat({
           targetConversationId,
           content,
           model,
+          clientMessageId,
         );
+
+        retryDraftRef.current = null;
 
         if (currentConversationIdRef.current === targetConversationId) {
           setMessages((current) =>
@@ -198,10 +220,17 @@ export function useChat({
         }
       } catch (sendError) {
         if (targetConversationId) {
+          retryDraftRef.current = {
+            conversationId: targetConversationId,
+            model,
+            clientMessageId,
+          };
+
           if (currentConversationIdRef.current === targetConversationId) {
             setMessages((current) =>
               current.filter((message) => message.id !== temporaryAssistantId),
             );
+            setInput(content);
             await refreshMessages(targetConversationId);
           }
         }
@@ -225,7 +254,7 @@ export function useChat({
   return {
     messages,
     input,
-    setInput,
+    setInput: updateInput,
     isLoadingMessages,
     isSending,
     error,

@@ -51,6 +51,7 @@ export class PersistentChatService {
     conversationId: string;
     content: string;
     model: ChatModelKey;
+    clientMessageId?: string | null;
   }): Promise<PersistentChatResult> {
     const existingConversation = await this.conversations.findById(
       input.conversationId,
@@ -63,6 +64,7 @@ export class PersistentChatService {
     const userMessage = await this.messages.createUserMessage({
       conversationId: input.conversationId,
       content: input.content,
+      clientMessageId: input.clientMessageId ?? null,
     });
     const userTouchedConversation =
       (await this.conversations.touch(input.conversationId, {

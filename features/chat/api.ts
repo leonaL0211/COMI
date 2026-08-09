@@ -32,6 +32,7 @@ export async function sendChatMessage(
   conversationId: string,
   content: string,
   model: ChatModelKey,
+  clientMessageId: string,
 ) {
   return fetchJson<ChatResponse>("/api/chat", {
     method: "POST",
@@ -42,6 +43,7 @@ export async function sendChatMessage(
       conversationId,
       content,
       model,
+      clientMessageId,
     }),
   });
 }

@@ -25,6 +25,7 @@ type ValidationResult =
       conversationId: string;
       content: string;
       model: ChatModelKey;
+      clientMessageId: string | null;
     }
   | {
       ok: false;
@@ -49,6 +50,7 @@ export async function POST(request: Request) {
       conversationId: validation.conversationId,
       content: validation.content,
       model: validation.model,
+      clientMessageId: validation.clientMessageId,
     });
 
     return NextResponse.json(result);
@@ -109,10 +111,30 @@ function validateChatRequest(body: Record<string, unknown>): ValidationResult {
     };
   }
 
+  const clientMessageId = body.clientMessageId;
+
+  if (
+    typeof clientMessageId !== "undefined" &&
+    clientMessageId !== null &&
+    (typeof clientMessageId !== "string" ||
+      clientMessageId.trim().length === 0 ||
+      clientMessageId.length > 120)
+  ) {
+    return {
+      ok: false,
+      response: jsonError(
+        "clientMessageId must be a non-empty string up to 120 characters.",
+        400,
+      ),
+    };
+  }
+
   return {
     ok: true,
     conversationId,
     content,
     model,
+    clientMessageId:
+      typeof clientMessageId === "string" ? clientMessageId.trim() : null,
   };
 }

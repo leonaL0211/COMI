@@ -5,6 +5,7 @@ export type PersistedMessage = {
   conversationId: string;
   role: "user" | "assistant";
   content: string;
+  clientMessageId: string | null;
   model: string | null;
   stopReason: ChatStopReason | null;
   inputTokens: number | null;
@@ -18,6 +19,7 @@ export interface MessageRepository {
   createUserMessage(input: {
     conversationId: string;
     content: string;
+    clientMessageId?: string | null;
   }): Promise<PersistedMessage>;
   createAssistantMessage(input: {
     conversationId: string;
