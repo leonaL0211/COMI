@@ -1214,7 +1214,7 @@ select:focus-visible {
 .clawd-overlay {
   position: absolute;
   inset: 0;
-  z-index: 25;
+  z-index: 19;
   overflow: hidden;
   pointer-events: none;
 }
@@ -2743,7 +2743,7 @@ html[data-theme="sea-salt"] {
 }
 
 .clawd-overlay {
-  display: none;
+  display: block;
 }
 
 .composer-dock {
@@ -3788,7 +3788,7 @@ body {
 }
 
 .clawd-overlay {
-  display: none;
+  display: block;
 }
 
 @media (max-width: 401px), (max-height: 873px) {

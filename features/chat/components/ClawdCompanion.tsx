@@ -63,6 +63,7 @@ const idleActions: ClawdAction[] = [
 const clickActions: ClawdAction[] = ["shy", "dizzy", "coffee-hand"];
 const dragThreshold = 6;
 const edgePadding = 12;
+const safeAreaGap = 16;
 const minWanderDistance = 50;
 const minWanderDurationMs = 10000;
 const maxWanderDurationMs = 32000;
@@ -136,7 +137,7 @@ export function ClawdCompanion({
     });
   }, []);
 
-  const measureBounds = useCallback(() => {
+  const measureViewportBounds = useCallback(() => {
     const overlay = overlayRef.current;
     const clawd = clawdRef.current;
 
@@ -151,10 +152,43 @@ export function ClawdCompanion({
     const clawdHeight = clawdRect.height || 88;
     const minX = edgePadding;
     const maxX = Math.max(minX, rootRect.width - clawdWidth - edgePadding);
-    const minY = Math.max(edgePadding, headerHeight + edgePadding);
+    const minY = edgePadding;
+    const maxY = Math.max(minY, rootRect.height - clawdHeight - edgePadding);
+
+    return { minX, maxX, minY, maxY };
+  }, []);
+
+  const measureBounds = useCallback(() => {
+    const overlay = overlayRef.current;
+    const clawd = clawdRef.current;
+
+    if (!overlay || !clawd) {
+      return boundsRef.current;
+    }
+
+    const root = overlay.closest<HTMLElement>(".chat-main") ?? overlay;
+    const rootRect = root.getBoundingClientRect();
+    const clawdRect = clawd.getBoundingClientRect();
+    const clawdWidth = clawdRect.width || 88;
+    const clawdHeight = clawdRect.height || 88;
+    const header = root.querySelector<HTMLElement>(".chat-header");
+    const composer = root.querySelector<HTMLElement>(".composer-dock");
+    const headerRect = header?.getBoundingClientRect();
+    const composerRect = composer?.getBoundingClientRect();
+    const headerBottom =
+      headerRect && headerRect.height > 0
+        ? headerRect.bottom - rootRect.top
+        : headerHeight;
+    const composerTop =
+      composerRect && composerRect.height > 0
+        ? composerRect.top - rootRect.top
+        : rootRect.height - composerHeight;
+    const minX = edgePadding;
+    const maxX = Math.max(minX, rootRect.width - clawdWidth - edgePadding);
+    const minY = Math.max(edgePadding, headerBottom + safeAreaGap);
     const maxY = Math.max(
       minY,
-      rootRect.height - composerHeight - clawdHeight - edgePadding,
+      composerTop - clawdHeight - safeAreaGap,
     );
 
     boundsRef.current = { minX, maxX, minY, maxY };
@@ -187,6 +221,20 @@ export function ClawdCompanion({
       applyPosition(nextPosition, scale, durationMs);
     },
     [applyPosition, measureBounds],
+  );
+
+  const setViewportClampedPosition = useCallback(
+    (position: Position, scale = 1, durationMs = 0) => {
+      const bounds = measureViewportBounds();
+      const nextPosition = {
+        x: clamp(position.x, bounds.minX, bounds.maxX),
+        y: clamp(position.y, bounds.minY, bounds.maxY),
+      };
+
+      positionRef.current = nextPosition;
+      applyPosition(nextPosition, scale, durationMs);
+    },
+    [applyPosition, measureViewportBounds],
   );
 
   function getWanderTarget(bounds: Bounds, origin: Position) {
@@ -350,7 +398,7 @@ export function ClawdCompanion({
       const nextPosition = pendingPositionRef.current;
 
       if (nextPosition) {
-        setClampedPosition(nextPosition, 1.04);
+        setViewportClampedPosition(nextPosition, 1.04);
       }
     });
   }
@@ -401,23 +449,22 @@ export function ClawdCompanion({
     });
   }
 
-  function finishPointerInteraction(
-    event: PointerEvent<HTMLButtonElement>,
-    isCancel = false,
-  ) {
+  const finishPointerInteractionById = useCallback(
+    (pointerId: number, isCancel = false) => {
     const drag = dragRef.current;
+      const clawd = clawdRef.current;
 
-    if (!drag || drag.pointerId !== event.pointerId) {
+      if (!drag || drag.pointerId !== pointerId) {
       return;
     }
 
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
+      if (clawd?.hasPointerCapture(pointerId)) {
+        clawd.releasePointerCapture(pointerId);
     }
 
     dragRef.current = null;
     setIsDragging(false);
-    setClampedPosition(positionRef.current);
+    setViewportClampedPosition(positionRef.current);
 
     if (!drag.hasDragged && !isCancel && !reducedMotionRef.current) {
       setVisualAction(getRandomItem(clickActions, "shy"));
@@ -431,7 +478,31 @@ export function ClawdCompanion({
     if (mode === "idle") {
       scheduleWander(randomBetween(6000, 10000));
     }
-  }
+    },
+    [mode, scheduleWander, setViewportClampedPosition, setVisualAction],
+  );
+
+  useEffect(() => {
+    if (!isDragging) {
+      return;
+    }
+
+    function handleGlobalPointerUp(event: globalThis.PointerEvent) {
+      finishPointerInteractionById(event.pointerId);
+    }
+
+    function handleGlobalPointerCancel(event: globalThis.PointerEvent) {
+      finishPointerInteractionById(event.pointerId, true);
+    }
+
+    window.addEventListener("pointerup", handleGlobalPointerUp);
+    window.addEventListener("pointercancel", handleGlobalPointerCancel);
+
+    return () => {
+      window.removeEventListener("pointerup", handleGlobalPointerUp);
+      window.removeEventListener("pointercancel", handleGlobalPointerCancel);
+    };
+  }, [finishPointerInteractionById, isDragging]);
 
   return (
     <div ref={overlayRef} className="clawd-overlay" aria-hidden={false}>
@@ -445,8 +516,10 @@ export function ClawdCompanion({
         aria-label="Drag Clawd to move it"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        onPointerUp={(event) => finishPointerInteraction(event)}
-        onPointerCancel={(event) => finishPointerInteraction(event, true)}
+        onPointerUp={(event) => finishPointerInteractionById(event.pointerId)}
+        onPointerCancel={(event) =>
+          finishPointerInteractionById(event.pointerId, true)
+        }
       >
         <img
           key={`${action}-${assetVersion}`}
