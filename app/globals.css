@@ -2216,15 +2216,19 @@ select:focus-visible {
 
 @media (display-mode: standalone) {
   html,
-  body,
-  body > *,
-  .app-shell,
-  .chat-main {
-    height: 100vh;
-    min-height: 100vh;
-    max-height: 100vh;
+  body {
+    width: 100%;
+    min-height: 100%;
     overflow: hidden;
     background: var(--background-visual), var(--background);
+  }
+
+  .app-shell {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
   }
 }
 
@@ -3117,10 +3121,12 @@ body {
 .comi-welcome-frame {
   position: relative;
   display: block;
-  width: var(--figma-frame-width);
+  box-sizing: border-box;
+  width: 100%;
   height: var(--figma-frame-height);
-  max-width: 100vw;
+  max-width: var(--figma-frame-width);
   max-height: 100dvh;
+  margin-inline: auto;
   overflow: hidden;
   border: 0;
   background: var(--figma-bg);
@@ -3211,8 +3217,11 @@ body {
   display: flex;
   justify-content: center;
   width: 100%;
+  height: 100vh;
+  height: 100dvh;
   min-height: 100dvh;
   overflow-x: hidden;
+  overflow-y: hidden;
   background: var(--figma-bg);
 }
 
@@ -3224,7 +3233,7 @@ body {
   width: 100%;
   max-width: var(--figma-frame-width);
   height: var(--figma-frame-height);
-  max-height: 100dvh;
+  max-height: 100%;
   margin: 0 auto;
   overflow: hidden;
   background: var(--figma-bg);
@@ -3238,7 +3247,7 @@ body {
   right: 0;
   top: 0;
   width: auto;
-  height: 93px;
+  height: calc(93px + env(safe-area-inset-top));
   background-image: var(--figma-topbar-fade);
   box-shadow: var(--figma-topbar-shadow);
   backdrop-filter: blur(12px);
@@ -3251,7 +3260,7 @@ body {
   z-index: 20;
   box-sizing: border-box;
   width: 100%;
-  height: 93px;
+  height: calc(93px + env(safe-area-inset-top));
   padding: 0;
   pointer-events: none;
 }
@@ -3279,7 +3288,7 @@ body {
 .mobile-sidebar-trigger,
 .chat-memory-button {
   position: absolute;
-  top: 22px;
+  top: calc(22px + env(safe-area-inset-top));
   display: grid;
   width: 44px;
   min-width: 44px;
@@ -3307,7 +3316,7 @@ body {
 
 .more-menu-backdrop {
   align-items: flex-start;
-  padding-top: calc(22px + 44px + 16px);
+  padding-top: calc(22px + env(safe-area-inset-top) + 44px + 16px);
   pointer-events: auto;
 }
 
@@ -3334,7 +3343,7 @@ body {
   inset: 0;
   box-sizing: border-box;
   width: 100%;
-  height: 874px;
+  height: 100%;
 }
 
 .message-list-shell {
@@ -3518,8 +3527,11 @@ body {
 
 .message-row-user {
   display: flex;
+  flex-shrink: 0;
   width: min(308px, calc(100% - 47px));
+  height: auto;
   min-height: 67px;
+  align-items: flex-start;
   align-self: flex-end;
   margin-left: auto;
   margin-right: 0;
@@ -3577,9 +3589,12 @@ body {
 
 .message-bubble-user {
   box-sizing: border-box;
+  display: block;
   width: 100%;
+  height: auto;
   min-height: 67px;
   max-width: 308px;
+  overflow: hidden;
   border: 0;
   border-radius: 18px;
   background: var(--figma-user-bubble);
@@ -3592,6 +3607,10 @@ body {
 
 .message-content {
   display: block;
+  position: static;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
 }
 
 .message-note,
@@ -3607,7 +3626,8 @@ body {
   z-index: 30;
   left: 16px;
   right: 16px;
-  top: 786px;
+  top: auto;
+  bottom: calc(16px + env(safe-area-inset-bottom));
   box-sizing: border-box;
   width: auto;
   height: 72px;
@@ -3789,11 +3809,4 @@ body {
 
 .clawd-overlay {
   display: block;
-}
-
-@media (max-width: 401px), (max-height: 873px) {
-  .comi-welcome-frame {
-    margin-left: calc((100vw - 402px) / 2);
-    margin-right: 0;
-  }
 }
