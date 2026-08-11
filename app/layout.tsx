@@ -10,13 +10,13 @@ const instrumentSans = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Berry Chat",
-  description: "私人 AI 聊天与长期记忆应用",
-  applicationName: "Berry Chat",
+  title: "COMI",
+  description: "COMI private AI companion.",
+  applicationName: "COMI",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Berry Chat",
+    title: "COMI",
     statusBarStyle: "black-translucent",
   },
   icons: {
@@ -34,7 +34,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#fff7ef",
+  themeColor: "#fff0d6",
 };
 
 const themeInitScript = `

@@ -2,16 +2,16 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Berry Chat",
-    short_name: "Berry",
-    description: "私人 AI 聊天与长期记忆应用",
+    name: "COMI",
+    short_name: "COMI",
+    description: "COMI private AI companion.",
     id: "/",
     start_url: "/",
     scope: "/",
     display: "standalone",
     orientation: "portrait-primary",
-    background_color: "#fff7ef",
-    theme_color: "#fff7ef",
+    background_color: "#fffdf8",
+    theme_color: "#fff0d6",
     lang: "zh-CN",
     icons: [
       {
