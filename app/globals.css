@@ -3707,6 +3707,23 @@ body {
   }
 }
 
+@media (display-mode: standalone) {
+  :root {
+    --composer-bottom-offset: 0px;
+  }
+
+  .composer-dock {
+    bottom: 0;
+    height: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .chat-composer,
+  .chat-composer[data-expanded="true"] {
+    height: calc(72px + env(safe-area-inset-bottom, 0px));
+    min-height: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 .composer-toolbar {
   position: absolute;
   inset: 0;
