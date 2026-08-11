@@ -44,6 +44,7 @@ export function ChatScreen() {
     error,
     refreshConversations,
     createConversation,
+    startNewConversation,
     selectConversation,
     renameConversation,
     deleteConversation,
@@ -114,13 +115,10 @@ export function ChatScreen() {
     void chat.sendMessage(selectedModel);
   }
 
-  async function handleCreateConversation() {
+  function handleCreateConversation() {
     setIsStickerPickerOpen(false);
-    const created = await createConversation();
-
-    if (created) {
-      setIsSidebarOpen(false);
-    }
+    startNewConversation();
+    setIsSidebarOpen(false);
   }
 
   function handleSelectConversation(conversationId: string) {
@@ -184,6 +182,7 @@ export function ChatScreen() {
       headerHeight={headerHeight}
       composerHeight={composerHeight}
       isSidebarOpen={isSidebarOpen}
+      isHomeState={!chat.isLoadingMessages && chat.messages.length === 0}
       onCloseSidebar={handleCloseSidebar}
       sidebar={
         <ConversationSidebar
@@ -194,7 +193,7 @@ export function ChatScreen() {
           isInteractionDisabled={isConversationInteractionDisabled}
           error={error}
           onCreate={() => {
-            void handleCreateConversation();
+            handleCreateConversation();
           }}
           onSelect={handleSelectConversation}
           onRename={(conversation) => {
@@ -210,10 +209,7 @@ export function ChatScreen() {
         <ChatHeader
           headerRef={headerRef}
           title={currentConversationTitle}
-          selectedModel={selectedModel}
           selectedTheme={selectedTheme}
-          isModelSelectorDisabled={chat.isSending}
-          onSelectModel={setSelectedModel}
           onSelectTheme={setSelectedTheme}
           onOpenSidebar={() => setIsSidebarOpen(true)}
           onOpenMemoryPanel={handleOpenMemoryPanel}
@@ -221,6 +217,7 @@ export function ChatScreen() {
       }
       messageList={
         <MessageList
+          conversationId={currentConversationId}
           messages={chat.messages}
           isLoading={chat.isLoadingMessages}
           error={chat.error}
@@ -246,9 +243,12 @@ export function ChatScreen() {
           isSending={chat.isSending}
           isDisabled={chat.isSending || chat.isLoadingMessages || isCreating}
           canSend={chat.canSend && !isCreating}
+          selectedModel={selectedModel}
+          isModelSelectorDisabled={chat.isSending}
           isStickerPickerOpen={isStickerPickerOpen}
           onChange={chat.setInput}
           onSubmit={handleSubmit}
+          onSelectModel={setSelectedModel}
           onToggleStickerPicker={() =>
             setIsStickerPickerOpen((isOpen) => !isOpen)
           }

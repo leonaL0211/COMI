@@ -2396,3 +2396,1404 @@ select:focus-visible {
     font-size: 16px;
   }
 }
+
+/* COMI visual refresh */
+:root,
+html[data-theme="milk-tea"],
+html[data-theme="sea-salt"] {
+  --cream-bg: #fff0d6;
+  --cream-bg-soft: #fff8ea;
+  --strawberry-pink: #fccccc;
+  --berry-red: #a82a31;
+  --glass-white: rgba(255, 255, 255, 0.58);
+  --glass-white-strong: rgba(255, 255, 255, 0.78);
+  --comi-ink: #4c4540;
+  --comi-muted: rgba(76, 69, 64, 0.58);
+  --comi-glow: rgba(252, 204, 204, 0.52);
+  --comi-shadow: 0 18px 48px rgba(168, 42, 49, 0.12);
+  --background: var(--cream-bg);
+  --background-deep: #ffe9dc;
+  --foreground: var(--comi-ink);
+  --accent: var(--berry-red);
+  --accent-hover: #8f2229;
+  --accent-soft: var(--strawberry-pink);
+  --accent-foreground: #fffdf8;
+  --background-visual:
+    radial-gradient(circle at 20% 16%, rgba(252, 204, 204, 0.28), transparent 34%),
+    radial-gradient(circle at 86% 8%, rgba(255, 255, 255, 0.48), transparent 32%),
+    radial-gradient(circle at 50% 94%, rgba(255, 220, 206, 0.22), transparent 36%),
+    linear-gradient(180deg, #fff0d6 0%, #fff6e7 56%, #fffdf8 100%);
+  --font-geist-sans: var(--font-instrument-sans), "Instrument Sans", "Inter",
+    "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+  --glass-background: rgba(255, 255, 255, 0.5);
+  --glass-background-strong: rgba(255, 255, 255, 0.74);
+  --glass-border: rgba(255, 255, 255, 0.66);
+  --shadow-floating:
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    0 18px 48px rgba(168, 42, 49, 0.12);
+  --user-message-bubble-bg:
+    linear-gradient(
+      135deg,
+      rgba(252, 204, 204, 0.7) 0%,
+      rgba(255, 222, 226, 0.52) 58%,
+      rgba(255, 255, 255, 0.38) 100%
+    );
+  --user-message-bubble-border: rgba(255, 255, 255, 0.58);
+  --user-message-bubble-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    0 14px 34px rgba(168, 42, 49, 0.12),
+    0 3px 9px rgba(138, 86, 103, 0.07);
+}
+
+.comi-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  user-select: none;
+}
+
+.comi-icon img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.comi-icon-sm {
+  width: 38px;
+}
+
+.comi-icon-md {
+  width: 72px;
+}
+
+.comi-icon-lg {
+  width: clamp(178px, 44vw, 236px);
+}
+
+.glass-icon-button {
+  display: inline-grid;
+  width: 46px;
+  min-width: 46px;
+  height: 46px;
+  place-items: center;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(255, 244, 238, 0.34));
+  color: var(--comi-ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 10px 28px rgba(168, 42, 49, 0.1),
+    0 0 24px rgba(252, 204, 204, 0.2);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.glass-icon-button-berry {
+  background:
+    linear-gradient(145deg, rgba(168, 42, 49, 0.76), rgba(252, 204, 204, 0.48));
+  color: #fffdf8;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.44),
+    0 12px 30px rgba(168, 42, 49, 0.18),
+    0 0 26px rgba(252, 204, 204, 0.34);
+}
+
+.glass-icon-button:active {
+  transform: scale(0.96);
+}
+
+.comi-menu-lines,
+.comi-more-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comi-menu-lines {
+  flex-direction: column;
+  gap: 5px;
+}
+
+.comi-menu-lines span {
+  width: 17px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+.comi-more-dots {
+  gap: 4px;
+}
+
+.comi-more-dots span,
+.chat-memory-button span {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+.comi-welcome-page {
+  position: relative;
+  display: grid;
+  min-height: 100dvh;
+  overflow: hidden;
+  background: var(--background-visual), var(--cream-bg);
+  color: var(--comi-ink);
+  padding: max(18px, env(safe-area-inset-top)) 18px
+    max(22px, env(safe-area-inset-bottom));
+}
+
+.comi-welcome-page::before {
+  content: "";
+  position: absolute;
+  inset: 18% 18% auto;
+  height: 36dvh;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(252, 204, 204, 0.28), transparent 64%);
+  filter: blur(16px);
+  pointer-events: none;
+}
+
+.comi-welcome-topbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.comi-welcome-shell {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  text-align: center;
+}
+
+.comi-welcome-mark {
+  position: relative;
+  display: grid;
+  border: 0;
+  background: transparent;
+  place-items: center;
+  padding: 0;
+}
+
+.comi-welcome-mark::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(252, 204, 204, 0.34), transparent 66%);
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+.comi-welcome-copy {
+  display: flex;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.comi-welcome-copy h1 {
+  color: var(--comi-ink);
+  max-width: 100%;
+  font-size: clamp(24px, 6.1vw, 42px);
+  font-weight: 650;
+  line-height: 1.08;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.comi-welcome-copy p {
+  color: var(--comi-muted);
+  font-size: clamp(16px, 4.2vw, 19px);
+  font-weight: 450;
+  line-height: 1.45;
+}
+
+.chat-header {
+  padding: max(14px, env(safe-area-inset-top)) 20px 0;
+}
+
+.chat-topbar-fade {
+  height: 116px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 240, 214, 0.9) 0%,
+    rgba(255, 248, 234, 0.54) 54%,
+    rgba(255, 248, 234, 0) 100%
+  );
+}
+
+.chat-header-inner {
+  min-height: 54px;
+}
+
+.chat-header-title {
+  visibility: hidden;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-align: center;
+}
+
+.mobile-sidebar-trigger,
+.chat-memory-button {
+  width: 46px;
+  min-width: 46px;
+  height: 46px;
+  border: 1px solid var(--glass-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(255, 244, 238, 0.34));
+  color: var(--comi-ink);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 10px 28px rgba(168, 42, 49, 0.1),
+    0 0 24px rgba(252, 204, 204, 0.2);
+}
+
+.chat-memory-button {
+  background:
+    linear-gradient(145deg, rgba(168, 42, 49, 0.76), rgba(252, 204, 204, 0.48));
+  color: #fffdf8;
+}
+
+.message-list {
+  padding-top: 18px;
+}
+
+.message-list-inner {
+  gap: 20px;
+}
+
+.message-row {
+  max-width: 100%;
+}
+
+.message-row-assistant {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+}
+
+.message-avatar {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    0 8px 20px rgba(168, 42, 49, 0.1);
+}
+
+.message-bubble {
+  font-family: var(--font-geist-sans);
+  font-size: 15px;
+  line-height: 1.68;
+}
+
+.message-bubble-assistant {
+  max-width: min(78%, 620px);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 2px 0 0;
+  color: var(--assistant-foreground);
+}
+
+.message-bubble-user {
+  max-width: min(78%, 560px);
+  border: 1px solid var(--user-message-bubble-border);
+  border-radius: 26px;
+  background: var(--user-message-bubble-bg);
+  box-shadow: var(--user-message-bubble-shadow);
+  color: var(--user-bubble-foreground);
+  padding: 13px 17px;
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
+
+.message-note,
+.message-warning {
+  margin-top: 8px;
+  color: var(--comi-muted);
+  font-size: 12px;
+}
+
+.clawd-overlay {
+  display: none;
+}
+
+.composer-dock {
+  padding: 0 18px max(18px, env(safe-area-inset-bottom));
+}
+
+.composer-dock::before,
+.composer-dock::after {
+  content: none;
+}
+
+.chat-composer {
+  display: flex;
+  width: min(100%, 760px);
+  min-height: 96px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  border: 1px solid var(--glass-border);
+  border-radius: 32px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.74), rgba(255, 246, 239, 0.46));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    0 18px 46px rgba(168, 42, 49, 0.12),
+    0 0 32px rgba(252, 204, 204, 0.24);
+  padding: 13px;
+  backdrop-filter: blur(22px) saturate(135%);
+  -webkit-backdrop-filter: blur(22px) saturate(135%);
+}
+
+.chat-composer[data-expanded="true"] {
+  display: flex;
+  grid-template-columns: none;
+  flex-direction: column;
+  align-items: stretch;
+  border-radius: 32px;
+  padding: 13px;
+}
+
+.chat-composer-input,
+.chat-composer[data-expanded="true"] .chat-composer-input {
+  flex: 0 0 auto;
+  grid-column: auto;
+  grid-row: auto;
+  min-height: 34px;
+  width: 100%;
+  max-height: 168px;
+  padding: 2px 8px 0;
+  color: var(--comi-ink);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.chat-composer-input::placeholder {
+  color: rgba(76, 69, 64, 0.45);
+}
+
+.composer-toolbar {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+}
+
+.composer-toolbar-left {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+}
+
+.sticker-trigger-button {
+  display: grid;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: var(--radius-pill);
+  background:
+    linear-gradient(145deg, rgba(252, 204, 204, 0.62), rgba(255, 255, 255, 0.34));
+  color: var(--berry-red);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.64),
+    0 8px 18px rgba(168, 42, 49, 0.08);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 0 0 3px;
+}
+
+.composer-model-pill {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.42);
+  color: var(--comi-ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 650;
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+}
+
+.composer-model-pill span {
+  color: var(--comi-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.chat-send-button {
+  display: grid;
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: var(--radius-pill);
+  background:
+    linear-gradient(145deg, rgba(168, 42, 49, 0.98), rgba(201, 86, 96, 0.84));
+  color: #fffdf8;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 12px 28px rgba(168, 42, 49, 0.24),
+    0 0 28px rgba(168, 42, 49, 0.16);
+  padding: 0;
+}
+
+.chat-send-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.chat-send-button:disabled {
+  background: rgba(214, 210, 196, 0.68);
+  color: rgba(76, 69, 64, 0.5);
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .composer-dock {
+    padding-inline: 32px;
+  }
+}
+
+@media (max-width: 767px) {
+  .message-bubble-assistant,
+  .message-bubble-user {
+    max-width: 84%;
+  }
+
+  .chat-composer,
+  .chat-composer[data-expanded="true"] {
+    border-radius: 28px;
+  }
+
+  .comi-welcome-copy h1 {
+    font-size: clamp(22px, 5.8vw, 30px);
+  }
+
+  .composer-model-pill span {
+    display: none;
+  }
+}
+
+/* Figma COMI UI implementation: source nodes 2012:2, 2012:32, 2018:159, 2019:203. */
+:root {
+  --figma-frame-width: 402px;
+  --figma-frame-height: 874px;
+  --figma-font: var(--font-instrument-sans), "Instrument Sans", "Inter",
+    "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
+  --font-geist-sans: var(--figma-font);
+}
+
+html[data-theme="milk-tea"] {
+  --app-bg: #fff7ef;
+  --surface-glass: rgba(255, 250, 245, 0.68);
+  --surface-secondary: rgba(255, 247, 240, 0.42);
+  --primary: #c98291;
+  --primary-soft: #f5d9dd;
+  --text-primary: rgba(79, 69, 65, 0.9);
+  --text-secondary: rgba(137, 123, 117, 0.72);
+  --glow-primary: rgba(245, 217, 221, 0.5);
+  --figma-bg: var(--app-bg);
+  --figma-text-main: var(--text-primary);
+  --figma-text-muted: rgba(137, 123, 117, 0.58);
+  --figma-text-soft: var(--text-secondary);
+  --figma-title: rgba(79, 58, 52, 0.5);
+  --figma-slogan: rgba(79, 69, 65, 0.55);
+  --figma-topbar-fade:
+    linear-gradient(
+      0deg,
+      rgba(255, 247, 239, 0.164) 0%,
+      rgba(255, 247, 239, 0.09) 54.231%,
+      rgba(255, 247, 239, 0) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(255, 247, 239, 0.72) 0%,
+      rgba(255, 247, 239, 0) 100%
+    );
+  --figma-topbar-shadow: 0 5px 18px -8px rgba(201, 130, 145, 0.08);
+  --figma-topbar-button-border: rgba(255, 255, 255, 0.88);
+  --figma-topbar-button-bg:
+    linear-gradient(135deg, rgba(255, 250, 245, 0.75) 0%, rgba(245, 217, 221, 0.14) 100%);
+  --figma-topbar-button-shadow:
+    inset 0 4px 4px rgba(245, 217, 221, 0.12),
+    inset 1px 2px 5px rgba(245, 217, 221, 0.18),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.75),
+    0 4px 4px rgba(245, 217, 221, 0.12),
+    0 6px 16px -2px rgba(201, 130, 145, 0.08);
+  --figma-topbar-button-color: rgba(79, 69, 65, 0.55);
+  --figma-user-bubble: rgba(245, 217, 221, 0.42);
+  --figma-user-bubble-shadow: 0 4px 14px -4px rgba(201, 130, 145, 0.12);
+  --figma-composer-border: rgba(255, 255, 255, 0.85);
+  --figma-composer-bg: rgba(255, 250, 245, 0.66);
+  --figma-composer-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    0 8px 24px rgba(201, 130, 145, 0.09);
+  --figma-plus-filter: hue-rotate(-8deg) saturate(0.82);
+  --figma-model-bg: rgba(255, 247, 239, 0.42);
+  --figma-model-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.65);
+  --figma-model-text: rgba(79, 69, 65, 0.8);
+  --figma-send-filter: hue-rotate(-8deg) saturate(0.88);
+  --figma-send-color: rgba(255, 250, 245, 0.82);
+  --figma-home-glow-filter: hue-rotate(-10deg) saturate(0.85);
+  --figma-home-glow-opacity: 0.9;
+  --background: var(--figma-bg);
+  --foreground: var(--figma-text-main);
+}
+
+html[data-theme="sea-salt"] {
+  --app-bg: #fffdf8;
+  --surface-glass: rgba(255, 253, 248, 0.65);
+  --surface-secondary: rgba(255, 240, 214, 0.32);
+  --primary: #a82a31;
+  --primary-soft: #fccccc;
+  --text-primary: rgba(109, 100, 96, 0.9);
+  --text-secondary: rgba(150, 141, 136, 0.75);
+  --glow-primary: rgba(252, 204, 204, 0.52);
+  --figma-bg: var(--app-bg);
+  --figma-text-main: var(--text-primary);
+  --figma-text-muted: rgba(109, 100, 96, 0.55);
+  --figma-text-soft: var(--text-secondary);
+  --figma-title: rgba(43, 39, 37, 0.5);
+  --figma-slogan: rgba(0, 0, 0, 0.55);
+  --figma-topbar-fade:
+    linear-gradient(
+      0deg,
+      rgba(255, 253, 248, 0.164) 0%,
+      rgba(255, 253, 248, 0.09) 54.231%,
+      rgba(255, 253, 248, 0) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(255, 253, 248, 0.72) 0%,
+      rgba(255, 253, 248, 0) 100%
+    );
+  --figma-topbar-shadow: 0 5px 18px -8px rgba(252, 204, 204, 0.08);
+  --figma-topbar-button-border: rgba(255, 255, 255, 0.88);
+  --figma-topbar-button-bg:
+    linear-gradient(135deg, rgba(255, 253, 248, 0.75) 0%, rgba(252, 204, 204, 0.11) 100%);
+  --figma-topbar-button-shadow:
+    inset 0 4px 4px rgba(252, 204, 204, 0.12),
+    inset 1px 2px 5px rgba(252, 204, 204, 0.18),
+    inset -1px -1px 4px rgba(255, 255, 255, 0.75),
+    0 4px 4px rgba(252, 204, 204, 0.12),
+    0 6px 16px -2px rgba(168, 42, 49, 0.08);
+  --figma-topbar-button-color: rgba(109, 100, 96, 0.55);
+  --figma-user-bubble: rgba(255, 204, 204, 0.32);
+  --figma-user-bubble-shadow: 0 4px 14px -4px rgba(168, 42, 49, 0.1);
+  --figma-composer-border: rgba(255, 255, 255, 0.85);
+  --figma-composer-bg: rgba(255, 253, 248, 0.65);
+  --figma-composer-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    0 8px 24px rgba(168, 42, 49, 0.08);
+  --figma-plus-filter: none;
+  --figma-model-bg: rgba(255, 240, 214, 0.32);
+  --figma-model-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.65);
+  --figma-model-text: rgba(109, 100, 96, 0.8);
+  --figma-send-filter: none;
+  --figma-send-color: rgba(255, 253, 248, 0.8);
+  --figma-home-glow-filter: none;
+  --figma-home-glow-opacity: 1;
+  --background: var(--figma-bg);
+  --foreground: var(--figma-text-main);
+}
+
+html[data-theme="sakura-night"] {
+  --app-bg: #211b22;
+  --surface-glass: rgba(60, 48, 63, 0.68);
+  --surface-secondary: rgba(226, 166, 184, 0.14);
+  --primary: #e2a6b8;
+  --primary-soft: #4a3542;
+  --text-primary: rgba(245, 237, 241, 0.9);
+  --text-secondary: rgba(201, 183, 192, 0.76);
+  --glow-primary: rgba(226, 166, 184, 0.28);
+  --figma-bg: var(--app-bg);
+  --figma-text-main: var(--text-primary);
+  --figma-text-muted: rgba(201, 183, 192, 0.62);
+  --figma-text-soft: var(--text-secondary);
+  --figma-title: rgba(245, 237, 241, 0.72);
+  --figma-slogan: rgba(245, 237, 241, 0.58);
+  --figma-topbar-fade:
+    linear-gradient(
+      0deg,
+      rgba(33, 27, 34, 0.18) 0%,
+      rgba(33, 27, 34, 0.1) 54.231%,
+      rgba(33, 27, 34, 0) 100%
+    ),
+    linear-gradient(
+      0deg,
+      rgba(33, 27, 34, 0.78) 0%,
+      rgba(33, 27, 34, 0) 100%
+    );
+  --figma-topbar-shadow: 0 5px 18px -8px rgba(0, 0, 0, 0.28);
+  --figma-topbar-button-border: rgba(255, 238, 245, 0.18);
+  --figma-topbar-button-bg:
+    linear-gradient(135deg, rgba(82, 66, 86, 0.72) 0%, rgba(226, 166, 184, 0.12) 100%);
+  --figma-topbar-button-shadow:
+    inset 0 4px 4px rgba(226, 166, 184, 0.08),
+    inset 1px 2px 5px rgba(226, 166, 184, 0.1),
+    inset -1px -1px 4px rgba(255, 238, 245, 0.08),
+    0 4px 4px rgba(0, 0, 0, 0.16),
+    0 6px 16px -2px rgba(0, 0, 0, 0.26);
+  --figma-topbar-button-color: rgba(245, 237, 241, 0.78);
+  --figma-user-bubble: rgba(74, 53, 66, 0.62);
+  --figma-user-bubble-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.32);
+  --figma-composer-border: rgba(255, 238, 245, 0.16);
+  --figma-composer-bg: rgba(60, 48, 63, 0.7);
+  --figma-composer-shadow:
+    inset 0 1px 2px rgba(255, 238, 245, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.28);
+  --figma-plus-filter: hue-rotate(132deg) saturate(0.76) brightness(0.68);
+  --figma-model-bg: rgba(226, 166, 184, 0.12);
+  --figma-model-shadow: inset 0 1px 2px rgba(255, 238, 245, 0.12);
+  --figma-model-text: rgba(245, 237, 241, 0.8);
+  --figma-send-filter: hue-rotate(132deg) saturate(0.82) brightness(0.75);
+  --figma-send-color: rgba(245, 237, 241, 0.82);
+  --figma-home-glow-filter: hue-rotate(132deg) saturate(0.72) brightness(0.72);
+  --figma-home-glow-opacity: 0.72;
+  --background: var(--figma-bg);
+  --foreground: var(--figma-text-main);
+}
+
+body {
+  background: var(--figma-bg);
+  font-family: var(--figma-font);
+}
+
+.comi-welcome-page {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  overflow: hidden;
+  background: var(--figma-bg);
+  padding: 0;
+}
+
+.comi-welcome-page::before,
+.comi-welcome-mark::before {
+  content: none;
+}
+
+.comi-welcome-frame {
+  position: relative;
+  display: block;
+  width: var(--figma-frame-width);
+  height: var(--figma-frame-height);
+  max-width: 100vw;
+  max-height: 100dvh;
+  overflow: hidden;
+  border: 0;
+  background: var(--figma-bg);
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.comi-welcome-glow,
+.comi-home-glow {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.comi-welcome-glow img,
+.comi-home-glow img {
+  position: absolute;
+  display: block;
+  width: 150%;
+  height: 150%;
+  max-width: none;
+  inset: -25%;
+  pointer-events: none;
+}
+
+.comi-welcome-glow-1 {
+  left: calc(50% - 141px);
+  top: 265px;
+  width: 240px;
+  height: 240px;
+}
+
+.comi-welcome-glow-2 {
+  left: calc(50% - 82px);
+  top: 299px;
+  width: 240px;
+  height: 240px;
+}
+
+.comi-welcome-logo {
+  position: absolute;
+  left: 50%;
+  top: 340px;
+  width: 112px;
+  height: 112px;
+  transform: translateX(-50%);
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.comi-welcome-title,
+.comi-welcome-slogan {
+  position: absolute;
+  display: block;
+  margin: 0;
+  white-space: nowrap;
+  word-break: break-word;
+  font-family: var(--figma-font);
+  font-variation-settings: "wdth" 100;
+  line-height: normal;
+}
+
+.comi-welcome-title {
+  left: 50%;
+  top: 505px;
+  width: 76px;
+  height: 34px;
+  transform: translateX(-50%);
+  color: var(--figma-title);
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.comi-welcome-slogan {
+  left: 50%;
+  top: 544px;
+  width: 171px;
+  height: 17px;
+  transform: translateX(-50%);
+  color: var(--figma-slogan);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.app-shell {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: var(--figma-bg);
+}
+
+.chat-main {
+  position: relative;
+  display: block;
+  flex: 0 1 var(--figma-frame-width);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--figma-frame-width);
+  height: var(--figma-frame-height);
+  max-height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--figma-bg);
+  color: var(--figma-text-main);
+  font-family: var(--figma-font);
+}
+
+.chat-topbar-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: auto;
+  height: 93px;
+  background-image: var(--figma-topbar-fade);
+  box-shadow: var(--figma-topbar-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.chat-header {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 20;
+  box-sizing: border-box;
+  width: 100%;
+  height: 93px;
+  padding: 0;
+  pointer-events: none;
+}
+
+.chat-header-more-open {
+  z-index: 60;
+}
+
+.chat-header-inner {
+  position: absolute;
+  inset: 0;
+  z-index: 49;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 93px;
+  min-height: 0;
+  padding: 0;
+}
+
+.chat-header-title {
+  display: none;
+}
+
+.mobile-sidebar-trigger,
+.chat-memory-button {
+  position: absolute;
+  top: 22px;
+  display: grid;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--figma-topbar-button-border);
+  border-radius: 22px;
+  background: var(--figma-topbar-button-bg);
+  box-shadow: var(--figma-topbar-button-shadow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--figma-topbar-button-color);
+  padding: 0;
+  pointer-events: auto;
+}
+
+.mobile-sidebar-trigger {
+  left: 20px;
+}
+
+.chat-memory-button {
+  right: 20px;
+}
+
+.more-menu-backdrop {
+  align-items: flex-start;
+  padding-top: calc(22px + 44px + 16px);
+  pointer-events: auto;
+}
+
+.more-menu-panel {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+.figma-topbar-icon {
+  display: block;
+  width: 15px;
+  height: auto;
+  pointer-events: none;
+}
+
+.mobile-sidebar-trigger .figma-topbar-icon {
+  width: 14px;
+}
+
+.message-list-shell,
+.message-list {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 874px;
+}
+
+.message-list-shell {
+  z-index: 1;
+}
+
+.message-list {
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0;
+  scroll-behavior: auto;
+  scroll-padding-bottom: calc(
+    var(--composer-height, 72px) + max(16px, env(safe-area-inset-bottom)) +
+      24px
+  );
+  scrollbar-width: none;
+}
+
+.chat-main[data-comi-state="chat"] .message-list {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, 0.04) 18px,
+    rgba(0, 0, 0, 0.42) 62px,
+    black 118px,
+    black 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, 0.04) 18px,
+    rgba(0, 0, 0, 0.42) 62px,
+    black 118px,
+    black 100%
+  );
+}
+
+.message-list::-webkit-scrollbar {
+  display: none;
+}
+
+.glass-fade {
+  display: none;
+}
+
+.comi-home-hero {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 874px;
+  pointer-events: none;
+}
+
+.comi-home-glow-1 {
+  left: calc(50% - 96px);
+  top: 270px;
+  width: 150px;
+  height: 120px;
+}
+
+.comi-home-glow-1 img {
+  inset: -37.5% -30%;
+  width: 160%;
+  height: 175%;
+  filter: var(--figma-home-glow-filter);
+  opacity: var(--figma-home-glow-opacity);
+}
+
+.comi-home-glow-2 {
+  left: calc(50% - 41px);
+  top: 285px;
+  width: 145px;
+  height: 125px;
+}
+
+.comi-home-glow-2 img {
+  inset: -36% -31.03%;
+  width: 162.06%;
+  height: 172%;
+  filter: var(--figma-home-glow-filter);
+  opacity: var(--figma-home-glow-opacity);
+}
+
+.comi-home-glow-3 {
+  left: calc(50% - 56px);
+  top: 240px;
+  width: 115px;
+  height: 105px;
+}
+
+.comi-home-glow-3 img {
+  inset: -38.1% -34.78%;
+  width: 169.56%;
+  height: 176.2%;
+  filter: var(--figma-home-glow-filter);
+  opacity: var(--figma-home-glow-opacity);
+}
+
+.comi-home-glow-4 {
+  left: calc(50% - 115px);
+  top: 235px;
+  width: 230px;
+  height: 190px;
+}
+
+.comi-home-glow-4 img {
+  inset: -13.16% -10.87%;
+  width: 121.74%;
+  height: 126.32%;
+  filter: var(--figma-home-glow-filter);
+  opacity: var(--figma-home-glow-opacity);
+}
+
+.comi-home-title,
+.comi-home-subtitle {
+  position: absolute;
+  margin: 0;
+  white-space: nowrap;
+  word-break: break-word;
+  font-family: var(--figma-font);
+  font-variation-settings: "wdth" 100;
+  line-height: normal;
+}
+
+.comi-home-title {
+  left: 50%;
+  top: 426px;
+  width: 234px;
+  height: 22px;
+  transform: translateX(-50%);
+  color: var(--figma-text-main);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.comi-home-subtitle {
+  left: 50%;
+  top: 461px;
+  width: 151px;
+  height: 15px;
+  transform: translateX(-50%);
+  color: var(--figma-text-soft);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.message-list-inner {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  flex-direction: column;
+  gap: 12px;
+  padding: 100px 11px 0 19px;
+}
+
+.message-bottom-spacer {
+  display: block;
+  flex: 0 0
+    calc(
+      var(--composer-height, 72px) + max(16px, env(safe-area-inset-bottom)) +
+        24px
+    );
+  width: 100%;
+  pointer-events: none;
+}
+
+.message-row {
+  max-width: none;
+  margin: 0;
+}
+
+.message-row-assistant {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 299.636px);
+  gap: 9px;
+  align-items: start;
+  width: min(337px, 100%);
+}
+
+.message-row-user {
+  display: flex;
+  width: min(308px, calc(100% - 47px));
+  min-height: 67px;
+  align-self: flex-end;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.message-avatar {
+  position: relative;
+  display: block;
+  width: 28px;
+  height: 28px;
+  overflow: visible;
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.message-avatar-bg {
+  position: absolute;
+  left: -5px;
+  top: -3px;
+  width: 38px;
+  height: 38px;
+  max-width: none;
+  pointer-events: none;
+}
+
+.message-avatar-logo {
+  position: absolute;
+  left: 2.333px;
+  top: 7px;
+  width: 23.572px;
+  height: 13.86px;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.message-bubble {
+  margin: 0;
+  font-family: var(--figma-font);
+  font-size: 15px;
+  font-weight: 400;
+  font-variation-settings: "wdth" 100;
+  line-height: 22px;
+}
+
+.message-bubble-assistant {
+  width: 100%;
+  max-width: 299.636px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--figma-text-main);
+  padding: 0;
+}
+
+.message-bubble-user {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 67px;
+  max-width: 308px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--figma-user-bubble);
+  box-shadow: var(--figma-user-bubble-shadow);
+  color: var(--figma-text-main);
+  padding: 8px 16px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.message-content {
+  display: block;
+}
+
+.message-note,
+.message-warning {
+  margin-top: 6px;
+  color: var(--figma-text-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.composer-dock {
+  position: absolute;
+  z-index: 30;
+  left: 16px;
+  right: 16px;
+  top: 786px;
+  box-sizing: border-box;
+  width: auto;
+  height: 72px;
+  padding: 0;
+  pointer-events: none;
+}
+
+.composer-dock::before,
+.composer-dock::after {
+  content: none;
+}
+
+.chat-composer,
+.chat-composer[data-expanded="true"] {
+  position: relative;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  height: 72px;
+  min-height: 72px;
+  overflow: hidden;
+  border: 1px solid var(--figma-composer-border);
+  border-radius: 24px;
+  background: var(--figma-composer-bg);
+  box-shadow: var(--figma-composer-shadow);
+  padding: 0;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.chat-composer-input,
+.chat-composer[data-expanded="true"] .chat-composer-input {
+  position: absolute;
+  left: 16px;
+  right: 78px;
+  top: 9px;
+  width: auto;
+  height: 24px;
+  min-height: 24px;
+  max-height: 24px;
+  resize: none;
+  border: 0;
+  background: transparent;
+  color: var(--figma-text-main);
+  font-family: var(--figma-font);
+  font-size: 14px;
+  font-weight: 500;
+  font-variation-settings: "wdth" 100;
+  line-height: normal;
+  outline: none;
+  overflow: hidden;
+  padding: 4px 0 0;
+}
+
+.chat-composer-input::placeholder {
+  color: var(--figma-text-muted);
+  opacity: 1;
+}
+
+.composer-toolbar {
+  position: absolute;
+  inset: 0;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 72px;
+  pointer-events: none;
+}
+
+.composer-toolbar-left {
+  display: contents;
+}
+
+.sticker-trigger-button {
+  position: absolute;
+  left: 12px;
+  top: 38px;
+  display: grid;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 0;
+  border-radius: 14px;
+  background: transparent url("/comi/figma/composer-plus.svg") center / 44px 44px no-repeat;
+  filter: var(--figma-plus-filter);
+  color: var(--figma-text-muted);
+  box-shadow: none;
+  font-family: var(--figma-font);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: normal;
+  padding: 0 0 2px;
+  pointer-events: auto;
+}
+
+.composer-model-pill {
+  position: absolute;
+  left: 48px;
+  top: 38px;
+  display: inline-flex;
+  width: 92px;
+  height: 28px;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  border: 0;
+  border-radius: 14px;
+  background: var(--figma-model-bg);
+  box-shadow: var(--figma-model-shadow);
+  color: var(--figma-model-text);
+  font-family: var(--figma-font);
+  font-size: 12px;
+  font-weight: 500;
+  font-variation-settings: "wdth" 100;
+  line-height: normal;
+  padding: 0;
+  pointer-events: auto;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.composer-model-pill::after {
+  content: "▼";
+  margin-left: 3px;
+  font-size: 8px;
+}
+
+.composer-model-pill span {
+  display: none;
+}
+
+.chat-send-button {
+  position: absolute;
+  right: 16px;
+  top: 36px;
+  display: grid;
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 16px;
+  background: transparent url("/comi/figma/composer-send.svg") center / 60px 60px no-repeat;
+  filter: var(--figma-send-filter);
+  box-shadow: none;
+  color: var(--figma-send-color);
+  padding: 0;
+  pointer-events: auto;
+}
+
+.chat-send-button svg {
+  display: none;
+}
+
+.chat-send-button::before {
+  content: "↑";
+  margin-top: -2px;
+  font-family: var(--figma-font);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.chat-send-button:disabled {
+  background: transparent url("/comi/figma/composer-send.svg") center / 60px 60px no-repeat;
+  color: rgba(255, 253, 248, 0.45);
+  opacity: 0.58;
+}
+
+.sticker-picker {
+  left: 0;
+  right: auto;
+  bottom: 82px;
+}
+
+.clawd-overlay {
+  display: none;
+}
+
+@media (max-width: 401px), (max-height: 873px) {
+  .comi-welcome-frame {
+    margin-left: calc((100vw - 402px) / 2);
+    margin-right: 0;
+  }
+}

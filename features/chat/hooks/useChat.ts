@@ -62,6 +62,7 @@ export function useChat({
       queueMicrotask(() => {
         if (!currentConversationIdRef.current) {
           setMessages([]);
+          setInput("");
           setError(null);
           setIsLoadingMessages(false);
         }

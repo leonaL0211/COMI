@@ -13,6 +13,7 @@ type AppShellProps = {
   headerHeight: number;
   composerHeight: number;
   isSidebarOpen: boolean;
+  isHomeState: boolean;
   onCloseSidebar: () => void;
 };
 
@@ -26,6 +27,7 @@ export function AppShell({
   headerHeight,
   composerHeight,
   isSidebarOpen,
+  isHomeState,
   onCloseSidebar,
 }: AppShellProps) {
   useEffect(() => {
@@ -76,7 +78,11 @@ export function AppShell({
       >
         {sidebar}
       </div>
-      <section className="chat-main" aria-label="Berry Chat">
+      <section
+        className="chat-main"
+        data-comi-state={isHomeState ? "home" : "chat"}
+        aria-label="Berry Chat"
+      >
         {header}
         {messageList}
         {clawd}

@@ -46,7 +46,7 @@ export function useConversations() {
             return current;
           }
 
-          return nextConversations[0]?.id ?? null;
+          return null;
         });
       } catch (loadError) {
         if (loadRequestIdRef.current === requestId) {
@@ -94,6 +94,11 @@ export function useConversations() {
     setCurrentConversationId(conversationId);
   }, []);
 
+  const startNewConversation = useCallback(() => {
+    setCurrentConversationId(null);
+    setError(null);
+  }, []);
+
   const renameConversation = useCallback(
     async (conversationId: string, nextTitle: string) => {
       const title = nextTitle.trim();
@@ -133,7 +138,7 @@ export function useConversations() {
 
         setConversations(remaining);
         setCurrentConversationId((selected) =>
-          selected === conversationId ? remaining[0]?.id ?? null : selected,
+          selected === conversationId ? null : selected,
         );
         return true;
       } catch (deleteError) {
@@ -152,6 +157,7 @@ export function useConversations() {
     error,
     refreshConversations,
     createConversation,
+    startNewConversation,
     selectConversation,
     renameConversation,
     deleteConversation,

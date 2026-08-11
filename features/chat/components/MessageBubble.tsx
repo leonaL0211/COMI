@@ -1,5 +1,5 @@
-import type { UiChatMessage } from "../types";
 import Image from "next/image";
+import type { UiChatMessage } from "../types";
 import {
   getSingleStickerFromContent,
   parseStickerContent,
@@ -21,6 +21,22 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
         isUser ? "message-row-user" : "message-row-assistant",
       ].join(" ")}
     >
+      {!isUser ? (
+        <span className="message-avatar" aria-hidden="true">
+          <img
+            className="message-avatar-bg"
+            src="/comi/figma/chat-avatar-bg.svg"
+            alt=""
+            draggable={false}
+          />
+          <img
+            className="message-avatar-logo"
+            src="/comi/figma/chat-comi-avatar.png"
+            alt=""
+            draggable={false}
+          />
+        </span>
+      ) : null}
       <div
         className={[
           "message-bubble",
@@ -59,10 +75,10 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
           </div>
         )}
         {message.status === "pending" ? (
-          <p className="message-note">正在等待回复...</p>
+          <p className="message-note">Waiting for reply...</p>
         ) : null}
         {message.stopReason === "max_tokens" ? (
-          <p className="message-warning">回复达到了输出长度上限。</p>
+          <p className="message-warning">Reply reached the output limit.</p>
         ) : null}
       </div>
     </article>

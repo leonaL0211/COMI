@@ -1,6 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Instrument_Sans } from "next/font/google";
 import { PwaRegistration } from "./PwaRegistration";
 import "./globals.css";
+
+const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-instrument-sans",
+});
 
 export const metadata: Metadata = {
   title: "Berry Chat",
@@ -58,7 +65,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className="h-full antialiased"
+      className={`${instrumentSans.variable} h-full antialiased`}
       data-theme="milk-tea"
       suppressHydrationWarning
     >
