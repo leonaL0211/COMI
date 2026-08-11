@@ -76,7 +76,7 @@ export function ChatScreen() {
 
     const observer = new ResizeObserver(([entry]) => {
       if (entry) {
-        setComposerHeight(Math.ceil(entry.contentRect.height));
+        setComposerHeight(Math.ceil(composer.getBoundingClientRect().height));
       }
     });
 

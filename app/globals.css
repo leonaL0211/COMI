@@ -2923,6 +2923,9 @@ html[data-theme="sea-salt"] {
 :root {
   --figma-frame-width: 402px;
   --figma-frame-height: 874px;
+  --composer-bottom-offset: max(16px, env(safe-area-inset-bottom));
+  --message-bottom-gap: 18px;
+  --message-stack-gap: 12px;
   --figma-font: var(--font-instrument-sans), "Instrument Sans", "Inter",
     "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
   --font-geist-sans: var(--figma-font);
@@ -3232,7 +3235,7 @@ body {
   box-sizing: border-box;
   width: 100%;
   max-width: var(--figma-frame-width);
-  height: var(--figma-frame-height);
+  height: 100%;
   max-height: 100%;
   margin: 0 auto;
   overflow: hidden;
@@ -3356,8 +3359,8 @@ body {
   padding: 0;
   scroll-behavior: auto;
   scroll-padding-bottom: calc(
-    var(--composer-height, 72px) + max(16px, env(safe-area-inset-bottom)) +
-      24px
+    var(--composer-height, 72px) + var(--composer-bottom-offset) +
+      var(--message-bottom-gap)
   );
   scrollbar-width: none;
 }
@@ -3497,7 +3500,7 @@ body {
   width: 100%;
   min-height: 100%;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--message-stack-gap);
   padding: 100px 11px 0 19px;
 }
 
@@ -3505,8 +3508,8 @@ body {
   display: block;
   flex: 0 0
     calc(
-      var(--composer-height, 72px) + max(16px, env(safe-area-inset-bottom)) +
-        24px
+      var(--composer-height, 72px) + var(--composer-bottom-offset) +
+        var(--message-bottom-gap) - var(--message-stack-gap)
     );
   width: 100%;
   pointer-events: none;
@@ -3622,12 +3625,12 @@ body {
 }
 
 .composer-dock {
-  position: absolute;
+  position: fixed;
   z-index: 30;
-  left: 16px;
-  right: 16px;
+  left: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
+  right: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
   top: auto;
-  bottom: calc(16px + env(safe-area-inset-bottom));
+  bottom: var(--composer-bottom-offset);
   box-sizing: border-box;
   width: auto;
   height: 72px;
@@ -3687,6 +3690,21 @@ body {
 .chat-composer-input::placeholder {
   color: var(--figma-text-muted);
   opacity: 1;
+}
+
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  .chat-composer-input,
+  .chat-composer[data-expanded="true"] .chat-composer-input {
+    font-size: 16px;
+    line-height: 18px;
+    padding-top: 2px;
+  }
 }
 
 .composer-toolbar {
@@ -3771,11 +3789,13 @@ body {
   width: 32px;
   min-width: 32px;
   height: 32px;
+  min-height: 32px;
+  max-height: 32px;
   place-items: center;
   border: 0;
   border-radius: 16px;
   background: transparent url("/comi/figma/composer-send.svg") center / 60px 60px no-repeat;
-  filter: var(--figma-send-filter);
+  filter: none;
   box-shadow: none;
   color: var(--figma-send-color);
   padding: 0;
@@ -3797,8 +3817,9 @@ body {
 
 .chat-send-button:disabled {
   background: transparent url("/comi/figma/composer-send.svg") center / 60px 60px no-repeat;
-  color: rgba(255, 253, 248, 0.45);
-  opacity: 0.58;
+  filter: none;
+  color: rgba(255, 253, 248, 0.58);
+  opacity: 1;
 }
 
 .sticker-picker {
