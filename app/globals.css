@@ -2931,6 +2931,7 @@ html[data-theme="sea-salt"] {
   --composer-bottom-offset: max(16px, env(safe-area-inset-bottom));
   --message-bottom-gap: 18px;
   --message-stack-gap: 12px;
+  --figma-topbar-fade-height: 93px;
   --figma-font: var(--font-instrument-sans), "Instrument Sans", "Inter",
     "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
   --font-geist-sans: var(--figma-font);
@@ -3051,60 +3052,147 @@ html[data-theme="sea-salt"] {
 }
 
 html[data-theme="sakura-night"] {
-  --app-bg: #211b22;
-  --surface-glass: rgba(60, 48, 63, 0.68);
-  --surface-secondary: rgba(226, 166, 184, 0.14);
-  --primary: #e2a6b8;
-  --primary-soft: #4a3542;
-  --text-primary: rgba(245, 237, 241, 0.9);
-  --text-secondary: rgba(201, 183, 192, 0.76);
-  --glow-primary: rgba(226, 166, 184, 0.28);
+  --app-bg: #171217;
+  --surface-glass: rgba(42, 35, 44, 0.82);
+  --surface-secondary: rgba(74, 51, 68, 0.18);
+  --primary: rgba(200, 111, 149, 0.704);
+  --primary-soft: rgba(207, 166, 183, 0.18);
+  --text-primary: rgba(248, 237, 242, 0.9);
+  --text-secondary: rgba(183, 168, 173, 0.55);
+  --glow-primary: rgba(233, 166, 186, 0.2);
   --figma-bg: var(--app-bg);
   --figma-text-main: var(--text-primary);
-  --figma-text-muted: rgba(201, 183, 192, 0.62);
+  --figma-text-muted: rgba(183, 168, 173, 0.55);
+  --figma-placeholder: rgba(109, 100, 96, 0.55);
   --figma-text-soft: var(--text-secondary);
-  --figma-title: rgba(245, 237, 241, 0.72);
-  --figma-slogan: rgba(245, 237, 241, 0.58);
+  --figma-title: rgba(255, 246, 242, 0.5);
+  --figma-slogan: rgba(183, 168, 173, 0.55);
   --figma-topbar-fade:
     linear-gradient(
-      0deg,
-      rgba(33, 27, 34, 0.18) 0%,
-      rgba(33, 27, 34, 0.1) 54.231%,
-      rgba(33, 27, 34, 0) 100%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(33, 27, 34, 0.78) 0%,
-      rgba(33, 27, 34, 0) 100%
+      180deg,
+      rgba(21, 16, 27, 0.86) 0%,
+      rgba(74, 49, 68, 0.38) 48.79%,
+      rgba(74, 49, 68, 0) 100%
     );
-  --figma-topbar-shadow: 0 5px 18px -8px rgba(0, 0, 0, 0.28);
-  --figma-topbar-button-border: rgba(255, 238, 245, 0.18);
+  --figma-topbar-fade-height: 132px;
+  --figma-topbar-shadow: none;
+  --figma-topbar-button-border: rgba(255, 244, 248, 0.28);
   --figma-topbar-button-bg:
-    linear-gradient(135deg, rgba(82, 66, 86, 0.72) 0%, rgba(226, 166, 184, 0.12) 100%);
+    linear-gradient(
+      135deg,
+      rgba(255, 247, 251, 0.2) 15.91%,
+      rgba(246, 221, 232, 0.3) 50.37%,
+      rgba(217, 184, 200, 0.4) 87.5%
+    );
   --figma-topbar-button-shadow:
-    inset 0 4px 4px rgba(226, 166, 184, 0.08),
-    inset 1px 2px 5px rgba(226, 166, 184, 0.1),
-    inset -1px -1px 4px rgba(255, 238, 245, 0.08),
-    0 4px 4px rgba(0, 0, 0, 0.16),
-    0 6px 16px -2px rgba(0, 0, 0, 0.26);
-  --figma-topbar-button-color: rgba(245, 237, 241, 0.78);
-  --figma-user-bubble: rgba(74, 53, 66, 0.62);
-  --figma-user-bubble-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.32);
-  --figma-composer-border: rgba(255, 238, 245, 0.16);
-  --figma-composer-bg: rgba(60, 48, 63, 0.7);
+    0 2px 8px rgba(255, 213, 228, 0.12),
+    0 4px 24px rgba(231, 168, 195, 0.18),
+    0 8px 18px rgba(0, 0, 0, 0.18),
+    inset 0 -2px 8px rgba(255, 221, 204, 0.2),
+    inset 0 1px 6px rgba(255, 255, 255, 0.1);
+  --figma-topbar-button-color: rgba(255, 246, 242, 0.65);
+  --figma-user-bubble:
+    linear-gradient(
+      99.958deg,
+      rgba(201, 133, 164, 0.0896) 3.2%,
+      rgba(168, 94, 131, 0.08) 50.38%,
+      rgba(117, 70, 97, 0.064) 99.59%
+    );
+  --figma-user-bubble-border: rgba(255, 221, 233, 0.16);
+  --figma-user-bubble-border-width: 1px;
+  --figma-user-bubble-shadow:
+    0 4px 4px rgba(217, 141, 174, 0.1),
+    0 6px 18px rgba(0, 0, 0, 0.16),
+    inset 0 4px 4px rgba(255, 247, 251, 0.12);
+  --figma-composer-border: rgba(246, 220, 230, 0.14);
+  --figma-composer-bg:
+    linear-gradient(0deg, rgba(74, 51, 68, 0.18), rgba(74, 51, 68, 0.18)),
+    linear-gradient(0deg, rgba(42, 35, 44, 0.82), rgba(42, 35, 44, 0.82));
   --figma-composer-shadow:
-    inset 0 1px 2px rgba(255, 238, 245, 0.12),
-    0 8px 24px rgba(0, 0, 0, 0.28);
-  --figma-plus-filter: hue-rotate(132deg) saturate(0.76) brightness(0.68);
-  --figma-model-bg: rgba(226, 166, 184, 0.12);
-  --figma-model-shadow: inset 0 1px 2px rgba(255, 238, 245, 0.12);
-  --figma-model-text: rgba(245, 237, 241, 0.8);
-  --figma-send-filter: hue-rotate(132deg) saturate(0.82) brightness(0.75);
-  --figma-send-color: rgba(245, 237, 241, 0.82);
-  --figma-home-glow-filter: hue-rotate(132deg) saturate(0.72) brightness(0.72);
-  --figma-home-glow-opacity: 0.72;
-  --background: var(--figma-bg);
-  --foreground: var(--figma-text-main);
+    0 2px 10px rgba(200, 110, 139, 0.1),
+    0 10px 28px rgba(0, 0, 0, 0.18),
+    inset 0 1px 6px rgba(255, 247, 251, 0.1);
+  --figma-composer-blur: 10px;
+  --figma-plus-filter: none;
+  --figma-plus-bg: rgba(243, 215, 224, 0.18);
+  --figma-plus-border: rgba(255, 245, 250, 0.24);
+  --figma-plus-shadow:
+    0 3px 10px -2px rgba(255, 204, 204, 0.6),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  --figma-plus-color: rgba(248, 230, 237, 0.72);
+  --figma-plus-blur: 7px;
+  --figma-model-bg: rgba(207, 166, 183, 0.18);
+  --figma-model-border: rgba(255, 244, 248, 0.14);
+  --figma-model-border-width: 1px;
+  --figma-model-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 4px rgba(255, 255, 255, 0.12);
+  --figma-model-text: rgba(255, 247, 251, 0.88);
+  --figma-model-blur: 6px;
+  --figma-send-bg:
+    linear-gradient(
+      180deg,
+      rgba(200, 111, 149, 0.704) 0%,
+      rgba(184, 92, 134, 0.656) 50.36%,
+      rgba(143, 74, 115, 0.624) 100%
+    );
+  --figma-send-border: rgba(255, 217, 232, 0.18);
+  --figma-send-shadow:
+    0 6px 16px -2px rgba(78, 33, 58, 0.26),
+    0 2px 6px -2px rgba(231, 167, 196, 0.16),
+    inset 0 1px 3px rgba(255, 248, 252, 0.25),
+    inset 0 -1px 6px rgba(126, 62, 99, 0.16),
+    inset 0 1px 2px rgba(255, 255, 255, 0.75);
+  --figma-send-color: rgba(255, 247, 251, 0.8);
+  --figma-home-glow-filter: none;
+  --figma-home-glow-opacity: 1;
+  --background: var(--app-bg);
+  --background-deep: #15101b;
+  --background-visual: var(--app-bg);
+  --foreground: var(--text-primary);
+  --muted: rgba(74, 51, 68, 0.34);
+  --muted-foreground: var(--text-secondary);
+  --surface: rgba(42, 35, 44, 0.72);
+  --surface-strong: rgba(42, 35, 44, 0.9);
+  --surface-soft: rgba(207, 166, 183, 0.12);
+  --border: rgba(255, 244, 248, 0.14);
+  --border-strong: rgba(255, 221, 233, 0.16);
+  --accent: rgba(200, 111, 149, 0.82);
+  --accent-hover: rgba(231, 167, 196, 0.82);
+  --accent-soft: rgba(207, 166, 183, 0.18);
+  --accent-foreground: rgba(255, 247, 251, 0.92);
+  --danger: rgba(231, 167, 196, 0.9);
+  --success: rgba(180, 205, 170, 0.82);
+  --warning: rgba(229, 190, 142, 0.82);
+  --user-bubble: var(--figma-user-bubble);
+  --user-bubble-foreground: rgba(255, 247, 251, 0.9);
+  --assistant-foreground: rgba(248, 237, 242, 0.9);
+  --glass-background: rgba(42, 35, 44, 0.72);
+  --glass-background-strong: rgba(42, 35, 44, 0.9);
+  --glass-border: rgba(255, 244, 248, 0.14);
+  --topbar-glass-button-bg: var(--figma-topbar-button-bg);
+  --topbar-glass-button-border: var(--figma-topbar-button-border);
+  --topbar-glass-button-shadow: var(--figma-topbar-button-shadow);
+  --topbar-icon: rgba(255, 246, 242, 0.65);
+  --topbar-avatar-bg: #ffffff;
+  --topbar-avatar-text: #171217;
+  --topbar-more-button-bg: var(--figma-topbar-button-bg);
+  --topbar-more-button-border: var(--figma-topbar-button-border);
+  --topbar-more-button-dot: rgba(255, 247, 250, 0.8);
+  --topbar-more-button-shadow: var(--figma-topbar-button-shadow);
+  --user-message-bubble-bg: var(--figma-user-bubble);
+  --user-message-bubble-border: var(--figma-user-bubble-border);
+  --user-message-bubble-shadow: var(--figma-user-bubble-shadow);
+  --more-menu-backdrop: rgba(0, 0, 0, 0.34);
+  --more-menu-panel-bg:
+    linear-gradient(0deg, rgba(74, 51, 68, 0.18), rgba(74, 51, 68, 0.18)),
+    linear-gradient(0deg, rgba(42, 35, 44, 0.9), rgba(42, 35, 44, 0.9));
+  --theme-choice-selected: rgba(207, 166, 183, 0.18);
+  --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.22);
+  --shadow-floating:
+    0 2px 10px rgba(200, 110, 139, 0.1),
+    0 10px 28px rgba(0, 0, 0, 0.24),
+    inset 0 1px 6px rgba(255, 247, 251, 0.08);
 }
 
 body {
@@ -3255,7 +3343,7 @@ body {
   right: 0;
   top: 0;
   width: auto;
-  height: calc(93px + env(safe-area-inset-top));
+  height: calc(var(--figma-topbar-fade-height) + env(safe-area-inset-top));
   background-image: var(--figma-topbar-fade);
   box-shadow: var(--figma-topbar-shadow);
   backdrop-filter: blur(12px);
@@ -3603,7 +3691,8 @@ body {
   min-height: 67px;
   max-width: 308px;
   overflow: hidden;
-  border: 0;
+  border: var(--figma-user-bubble-border-width, 0) solid
+    var(--figma-user-bubble-border, transparent);
   border-radius: 18px;
   background: var(--figma-user-bubble);
   box-shadow: var(--figma-user-bubble-shadow);
@@ -3664,8 +3753,8 @@ body {
   box-shadow: var(--figma-composer-shadow);
   padding: 0;
   pointer-events: auto;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(var(--figma-composer-blur, 12px));
+  -webkit-backdrop-filter: blur(var(--figma-composer-blur, 12px));
 }
 
 .chat-composer-input,
@@ -3693,7 +3782,7 @@ body {
 }
 
 .chat-composer-input::placeholder {
-  color: var(--figma-text-muted);
+  color: var(--figma-placeholder, var(--figma-text-muted));
   opacity: 1;
 }
 
@@ -3777,7 +3866,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0;
-  border: 0;
+  border: var(--figma-model-border-width, 0) solid
+    var(--figma-model-border, transparent);
   border-radius: 14px;
   background: var(--figma-model-bg);
   box-shadow: var(--figma-model-shadow);
@@ -3789,8 +3879,8 @@ body {
   line-height: normal;
   padding: 0;
   pointer-events: auto;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(var(--figma-model-blur, 6px));
+  -webkit-backdrop-filter: blur(var(--figma-model-blur, 6px));
 }
 
 .composer-model-pill::after {
@@ -3861,6 +3951,122 @@ body {
   color: rgba(255, 253, 248, 0.8);
   opacity: 1;
   transform: none;
+}
+
+html[data-theme="sakura-night"] .comi-welcome-glow,
+html[data-theme="sakura-night"] .comi-home-glow {
+  border-radius: 999px;
+}
+
+html[data-theme="sakura-night"] .comi-welcome-glow img,
+html[data-theme="sakura-night"] .comi-home-glow img {
+  display: none;
+}
+
+html[data-theme="sakura-night"] .comi-welcome-glow-1 {
+  left: calc(50% - 155px);
+  top: 282px;
+  width: 240px;
+  height: 240px;
+  background: rgba(252, 204, 204, 0.2);
+  filter: blur(30px);
+}
+
+html[data-theme="sakura-night"] .comi-welcome-glow-2 {
+  left: calc(50% - 82px);
+  top: 299px;
+  width: 240px;
+  height: 240px;
+  background: rgba(233, 166, 186, 0.2);
+  filter: blur(30px);
+}
+
+html[data-theme="sakura-night"] .comi-welcome-logo {
+  top: 363px;
+  width: 129px;
+  height: 112px;
+  object-fit: contain;
+}
+
+html[data-theme="sakura-night"] .comi-welcome-slogan {
+  top: 539px;
+}
+
+html[data-theme="sakura-night"] .comi-home-title {
+  color: var(--figma-title);
+}
+
+html[data-theme="sakura-night"] .mobile-sidebar-trigger,
+html[data-theme="sakura-night"] .chat-memory-button {
+  border-width: 1.5px;
+}
+
+html[data-theme="sakura-night"] .comi-home-glow-1 {
+  background: rgba(233, 166, 186, 0.2);
+  filter: blur(22.5px);
+}
+
+html[data-theme="sakura-night"] .comi-home-glow-2 {
+  background: rgba(255, 240, 214, 0.08);
+  filter: blur(22.5px);
+}
+
+html[data-theme="sakura-night"] .comi-home-glow-3 {
+  background: rgba(142, 88, 117, 0.1);
+  filter: blur(20px);
+}
+
+html[data-theme="sakura-night"] .comi-home-glow-4 {
+  left: calc(50% - 103px);
+  background: rgba(182, 75, 108, 0.06);
+  filter: blur(12.5px);
+}
+
+html[data-theme="sakura-night"] .sticker-trigger-button,
+html[data-theme="sakura-night"] .sticker-trigger-button:hover,
+html[data-theme="sakura-night"] .sticker-trigger-button:focus-visible,
+html[data-theme="sakura-night"] .sticker-trigger-button:disabled {
+  border: 1px solid var(--figma-plus-border);
+  background: var(--figma-plus-bg);
+  box-shadow: var(--figma-plus-shadow);
+  filter: none;
+  color: var(--figma-plus-color);
+  opacity: 1;
+  backdrop-filter: blur(var(--figma-plus-blur));
+  -webkit-backdrop-filter: blur(var(--figma-plus-blur));
+}
+
+html[data-theme="sakura-night"] .chat-send-button,
+html[data-theme="sakura-night"] .chat-send-button:hover,
+html[data-theme="sakura-night"] .chat-send-button:active,
+html[data-theme="sakura-night"] .chat-send-button:disabled {
+  border: 1px solid var(--figma-send-border);
+  background-color: transparent;
+  background-image: var(--figma-send-bg);
+  background-position: center;
+  background-size: auto;
+  box-shadow: var(--figma-send-shadow);
+  color: var(--figma-send-color);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+html[data-theme="sakura-night"] .chat-send-button::before {
+  color: var(--figma-send-color);
+}
+
+html[data-theme="sakura-night"] .memory-backdrop,
+html[data-theme="sakura-night"] .mobile-sidebar-backdrop {
+  background: var(--more-menu-backdrop);
+}
+
+html[data-theme="sakura-night"] .sticker-picker,
+html[data-theme="sakura-night"] .popover-content,
+html[data-theme="sakura-night"] .memory-panel,
+html[data-theme="sakura-night"] .conversation-sidebar {
+  border-color: var(--glass-border);
+  background: var(--surface-strong);
+  color: var(--foreground);
 }
 
 .sticker-picker {

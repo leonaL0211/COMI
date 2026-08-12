@@ -26,8 +26,8 @@ export const themeOptions: readonly ThemeOption[] = [
   {
     id: "sakura-night",
     name: "夜樱",
-    colors: ["#E2A6B8", "#4A3542", "#211B22", "#F5EDF1"],
-    themeColor: "#211b22",
+    colors: ["#171217", "#4A3144", "#E9A6BA", "#FFF7FB"],
+    themeColor: "#171217",
   },
 ] as const;
 

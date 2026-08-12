@@ -46,7 +46,7 @@ try {
   var colors = {
     "milk-tea": "#fff7ef",
     "sea-salt": "#fff0d6",
-    "sakura-night": "#211b22"
+    "sakura-night": "#171217"
   };
   var themeColor = document.querySelector('meta[name="theme-color"]');
   if (themeColor) {
