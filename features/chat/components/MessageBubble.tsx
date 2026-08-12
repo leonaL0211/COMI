@@ -25,13 +25,13 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
         <span className="message-avatar" aria-hidden="true">
           <img
             className="message-avatar-bg"
-            src="/comi/figma/chat-avatar-bg.svg"
+            src="/comi/figma/chat-avatar-bg.svg?v=20260813-cache-fix"
             alt=""
             draggable={false}
           />
           <img
             className="message-avatar-logo"
-            src="/comi/figma/chat-comi-avatar.png"
+            src="/comi/figma/chat-comi-avatar.png?v=20260813-cache-fix"
             alt=""
             draggable={false}
           />

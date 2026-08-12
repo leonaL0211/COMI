@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans } from "next/font/google";
+import { appBuildId } from "@/shared/build-info";
 import { PwaRegistration } from "./PwaRegistration";
 import "./globals.css";
 
@@ -67,6 +68,7 @@ export default function RootLayout({
       lang="zh-CN"
       className={`${instrumentSans.variable} h-full antialiased`}
       data-theme="milk-tea"
+      data-build-id={appBuildId}
       suppressHydrationWarning
     >
       <head>

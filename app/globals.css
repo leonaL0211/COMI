@@ -253,6 +253,10 @@ body {
   font-family: var(--font-geist-sans);
 }
 
+html {
+  background-color: var(--figma-bg, var(--background));
+}
+
 nextjs-portal:empty {
   pointer-events: none;
 }
@@ -262,7 +266,7 @@ body > * {
   max-width: 100%;
   min-width: 0;
   min-height: 0;
-  background: var(--background-visual), var(--background);
+  background: var(--figma-bg, var(--background-visual)), var(--background);
 }
 
 button,
@@ -3829,7 +3833,12 @@ body {
 }
 
 .composer-toolbar-left {
-  display: contents;
+  position: absolute;
+  left: 0;
+  right: 78px;
+  bottom: 0;
+  height: 72px;
+  pointer-events: none;
 }
 
 .sticker-trigger-button {
@@ -3853,6 +3862,7 @@ body {
   line-height: normal;
   padding: 0 0 2px;
   pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .composer-model-pill {
@@ -3879,6 +3889,7 @@ body {
   line-height: normal;
   padding: 0;
   pointer-events: auto;
+  touch-action: manipulation;
   backdrop-filter: blur(var(--figma-model-blur, 6px));
   -webkit-backdrop-filter: blur(var(--figma-model-blur, 6px));
 }
@@ -4155,7 +4166,7 @@ html[data-theme="sakura-night"] .conversation-sidebar {
   }
 
   .composer-toolbar {
-    bottom: env(safe-area-inset-bottom, 0px);
+    bottom: 0;
   }
 }
 
