@@ -253,6 +253,10 @@ body {
   font-family: var(--font-geist-sans);
 }
 
+nextjs-portal:empty {
+  pointer-events: none;
+}
+
 body > * {
   width: 100%;
   max-width: 100%;
@@ -1989,7 +1993,8 @@ select:focus-visible {
 
 .popover-content {
   position: fixed;
-  z-index: 48;
+  z-index: 52;
+  pointer-events: auto;
   min-width: 148px;
   max-width: min(240px, calc(100vw - 24px));
   transform-origin: top right;
@@ -3800,21 +3805,26 @@ body {
 
 .chat-send-button {
   position: absolute;
-  right: 16px;
+  right: 8px;
   top: 36px;
   display: grid;
-  width: 32px;
-  min-width: 32px;
-  height: 32px;
-  min-height: 32px;
-  max-height: 32px;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  max-height: 40px;
   place-items: center;
   border: 0;
-  border-radius: 16px;
-  background: transparent url("/comi/figma/composer-send.svg") center / 60px 60px no-repeat;
+  border-radius: 20px;
+  background-color: transparent;
+  background-image: url("/comi/figma/composer-send.svg?v=20260813-soft-glow");
+  background-position: center calc(50% + 5px);
+  background-repeat: no-repeat;
+  background-size: 68px 68px;
   filter: none;
   box-shadow: none;
-  color: var(--figma-send-color);
+  color: rgba(255, 253, 248, 0.8);
+  overflow: visible;
   padding: 0;
   pointer-events: auto;
 }
@@ -3825,24 +3835,122 @@ body {
 
 .chat-send-button::before {
   content: "↑";
-  margin-top: -2px;
+  position: absolute;
+  top: 12.5px;
+  left: 15px;
+  width: 10px;
+  height: 15px;
+  margin: 0;
   font-family: var(--figma-font);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
-  line-height: normal;
+  line-height: 14px;
+  text-align: left;
 }
 
+.chat-send-button:hover,
+.chat-send-button:active,
 .chat-send-button:disabled {
-  background: transparent url("/comi/figma/composer-send.svg") center / 60px 60px no-repeat;
+  background-color: transparent;
+  background-image: url("/comi/figma/composer-send.svg?v=20260813-soft-glow");
+  background-position: center calc(50% + 5px);
+  background-repeat: no-repeat;
+  background-size: 68px 68px;
+  box-shadow: none;
   filter: none;
-  color: rgba(255, 253, 248, 0.58);
+  color: rgba(255, 253, 248, 0.8);
   opacity: 1;
+  transform: none;
 }
 
 .sticker-picker {
   left: 0;
   right: auto;
   bottom: 82px;
+}
+
+.message-row-assistant {
+  grid-template-columns: 28px minmax(0, 1fr);
+  width: 100%;
+  max-width: 100%;
+}
+
+.message-bubble-assistant {
+  max-width: none;
+}
+
+.composer-dock {
+  height: calc(72px + var(--composer-extra-height, 0px));
+}
+
+.chat-composer,
+.chat-composer[data-expanded="true"] {
+  height: calc(72px + var(--composer-extra-height, 0px));
+}
+
+.chat-composer-input,
+.chat-composer[data-expanded="true"] .chat-composer-input {
+  height: var(--composer-input-height, 24px);
+  max-height: 62px;
+  font-weight: 400;
+}
+
+.chat-composer-input::placeholder {
+  opacity: 0.74;
+}
+
+.composer-toolbar {
+  inset: auto 0 0;
+}
+
+.sticker-trigger-button,
+.composer-model-pill {
+  top: auto;
+  bottom: 6px;
+}
+
+.composer-model-pill::after {
+  content: "";
+}
+
+.chat-send-button {
+  top: auto;
+  bottom: 6px;
+}
+
+.sticker-picker {
+  left: clamp(12px, calc((100vw - var(--figma-frame-width)) / 2 + 16px), 16px);
+  right: auto;
+  bottom: calc(100% + 10px);
+  width: min(310px, calc(100vw - 24px));
+  transform: none;
+}
+
+@media (display-mode: standalone) {
+  :root {
+    --composer-bottom-offset: 0px;
+  }
+
+  .composer-dock {
+    bottom: 0;
+    height: calc(
+      72px + var(--composer-extra-height, 0px) +
+        env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .chat-composer,
+  .chat-composer[data-expanded="true"] {
+    height: calc(
+      72px + var(--composer-extra-height, 0px) +
+        env(safe-area-inset-bottom, 0px)
+    );
+    min-height: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .composer-toolbar {
+    bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 .clawd-overlay {

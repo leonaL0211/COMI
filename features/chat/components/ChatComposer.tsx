@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
-import type { FormEvent, Ref } from "react";
+import type { CSSProperties, FormEvent, Ref } from "react";
 import { Popover } from "@/features/ui/Popover";
 import { StickerPicker } from "@/features/stickers/StickerPicker";
 import {
@@ -28,6 +28,14 @@ type ChatComposerProps = {
   onSendSticker: (stickerId: StickerId) => void;
 };
 
+const minTextareaHeight = 24;
+const maxTextareaRows = 3;
+
+type ComposerStyle = CSSProperties & {
+  "--composer-input-height": string;
+  "--composer-extra-height": string;
+};
+
 export function ChatComposer({
   value,
   isSending,
@@ -45,7 +53,9 @@ export function ChatComposer({
   onSendSticker,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const skipStickerClickRef = useRef(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [textareaHeight, setTextareaHeight] = useState(minTextareaHeight);
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
@@ -55,12 +65,53 @@ export function ChatComposer({
     }
 
     textarea.style.height = "auto";
-    textarea.style.height = "24px";
-    setIsExpanded(false);
+    const computedStyle = window.getComputedStyle(textarea);
+    const lineHeight = Number.parseFloat(computedStyle.lineHeight) || 18;
+    const paddingTop = Number.parseFloat(computedStyle.paddingTop) || 0;
+    const paddingBottom = Number.parseFloat(computedStyle.paddingBottom) || 0;
+    const maxTextareaHeight = Math.ceil(
+      lineHeight * maxTextareaRows + paddingTop + paddingBottom,
+    );
+    const nextHeight = Math.min(
+      Math.max(textarea.scrollHeight, minTextareaHeight),
+      maxTextareaHeight,
+    );
+
+    textarea.style.height = `${nextHeight}px`;
+    textarea.style.overflowY =
+      textarea.scrollHeight > maxTextareaHeight ? "auto" : "hidden";
+    setTextareaHeight(nextHeight);
+    setIsExpanded(nextHeight > minTextareaHeight || value.includes("\n"));
   }, [value]);
 
+  const composerStyle: ComposerStyle = {
+    "--composer-input-height": `${textareaHeight}px`,
+    "--composer-extra-height": `${Math.max(
+      0,
+      textareaHeight - minTextareaHeight,
+    )}px`,
+  };
+
+  function handleStickerTriggerPointerUp() {
+    if (isDisabled) {
+      return;
+    }
+
+    skipStickerClickRef.current = true;
+    onToggleStickerPicker();
+  }
+
+  function handleStickerTriggerClick() {
+    if (skipStickerClickRef.current) {
+      skipStickerClickRef.current = false;
+      return;
+    }
+
+    onToggleStickerPicker();
+  }
+
   return (
-    <div className="composer-dock">
+    <div className="composer-dock" style={composerStyle}>
       <StickerPicker
         isOpen={isStickerPickerOpen}
         isDisabled={isDisabled}
@@ -96,7 +147,11 @@ export function ChatComposer({
               aria-label="Open stickers"
               aria-expanded={isStickerPickerOpen}
               onPointerDown={(event) => event.stopPropagation()}
-              onClick={onToggleStickerPicker}
+              onPointerUp={(event) => {
+                event.stopPropagation();
+                handleStickerTriggerPointerUp();
+              }}
+              onClick={handleStickerTriggerClick}
             >
               +
             </button>
