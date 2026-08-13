@@ -2584,7 +2584,7 @@ html[data-theme="sea-salt"] {
 :root {
   --figma-frame-width: 402px;
   --figma-frame-height: 874px;
-  --composer-bottom-offset: 16px;
+  --composer-bottom-offset: max(16px, env(safe-area-inset-bottom));
   --message-bottom-gap: 18px;
   --message-stack-gap: 12px;
   --figma-topbar-fade-height: 93px;
@@ -3376,44 +3376,29 @@ body {
 
 .composer-dock {
   position: fixed;
-  z-index: 50;
-  left: 0;
-  right: 0;
+  z-index: 30;
+  left: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
+  right: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
   top: auto;
-  bottom: 0;
+  bottom: var(--composer-bottom-offset);
   box-sizing: border-box;
   width: auto;
   height: calc(72px + var(--composer-bottom-offset));
   padding: 0;
-  margin: 0;
-  pointer-events: auto;
-}
-
-.composer-dock::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 16px;
-  background: var(--figma-bg);
   pointer-events: none;
 }
 
+.composer-dock::before,
 .composer-dock::after {
   content: none;
 }
 
 .chat-composer,
 .chat-composer[data-expanded="true"] {
-  position: absolute;
-  left: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
-  right: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
-  bottom: var(--composer-bottom-offset);
+  position: relative;
   display: block;
   box-sizing: border-box;
-  width: auto;
+  width: 100%;
   max-width: none;
   height: 72px;
   min-height: 72px;
@@ -3479,16 +3464,11 @@ body {
   box-sizing: border-box;
   width: 100%;
   height: 72px;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .composer-toolbar-left {
-  position: absolute;
-  left: 0;
-  right: 78px;
-  bottom: 0;
-  height: 72px;
-  pointer-events: auto;
+  display: contents;
 }
 
 .sticker-trigger-button {
@@ -3571,6 +3551,11 @@ body {
   content: "▼";
   margin-left: 3px;
   font-size: 8px;
+}
+
+.composer-model-pill::after,
+.chat-send-button::before {
+  pointer-events: none;
 }
 
 .composer-model-pill span {
@@ -3770,9 +3755,7 @@ html[data-theme="sakura-night"] .conversation-sidebar {
 }
 
 .composer-dock {
-  height: calc(
-    72px + var(--composer-extra-height, 0px) + var(--composer-bottom-offset)
-  );
+  height: calc(72px + var(--composer-extra-height, 0px));
 }
 
 .chat-composer,
@@ -3816,6 +3799,33 @@ html[data-theme="sakura-night"] .conversation-sidebar {
   bottom: calc(100% + 10px);
   width: min(310px, calc(100vw - 24px));
   transform: none;
+}
+
+@media (display-mode: standalone) {
+  :root {
+    --composer-bottom-offset: 0px;
+  }
+
+  .composer-dock {
+    bottom: 0;
+    height: calc(
+      72px + var(--composer-extra-height, 0px) +
+        env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .chat-composer,
+  .chat-composer[data-expanded="true"] {
+    height: calc(
+      72px + var(--composer-extra-height, 0px) +
+        env(safe-area-inset-bottom, 0px)
+    );
+    min-height: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .composer-toolbar {
+    bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 .clawd-overlay {

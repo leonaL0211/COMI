@@ -2,7 +2,6 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, FormEvent, Ref } from "react";
-import { createPortal } from "react-dom";
 import { StickerPicker } from "@/features/stickers/StickerPicker";
 import {
   CHAT_MODEL_OPTIONS,
@@ -54,13 +53,8 @@ export function ChatComposer({
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const skipStickerClickRef = useRef(false);
-  const [portalReady, setPortalReady] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(minTextareaHeight);
-
-  useLayoutEffect(() => {
-    setPortalReady(true);
-  }, []);
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
@@ -87,7 +81,7 @@ export function ChatComposer({
       textarea.scrollHeight > maxTextareaHeight ? "auto" : "hidden";
     setTextareaHeight(nextHeight);
     setIsExpanded(nextHeight > minTextareaHeight || value.includes("\n"));
-  }, [portalReady, value]);
+  }, [value]);
 
   const composerStyle: ComposerStyle = {
     "--composer-input-height": `${textareaHeight}px`,
@@ -115,7 +109,7 @@ export function ChatComposer({
     onToggleStickerPicker();
   }
 
-  const composerDock = (
+  return (
     <div className="composer-dock" style={composerStyle}>
       <StickerPicker
         isOpen={isStickerPickerOpen}
@@ -205,6 +199,4 @@ export function ChatComposer({
       </form>
     </div>
   );
-
-  return portalReady ? createPortal(composerDock, document.body) : null;
 }
