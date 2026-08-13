@@ -55,7 +55,6 @@ export function ChatComposer({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const skipStickerClickRef = useRef(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isModelMenuOpen, setIsModelMenuOpen] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(minTextareaHeight);
 
   useLayoutEffect(() => {
@@ -158,8 +157,6 @@ export function ChatComposer({
             </button>
             <Popover
               ariaLabel="Select chat model"
-              open={isModelMenuOpen}
-              onOpenChange={setIsModelMenuOpen}
               trigger={(triggerProps) => (
                 <button
                   {...triggerProps}
@@ -180,10 +177,7 @@ export function ChatComposer({
                   type="button"
                   role="menuitemradio"
                   aria-checked={option.key === selectedModel}
-                  onClick={() => {
-                    onSelectModel(option.key);
-                    setIsModelMenuOpen(false);
-                  }}
+                  onClick={() => onSelectModel(option.key)}
                 >
                   <span>{option.label}</span>
                   {option.key === selectedModel ? (

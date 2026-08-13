@@ -22,8 +22,6 @@ type PopoverProps = {
   children: ReactNode;
   contentClassName?: string;
   closeOnButtonClick?: boolean;
-  open?: boolean;
-  onOpenChange?: (isOpen: boolean) => void;
 };
 
 export function Popover({
@@ -32,35 +30,18 @@ export function Popover({
   children,
   contentClassName = "",
   closeOnButtonClick = true,
-  open,
-  onOpenChange,
 }: PopoverProps) {
   const contentId = useId();
   const rootRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
-  const isOpen = open ?? uncontrolledOpen;
-
-  const setOpen = useCallback(
-    (nextOpen: boolean | ((current: boolean) => boolean)) => {
-      const resolvedOpen =
-        typeof nextOpen === "function" ? nextOpen(isOpen) : nextOpen;
-
-      if (open === undefined) {
-        setUncontrolledOpen(resolvedOpen);
-      }
-
-      onOpenChange?.(resolvedOpen);
-    },
-    [isOpen, onOpenChange, open],
-  );
 
   const close = useCallback(() => {
-    setOpen(false);
+    setIsOpen(false);
     window.requestAnimationFrame(() => triggerRef.current?.focus());
-  }, [setOpen]);
+  }, []);
 
   const updatePosition = useCallback(() => {
     const triggerRect = triggerRef.current?.getBoundingClientRect();
@@ -140,7 +121,7 @@ export function Popover({
         ref: triggerRef,
         "aria-expanded": isOpen,
         "aria-controls": contentId,
-        onClick: () => setOpen((current) => !current),
+        onClick: () => setIsOpen((current) => !current),
       })}
       {isOpen ? (
         <div

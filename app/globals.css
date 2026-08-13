@@ -238,7 +238,7 @@ html[data-theme="sakura-night"] {
 
 html,
 body {
-  background-color: var(--figma-bg, var(--background));
+  background: var(--background-visual), var(--background);
   height: 100%;
   min-height: 100%;
   overflow: hidden;
@@ -248,26 +248,17 @@ body {
 }
 
 body {
-  background-color: var(--figma-bg, var(--background));
+  background: var(--background-visual), var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans);
 }
 
-nextjs-portal:empty {
-  pointer-events: none;
+html {
+  background-color: var(--figma-bg, var(--background));
 }
 
-.app-viewport {
-  position: relative;
-  isolation: isolate;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  height: 100vh;
-  height: 100dvh;
-  min-height: 0;
-  background: var(--figma-bg, var(--background));
-  overflow: hidden;
+nextjs-portal:empty {
+  pointer-events: none;
 }
 
 button,
@@ -2053,10 +2044,9 @@ select:focus-visible {
     width: 100%;
     min-height: 100%;
     overflow: hidden;
-    background-color: var(--figma-bg, var(--background));
+    background: var(--background-visual), var(--background);
   }
 
-  .app-viewport,
   .app-shell {
     height: 100vh;
     height: 100dvh;
@@ -2067,10 +2057,6 @@ select:focus-visible {
 }
 
 @media (min-width: 768px) {
-  .app-shell {
-    --sidebar-offset: var(--sidebar-width);
-  }
-
   .mobile-sidebar-trigger,
   .mobile-sidebar-close,
   .mobile-sidebar-backdrop {
@@ -2598,6 +2584,7 @@ html[data-theme="sea-salt"] {
 :root {
   --figma-frame-width: 402px;
   --figma-frame-height: 874px;
+  --composer-bottom-offset: max(16px, env(safe-area-inset-bottom));
   --message-bottom-gap: 18px;
   --message-stack-gap: 12px;
   --figma-topbar-fade-height: 93px;
@@ -3121,7 +3108,8 @@ body {
   padding: 0;
   scroll-behavior: auto;
   scroll-padding-bottom: calc(
-    var(--composer-height, 72px) + var(--message-bottom-gap)
+    var(--composer-height, 72px) + var(--composer-bottom-offset) +
+      var(--message-bottom-gap)
   );
   scrollbar-width: none;
 }
@@ -3269,8 +3257,8 @@ body {
   display: block;
   flex: 0 0
     calc(
-      var(--composer-height, 72px) + var(--message-bottom-gap) -
-        var(--message-stack-gap)
+      var(--composer-height, 72px) + var(--composer-bottom-offset) +
+        var(--message-bottom-gap) - var(--message-stack-gap)
     );
   width: 100%;
   pointer-events: none;
@@ -3389,53 +3377,50 @@ body {
 .composer-dock {
   position: fixed;
   z-index: 30;
-  left: max(
-    16px,
-    calc(
-      var(--sidebar-offset, 0px) + (100vw - var(--sidebar-offset, 0px) -
-            var(--figma-frame-width)) / 2 + 16px
-    )
-  );
-  right: max(
-    16px,
-    calc((100vw - var(--sidebar-offset, 0px) - var(--figma-frame-width)) / 2 + 16px)
-  );
+  left: 0;
+  right: 0;
   top: auto;
   bottom: 0;
   box-sizing: border-box;
   width: auto;
-  height: calc(
-    72px + var(--composer-extra-height, 0px) +
-      env(safe-area-inset-bottom, 0px)
-  );
+  height: calc(72px + var(--composer-bottom-offset));
   padding: 0;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
-.composer-dock::before,
+.composer-dock::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--composer-bottom-offset);
+  background: var(--figma-bg);
+  pointer-events: none;
+}
+
 .composer-dock::after {
   content: none;
 }
 
 .chat-composer,
 .chat-composer[data-expanded="true"] {
-  position: relative;
-  display: grid;
-  grid-template-rows:
-    calc(28px + var(--composer-extra-height, 0px))
-    44px
-    env(safe-area-inset-bottom, 0px);
+  position: absolute;
+  left: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
+  right: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
+  bottom: var(--composer-bottom-offset);
+  display: block;
   box-sizing: border-box;
-  width: 100%;
+  width: auto;
   max-width: none;
-  height: 100%;
-  min-height: calc(72px + env(safe-area-inset-bottom, 0px));
+  height: 72px;
+  min-height: 72px;
   overflow: hidden;
   border: 1px solid var(--figma-composer-border);
   border-radius: 24px;
   background: var(--figma-composer-bg);
   box-shadow: var(--figma-composer-shadow);
-  padding: 0 12px;
+  padding: 0;
   pointer-events: auto;
   backdrop-filter: blur(var(--figma-composer-blur, 12px));
   -webkit-backdrop-filter: blur(var(--figma-composer-blur, 12px));
@@ -3443,13 +3428,14 @@ body {
 
 .chat-composer-input,
 .chat-composer[data-expanded="true"] .chat-composer-input {
-  grid-row: 1;
-  align-self: start;
-  box-sizing: border-box;
-  width: calc(100% - 58px);
-  height: var(--composer-input-height, 24px);
+  position: absolute;
+  left: 16px;
+  right: 78px;
+  top: 9px;
+  width: auto;
+  height: 24px;
   min-height: 24px;
-  max-height: 62px;
+  max-height: 24px;
   resize: none;
   border: 0;
   background: transparent;
@@ -3461,7 +3447,7 @@ body {
   line-height: normal;
   outline: none;
   overflow: hidden;
-  padding: 10px 4px 0;
+  padding: 4px 0 0;
 }
 
 .chat-composer-input::placeholder {
@@ -3485,29 +3471,28 @@ body {
 }
 
 .composer-toolbar {
-  position: relative;
-  z-index: 2;
-  grid-row: 2;
-  display: flex;
+  position: absolute;
+  inset: 0;
+  display: block;
   box-sizing: border-box;
   width: 100%;
-  height: 44px;
-  align-items: start;
-  justify-content: space-between;
+  height: 72px;
   pointer-events: auto;
 }
 
 .composer-toolbar-left {
-  display: flex;
-  min-width: 0;
-  height: 44px;
-  align-items: center;
-  gap: 8px;
+  position: absolute;
+  left: 0;
+  right: 78px;
+  bottom: 0;
+  height: 72px;
   pointer-events: auto;
 }
 
 .sticker-trigger-button {
-  position: relative;
+  position: absolute;
+  left: 12px;
+  top: 38px;
   display: grid;
   width: 28px;
   min-width: 28px;
@@ -3523,27 +3508,27 @@ body {
   font-size: 18px;
   font-weight: 500;
   line-height: normal;
-  margin-top: 10px;
   padding: 0 0 2px;
   pointer-events: auto;
   touch-action: manipulation;
 }
 
 .composer-model-pill {
-  position: relative;
-  isolation: isolate;
+  position: absolute;
+  left: 48px;
+  top: 38px;
   display: inline-flex;
   width: 92px;
-  min-width: 92px;
-  height: 44px;
-  min-height: 44px;
+  height: 28px;
+  min-height: 28px;
   align-items: center;
   justify-content: center;
   gap: 0;
-  border: 0;
-  border-radius: 22px;
-  background: transparent;
-  box-shadow: none;
+  border: var(--figma-model-border-width, 0) solid
+    var(--figma-model-border, transparent);
+  border-radius: 14px;
+  background: var(--figma-model-bg);
+  box-shadow: var(--figma-model-shadow);
   color: var(--figma-model-text);
   font-family: var(--figma-font);
   font-size: 12px;
@@ -3553,36 +3538,12 @@ body {
   padding: 0;
   pointer-events: auto;
   touch-action: manipulation;
-}
-
-.composer-model-pill::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 10px;
-  z-index: 0;
-  box-sizing: border-box;
-  width: 92px;
-  height: 28px;
-  border: var(--figma-model-border-width, 0) solid
-    var(--figma-model-border, transparent);
-  border-radius: 14px;
-  background: var(--figma-model-bg);
-  box-shadow: var(--figma-model-shadow);
-  pointer-events: none;
   backdrop-filter: blur(var(--figma-model-blur, 6px));
   -webkit-backdrop-filter: blur(var(--figma-model-blur, 6px));
 }
 
-.composer-model-pill > * {
-  position: relative;
-  z-index: 1;
-}
-
 .composer-model-pill::after {
-  content: "";
-  position: relative;
-  z-index: 1;
+  content: "▼";
   margin-left: 3px;
   font-size: 8px;
 }
@@ -3592,9 +3553,9 @@ body {
 }
 
 .chat-send-button {
-  position: relative;
-  margin-top: -2px;
-  margin-right: -4px;
+  position: absolute;
+  right: 8px;
+  top: 36px;
   display: grid;
   width: 40px;
   min-width: 40px;
@@ -3783,13 +3744,45 @@ html[data-theme="sakura-night"] .conversation-sidebar {
   max-width: none;
 }
 
+.composer-dock {
+  height: calc(
+    72px + var(--composer-extra-height, 0px) + var(--composer-bottom-offset)
+  );
+}
+
+.chat-composer,
+.chat-composer[data-expanded="true"] {
+  height: calc(72px + var(--composer-extra-height, 0px));
+}
+
 .chat-composer-input,
 .chat-composer[data-expanded="true"] .chat-composer-input {
+  height: var(--composer-input-height, 24px);
+  max-height: 62px;
   font-weight: 400;
 }
 
 .chat-composer-input::placeholder {
   opacity: 0.74;
+}
+
+.composer-toolbar {
+  inset: auto 0 0;
+}
+
+.sticker-trigger-button,
+.composer-model-pill {
+  top: auto;
+  bottom: 6px;
+}
+
+.composer-model-pill::after {
+  content: "";
+}
+
+.chat-send-button {
+  top: auto;
+  bottom: 6px;
 }
 
 .sticker-picker {
@@ -3798,6 +3791,29 @@ html[data-theme="sakura-night"] .conversation-sidebar {
   bottom: calc(100% + 10px);
   width: min(310px, calc(100vw - 24px));
   transform: none;
+}
+
+@media (display-mode: standalone) {
+  :root {
+    --composer-bottom-offset: env(safe-area-inset-bottom, 0px);
+  }
+
+  .composer-dock {
+    bottom: 0;
+    height: calc(
+      72px + var(--composer-extra-height, 0px) + var(--composer-bottom-offset)
+    );
+  }
+
+  .chat-composer,
+  .chat-composer[data-expanded="true"] {
+    height: calc(72px + var(--composer-extra-height, 0px));
+    min-height: 72px;
+  }
+
+  .composer-toolbar {
+    bottom: 0;
+  }
 }
 
 .clawd-overlay {

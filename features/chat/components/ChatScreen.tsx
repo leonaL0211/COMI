@@ -30,7 +30,7 @@ export function ChatScreen() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isStickerPickerOpen, setIsStickerPickerOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(76);
-  const [composerHeight, setComposerHeight] = useState(72);
+  const [composerHeight, setComposerHeight] = useState(56);
   const headerRef = useRef<HTMLElement | null>(null);
   const composerRef = useRef<HTMLFormElement | null>(null);
   const { selectedModel, setSelectedModel } = useModelPreference();

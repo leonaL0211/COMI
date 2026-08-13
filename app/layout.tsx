@@ -75,7 +75,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="min-h-full flex flex-col">
-        <div className="app-viewport">{children}</div>
+        {children}
         <PwaRegistration />
       </body>
     </html>
