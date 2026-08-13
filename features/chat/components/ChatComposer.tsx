@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties, FormEvent, Ref } from "react";
-import { Popover } from "@/features/ui/Popover";
+import { createPortal } from "react-dom";
 import { StickerPicker } from "@/features/stickers/StickerPicker";
 import {
   CHAT_MODEL_OPTIONS,
@@ -54,8 +54,13 @@ export function ChatComposer({
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const skipStickerClickRef = useRef(false);
+  const [portalReady, setPortalReady] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(minTextareaHeight);
+
+  useLayoutEffect(() => {
+    setPortalReady(true);
+  }, []);
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
@@ -82,7 +87,7 @@ export function ChatComposer({
       textarea.scrollHeight > maxTextareaHeight ? "auto" : "hidden";
     setTextareaHeight(nextHeight);
     setIsExpanded(nextHeight > minTextareaHeight || value.includes("\n"));
-  }, [value]);
+  }, [portalReady, value]);
 
   const composerStyle: ComposerStyle = {
     "--composer-input-height": `${textareaHeight}px`,
@@ -110,7 +115,7 @@ export function ChatComposer({
     onToggleStickerPicker();
   }
 
-  return (
+  const composerDock = (
     <div className="composer-dock" style={composerStyle}>
       <StickerPicker
         isOpen={isStickerPickerOpen}
@@ -155,48 +160,27 @@ export function ChatComposer({
             >
               +
             </button>
-            <Popover
-              ariaLabel="Select chat model"
-              trigger={(triggerProps) => (
-                <button
-                  {...triggerProps}
-                  className="composer-model-pill"
-                  type="button"
-                  aria-haspopup="menu"
-                  disabled={isModelSelectorDisabled}
-                >
-                  Claude
-                  <span>{getChatModelLabel(selectedModel)}</span>
-                </button>
-              )}
-            >
-              {CHAT_MODEL_OPTIONS.map((option) => (
-                <button
-                  key={option.key}
-                  className="popover-menu-item model-menu-item"
-                  type="button"
-                  role="menuitemradio"
-                  aria-checked={option.key === selectedModel}
-                  onClick={() => onSelectModel(option.key)}
-                >
-                  <span>{option.label}</span>
-                  {option.key === selectedModel ? (
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 24 24"
-                      className="model-menu-check"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                    >
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                  ) : null}
-                </button>
-              ))}
-            </Popover>
+            <label className="composer-model-native">
+              <span className="composer-model-pill" aria-hidden="true">
+                Claude
+                <span>{getChatModelLabel(selectedModel)}</span>
+              </span>
+              <select
+                className="composer-model-select"
+                aria-label="Choose model"
+                value={selectedModel}
+                disabled={isModelSelectorDisabled}
+                onChange={(event) =>
+                  onSelectModel(event.target.value as ChatModelKey)
+                }
+              >
+                {CHAT_MODEL_OPTIONS.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
           <button
             className="chat-send-button"
@@ -221,4 +205,6 @@ export function ChatComposer({
       </form>
     </div>
   );
+
+  return portalReady ? createPortal(composerDock, document.body) : null;
 }
