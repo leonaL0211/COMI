@@ -2746,8 +2746,8 @@ html[data-theme="sakura-night"] {
     linear-gradient(
       90deg,
       rgba(255, 247, 251, 0.2) 0%,
-      rgba(246, 221, 232, 0.5) 48%,
-      rgba(217, 184, 200, 0.7) 100%
+      rgba(246, 221, 232, 0.3) 48%,
+      rgba(217, 184, 200, 0.5) 100%
     );
   --figma-topbar-button-shadow:
     0 2px 8px rgba(255, 213, 228, 0.12),
@@ -3049,7 +3049,7 @@ body {
 .mobile-sidebar-trigger,
 .chat-memory-button {
   position: absolute;
-  top: calc(22px + env(safe-area-inset-top));
+  top: calc(14px + env(safe-area-inset-top));
   display: grid;
   width: 44px;
   min-width: 44px;
@@ -3077,7 +3077,7 @@ body {
 
 .more-menu-backdrop {
   align-items: flex-start;
-  padding-top: calc(22px + env(safe-area-inset-top) + 44px + 16px);
+  padding-top: calc(14px + env(safe-area-inset-top) + 44px + 16px);
   pointer-events: auto;
 }
 
