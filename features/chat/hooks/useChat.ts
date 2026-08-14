@@ -188,6 +188,12 @@ export function useChat({
             role: "assistant",
             content: "Waiting for reply...",
             status: "pending",
+            // Stamp the model up front so avatar-visibility logic (which
+            // compares consecutive assistant messages' models) sees the
+            // correct value immediately, instead of "unknown" while pending
+            // and then the real model once the response resolves — which
+            // would otherwise flicker the avatar in and out.
+            model,
           },
         ]);
 

@@ -7,10 +7,15 @@ import {
 
 type MessageBubbleProps = {
   message: UiChatMessage;
+  showAvatar?: boolean;
   onStickerLoad?: () => void;
 };
 
-export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
+export function MessageBubble({
+  message,
+  showAvatar = false,
+  onStickerLoad,
+}: MessageBubbleProps) {
   const isUser = message.role === "user";
   const singleSticker = getSingleStickerFromContent(message.content);
 
@@ -18,10 +23,19 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
     <article
       className={[
         "message-row",
-        isUser ? "message-row-user" : "message-row-assistant",
-      ].join(" ")}
+        isUser
+          ? "message-row-user"
+          : "message-row-assistant",
+        !isUser
+          ? showAvatar
+            ? "assistant-message--with-avatar"
+            : "assistant-message--without-avatar"
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
-      {!isUser ? (
+      {!isUser && showAvatar ? (
         <span className="message-avatar" aria-hidden="true">
           <img
             className="message-avatar-bg"

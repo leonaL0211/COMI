@@ -2585,8 +2585,17 @@ html[data-theme="sea-salt"] {
   --figma-frame-width: 402px;
   --figma-frame-height: 874px;
   --composer-bottom-offset: 16px;
+  /* Single source of truth for the 1-line Composer chrome height (was a
+     72px literal duplicated in .chat-composer's base rule, its expanded
+     override, and .composer-dock's expanded override). 3-line height is
+     always this plus the JS-driven --composer-extra-height (max 32px). */
+  --composer-base-height: 80px;
   --message-bottom-gap: 18px;
   --message-stack-gap: 12px;
+  /* Clears the floating top-bar buttons (top: 22px + env(safe-area-inset-top),
+     44px tall) with a ~20px breathing gap, so the first message never sits
+     under them on notched devices. See .mobile-sidebar-trigger/.chat-memory-button. */
+  --message-list-top-offset: calc(86px + env(safe-area-inset-top, 0px));
   --figma-topbar-fade-height: 93px;
   --figma-font: var(--font-instrument-sans), "Instrument Sans", "Inter",
     "PingFang SC", "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
@@ -2735,10 +2744,10 @@ html[data-theme="sakura-night"] {
   --figma-topbar-button-border: rgba(255, 244, 248, 0.28);
   --figma-topbar-button-bg:
     linear-gradient(
-      135deg,
-      rgba(255, 247, 251, 0.2) 15.91%,
-      rgba(246, 221, 232, 0.3) 50.37%,
-      rgba(217, 184, 200, 0.4) 87.5%
+      90deg,
+      rgba(255, 247, 251, 0.2) 0%,
+      rgba(246, 221, 232, 0.5) 48%,
+      rgba(217, 184, 200, 0.7) 100%
     );
   --figma-topbar-button-shadow:
     0 2px 8px rgba(255, 213, 228, 0.12),
@@ -3250,7 +3259,7 @@ body {
   min-height: 100%;
   flex-direction: column;
   gap: var(--message-stack-gap);
-  padding: 100px 11px 0 19px;
+  padding: var(--message-list-top-offset) 11px 0 19px;
 }
 
 .message-bottom-spacer {
@@ -3399,8 +3408,8 @@ body {
   box-sizing: border-box;
   width: 100%;
   max-width: none;
-  height: 72px;
-  min-height: 72px;
+  height: var(--composer-base-height);
+  min-height: var(--composer-base-height);
   overflow: hidden;
   border: 1px solid var(--figma-composer-border);
   border-radius: 24px;
@@ -3433,7 +3442,12 @@ body {
   line-height: normal;
   outline: none;
   overflow: hidden;
-  padding: 4px 0 0;
+  /* padding-top lowered by 2px (was 4px) to nudge text/placeholder up;
+     padding-bottom raised by the same 2px so the top+bottom sum is
+     unchanged. ChatComposer.tsx reads computed padding-top + padding-bottom
+     to size the 3-line auto-grow cap, so keeping the sum fixed preserves
+     the existing 32px --composer-extra-height ceiling exactly. */
+  padding: 2px 0 2px;
 }
 
 .chat-composer-input:focus-visible {
@@ -3456,7 +3470,12 @@ body {
   .chat-composer[data-expanded="true"] .chat-composer-input {
     font-size: 16px;
     line-height: 18px;
-    padding-top: 2px;
+    /* Same top/bottom rebalancing as the base rule above, scoped to the
+       breakpoint that real phones actually hit: top 2px -> 0px, bottom
+       0px -> 2px, sum held at 2px so the 32px auto-grow ceiling is
+       unaffected (see ChatComposer.tsx's maxTextareaHeight calc). */
+    padding-top: 0px;
+    padding-bottom: 2px;
   }
 }
 
@@ -3757,13 +3776,36 @@ html[data-theme="sakura-night"] .conversation-sidebar {
   max-width: none;
 }
 
+/* Avatar column is only reserved when this assistant message actually shows
+   an avatar (first message in a run, or the model just switched). Without an
+   avatar, the bubble collapses to a single track starting at the avatar's
+   original left edge, instead of leaving a blank 28px + gap placeholder. */
+.assistant-message--with-avatar {
+  grid-template-columns: 28px minmax(0, 1fr);
+}
+
+.assistant-message--without-avatar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* AI reply typography (ChatGPT-like reading rhythm). Scoped to assistant
+   bubbles only — user bubbles keep the shared .message-bubble sizing. */
+.message-bubble-assistant,
+.message-bubble-assistant .message-content {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: normal;
+  text-align: left;
+}
+
 .composer-dock {
-  height: calc(72px + var(--composer-extra-height, 0px));
+  height: calc(var(--composer-base-height) + var(--composer-extra-height, 0px));
 }
 
 .chat-composer,
 .chat-composer[data-expanded="true"] {
-  height: calc(72px + var(--composer-extra-height, 0px));
+  height: calc(var(--composer-base-height) + var(--composer-extra-height, 0px));
 }
 
 .chat-composer-input,

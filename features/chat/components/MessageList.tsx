@@ -1,9 +1,37 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import type { UiChatMessage } from "../types";
 import { GlassFade } from "./GlassFade";
 import { MessageBubble } from "./MessageBubble";
+
+/**
+ * Avatar shows on the first assistant message of a conversation, and again
+ * whenever the model differs from the most recent assistant message (user
+ * messages in between are skipped, not compared against). Messages without
+ * model metadata (old data, or a still-pending reply) are treated as one
+ * shared "unknown" model so they don't falsely register as a switch.
+ */
+function computeAvatarVisibility(messages: UiChatMessage[]): boolean[] {
+  const showAvatar = new Array<boolean>(messages.length).fill(false);
+  let hasSeenAssistantMessage = false;
+  let lastAssistantModel: string | null = null;
+
+  messages.forEach((message, index) => {
+    if (message.role !== "assistant") {
+      return;
+    }
+
+    const currentModel = message.model ?? null;
+    showAvatar[index] =
+      !hasSeenAssistantMessage || currentModel !== lastAssistantModel;
+
+    hasSeenAssistantMessage = true;
+    lastAssistantModel = currentModel;
+  });
+
+  return showAvatar;
+}
 
 type MessageListProps = {
   messages: UiChatMessage[];
@@ -20,6 +48,10 @@ export function MessageList({
 }: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const avatarVisibility = useMemo(
+    () => computeAvatarVisibility(messages),
+    [messages],
+  );
   const shouldStickToBottomRef = useRef(true);
   const programmaticScrollRef = useRef(false);
   const releaseProgrammaticScrollRef = useRef<number | null>(null);
@@ -201,10 +233,11 @@ export function MessageList({
           </div>
         ) : (
           <div ref={contentRef} className="message-list-inner">
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <MessageBubble
                 key={message.id}
                 message={message}
+                showAvatar={avatarVisibility[index]}
                 onStickerLoad={handleStickerLoad}
               />
             ))}
