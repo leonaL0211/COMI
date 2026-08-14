@@ -2584,7 +2584,7 @@ html[data-theme="sea-salt"] {
 :root {
   --figma-frame-width: 402px;
   --figma-frame-height: 874px;
-  --composer-bottom-offset: max(16px, env(safe-area-inset-bottom));
+  --composer-bottom-offset: 16px;
   --message-bottom-gap: 18px;
   --message-stack-gap: 12px;
   --figma-topbar-fade-height: 93px;
@@ -3380,11 +3380,10 @@ body {
   left: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
   right: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
   top: auto;
-  bottom: var(--composer-bottom-offset);
-  box-sizing: border-box;
+  bottom: 0;
+  box-sizing: content-box;
   width: auto;
-  height: calc(72px + var(--composer-bottom-offset));
-  padding: 0;
+  padding: 0 0 var(--composer-bottom-offset);
   pointer-events: none;
 }
 
@@ -3435,6 +3434,10 @@ body {
   outline: none;
   overflow: hidden;
   padding: 4px 0 0;
+}
+
+.chat-composer-input:focus-visible {
+  outline: none;
 }
 
 .chat-composer-input::placeholder {
@@ -3799,33 +3802,6 @@ html[data-theme="sakura-night"] .conversation-sidebar {
   bottom: calc(100% + 10px);
   width: min(310px, calc(100vw - 24px));
   transform: none;
-}
-
-@media (display-mode: standalone) {
-  :root {
-    --composer-bottom-offset: 0px;
-  }
-
-  .composer-dock {
-    bottom: 0;
-    height: calc(
-      72px + var(--composer-extra-height, 0px) +
-        env(safe-area-inset-bottom, 0px)
-    );
-  }
-
-  .chat-composer,
-  .chat-composer[data-expanded="true"] {
-    height: calc(
-      72px + var(--composer-extra-height, 0px) +
-        env(safe-area-inset-bottom, 0px)
-    );
-    min-height: calc(72px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .composer-toolbar {
-    bottom: env(safe-area-inset-bottom, 0px);
-  }
 }
 
 .clawd-overlay {
