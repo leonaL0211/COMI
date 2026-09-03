@@ -38,23 +38,33 @@ export const viewport: Viewport = {
   themeColor: "#fff0d6",
 };
 
+/*
+ * Anti-FOUC theme script — runs before React hydrates, so it duplicates the
+ * allowlist/default from shared/themes.ts by necessity (can't import a
+ * module into an inline <script>). Keep the two in sync by hand.
+ *
+ * "milk-tea" (奶茶莓粉) was retired: it's intentionally not in `allowed`
+ * here, so any old stored value of "milk-tea" (or anything else invalid)
+ * falls through to "sea-salt" (Light) below, matching
+ * shared/themes.ts's defaultTheme. This never throws on an unrecognized
+ * value — it just fails safe to Light.
+ */
 const themeInitScript = `
 try {
-  var theme = window.localStorage.getItem("berry-chat-theme") || "milk-tea";
-  var allowed = ["milk-tea", "sea-salt", "sakura-night"];
-  var selected = allowed.indexOf(theme) >= 0 ? theme : "milk-tea";
+  var theme = window.localStorage.getItem("berry-chat-theme") || "sea-salt";
+  var allowed = ["sea-salt", "sakura-night"];
+  var selected = allowed.indexOf(theme) >= 0 ? theme : "sea-salt";
   document.documentElement.dataset.theme = selected;
   var colors = {
-    "milk-tea": "#fff7ef",
     "sea-salt": "#fff0d6",
     "sakura-night": "#171217"
   };
   var themeColor = document.querySelector('meta[name="theme-color"]');
   if (themeColor) {
-    themeColor.setAttribute("content", colors[selected] || colors["milk-tea"]);
+    themeColor.setAttribute("content", colors[selected] || colors["sea-salt"]);
   }
 } catch (error) {
-  document.documentElement.dataset.theme = "milk-tea";
+  document.documentElement.dataset.theme = "sea-salt";
 }
 `;
 
@@ -67,7 +77,7 @@ export default function RootLayout({
     <html
       lang="zh-CN"
       className={`${instrumentSans.variable} h-full antialiased`}
-      data-theme="milk-tea"
+      data-theme="sea-salt"
       data-build-id={appBuildId}
       suppressHydrationWarning
     >

@@ -997,73 +997,42 @@ select:focus-visible {
   line-height: 22px;
 }
 
-.more-menu-theme-section {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+/*
+ * Theme system was collapsed to Light (sea-salt) / Dark (sakura-night) —
+ * the More-menu "Theme" card grid (theme-card-grid / theme-choice-*) was
+ * removed along with its JSX in ChatHeader.tsx. The Light/Dark switch now
+ * lives in .theme-mode-toggle below. --theme-choice-selected is left
+ * defined per theme (harmless, unused) rather than touching every theme
+ * variable block for this.
+ */
+
+.theme-mode-toggle {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(
+    var(--composer-height, 56px) + max(12px, env(safe-area-inset-bottom)) +
+      64px
+  );
+  z-index: 42;
+  width: 38px;
+  min-width: 38px;
+  height: 38px;
+  /* Explicit, theme-scoped color — the inline SVG icon uses currentColor,
+   * and --comi-ink (the base .glass-icon-button color) is only defined for
+   * the light themes, not sakura-night. --topbar-icon is defined for every
+   * theme, so this keeps proper contrast in Dark mode too. */
+  color: var(--topbar-icon);
+  opacity: 0.86;
 }
 
-.theme-card-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+.theme-mode-toggle:hover,
+.theme-mode-toggle:focus-visible {
+  opacity: 1;
 }
 
-.theme-choice-card {
-  position: relative;
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 7px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: var(--surface);
-  color: var(--foreground);
-  padding: 9px;
-  text-align: left;
-}
-
-.theme-choice-card-selected {
-  border-color: var(--border-strong);
-  background: var(--theme-choice-selected);
-}
-
-.theme-choice-preview {
-  display: flex;
-  height: 32px;
-  align-items: stretch;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
-}
-
-.theme-choice-preview span {
-  flex: 1 1 0;
-}
-
-.theme-choice-name {
-  overflow: hidden;
-  color: var(--foreground);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 15px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.theme-choice-check {
-  position: absolute;
-  top: 7px;
-  right: 7px;
-  display: grid;
+.theme-mode-toggle-icon {
   width: 18px;
   height: 18px;
-  place-items: center;
-  border-radius: var(--radius-pill);
-  background: var(--surface-strong);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 800;
 }
 
 .ui-button-soft {

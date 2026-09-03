@@ -29,6 +29,7 @@ import { ChatComposer } from "./ChatComposer";
 import { ChatHeader } from "./ChatHeader";
 import { ClawdCompanion } from "./ClawdCompanion";
 import { MessageList } from "./MessageList";
+import { ThemeModeToggle } from "./ThemeModeToggle";
 
 export function ChatScreen({
   isTestParticipant,
@@ -239,8 +240,6 @@ export function ChatScreen({
         <ChatHeader
           headerRef={headerRef}
           title={currentConversationTitle}
-          selectedTheme={selectedTheme}
-          onSelectTheme={setSelectedTheme}
           onOpenSidebar={() => setIsSidebarOpen(true)}
           onOpenMemoryPanel={handleOpenMemoryPanel}
         />
@@ -296,6 +295,12 @@ export function ChatScreen({
         <MemoryToast
           toast={memoryToast}
           onDismiss={() => setMemoryToast(null)}
+        />
+      }
+      themeToggle={
+        <ThemeModeToggle
+          selectedTheme={selectedTheme}
+          onSelectTheme={setSelectedTheme}
         />
       }
     />

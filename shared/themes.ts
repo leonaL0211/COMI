@@ -1,4 +1,11 @@
-export type ThemeId = "milk-tea" | "sea-salt" | "sakura-night";
+/**
+ * "milk-tea" (奶茶莓粉) was retired as a selectable theme — the product only
+ * needs Light/Dark now. The id is kept out of this union on purpose so any
+ * remaining reference to it is a type error; `isThemeId` below is what
+ * makes an old "milk-tea" value stored in localStorage fail safe rather
+ * than throw (see useThemePreference).
+ */
+export type ThemeId = "sea-salt" | "sakura-night";
 
 export type ThemeOption = {
   id: ThemeId;
@@ -8,15 +15,10 @@ export type ThemeOption = {
 };
 
 export const themeStorageKey = "berry-chat-theme";
-export const defaultTheme: ThemeId = "milk-tea";
+/** sea-salt (草莓巴巴露亚) is the Light mode default. */
+export const defaultTheme: ThemeId = "sea-salt";
 
 export const themeOptions: readonly ThemeOption[] = [
-  {
-    id: "milk-tea",
-    name: "奶茶莓粉",
-    colors: ["#968C83", "#D6D2C4", "#FFF5EA", "#F7DAD9"],
-    themeColor: "#fff7ef",
-  },
   {
     id: "sea-salt",
     name: "草莓巴巴露亚",

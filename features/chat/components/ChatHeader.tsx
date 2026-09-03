@@ -3,13 +3,10 @@
 import { useEffect, useState } from "react";
 import type { Ref } from "react";
 import { GlassButton } from "./GlassButton";
-import { themeOptions, type ThemeId } from "@/shared/themes";
 
 type ChatHeaderProps = {
   title: string;
   headerRef: Ref<HTMLElement>;
-  selectedTheme: ThemeId;
-  onSelectTheme: (theme: ThemeId) => void;
   onOpenSidebar: () => void;
   onOpenMemoryPanel: () => void;
 };
@@ -17,8 +14,6 @@ type ChatHeaderProps = {
 export function ChatHeader({
   title,
   headerRef,
-  selectedTheme,
-  onSelectTheme,
   onOpenSidebar,
   onOpenMemoryPanel,
 }: ChatHeaderProps) {
@@ -123,34 +118,6 @@ export function ChatHeader({
                 -
               </span>
             </button>
-            <div className="more-menu-theme-section">
-              <p className="more-menu-section-title">Theme</p>
-              <div className="theme-card-grid">
-                {themeOptions.map((theme) => {
-                  const isSelected = theme.id === selectedTheme;
-
-                  return (
-                    <button
-                      key={theme.id}
-                      className={[
-                        "theme-choice-card",
-                        isSelected ? "theme-choice-card-selected" : "",
-                      ].join(" ")}
-                      type="button"
-                      aria-pressed={isSelected}
-                      onClick={() => onSelectTheme(theme.id)}
-                    >
-                      <span className="theme-choice-preview" aria-hidden="true">
-                        {theme.colors.slice(0, 3).map((color) => (
-                          <span key={color} style={{ background: color }} />
-                        ))}
-                      </span>
-                      <span className="theme-choice-name">{theme.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
           </section>
         </div>
       ) : null}
