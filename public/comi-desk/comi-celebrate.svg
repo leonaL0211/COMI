@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">COMI — Celebrate / Success</title>
+  <desc id="desc">COMI wiggles happily while soft confetti twinkles around it.</desc>
+  <defs>
+    <path id="comi-body-shape" d="M190 40C92 40 20 111 20 207C20 306 98 360 205 360C283 360 343 326 378 277C389 262 384 250 368 249C349 248 342 239 340 218C331 119 280 40 190 40Z"/>
+    <style>
+      .comi-celebrate-anim {
+        transform-origin: 200px 220px;
+        animation: comi-celebrate 3s cubic-bezier(.34, 1.2, .64, 1) infinite;
+      }
+      @keyframes comi-celebrate {
+        0%, 100% { transform: rotate(0deg) scale(1, 1); }
+        30% { transform: rotate(-3deg) scale(1.02, 0.98); }
+        50% { transform: rotate(3deg) scale(0.98, 1.02); }
+        65%, 90% { transform: rotate(0deg) scale(1, 1); }
+      }
+      .comi-confetti {
+        animation: comi-twinkle 2.8s ease-in-out infinite;
+      }
+      .cf1 { animation-delay: 0s; }
+      .cf2 { animation-delay: .3s; }
+      .cf3 { animation-delay: .6s; }
+      .cf4 { animation-delay: .9s; }
+      .cf5 { animation-delay: 1.2s; }
+      .cf6 { animation-delay: 1.5s; }
+      .cf7 { animation-delay: 1.8s; }
+      .cf8 { animation-delay: 2.1s; }
+      @keyframes comi-twinkle {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .4; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .comi-celebrate-anim, .comi-confetti { animation: none; }
+      }
+    </style>
+  </defs>
+  <g id="comi-pose" transform="translate(0 -22) rotate(7 200 220) translate(200 210) scale(.95 1.06) translate(-200 -210)">
+    <g class="comi-celebrate-anim">
+      <use id="comi-body" href="#comi-body-shape" fill="#FDDB88"/>
+      <g id="comi-eyes" fill="#FFFDF8" transform="translate(0 12)">
+        <rect id="eye-left" x="111" y="151" width="32" height="23" rx="11.5" transform="rotate(-7 127 162.5)"/>
+        <rect id="eye-right" x="181" y="151" width="32" height="23" rx="11.5" transform="rotate(7 197 162.5)"/>
+      </g>
+    </g>
+  </g>
+  <g id="confetti" aria-label="soft confetti">
+    <g class="comi-confetti cf1"><rect x="57" y="116" width="12" height="28" rx="5" fill="#E9AFA3" transform="rotate(-31 63 130)"/></g>
+    <g class="comi-confetti cf2"><circle cx="92" cy="78" r="8" fill="#A9C7C2"/></g>
+    <g class="comi-confetti cf3"><path d="M139 50Q151 65 136 80" fill="none" stroke="#B8AED2" stroke-width="10" stroke-linecap="round"/></g>
+    <g class="comi-confetti cf4"><rect x="208" y="38" width="11" height="27" rx="5" fill="#E7C987" transform="rotate(18 213.5 51.5)"/></g>
+    <g class="comi-confetti cf5"><circle cx="291" cy="75" r="8" fill="#D9B3A7"/></g>
+    <g class="comi-confetti cf6"><path d="M339 101Q322 113 341 128" fill="none" stroke="#AFC8BD" stroke-width="10" stroke-linecap="round"/></g>
+    <g class="comi-confetti cf7"><rect x="40" y="221" width="12" height="29" rx="5" fill="#C2B7D7" transform="rotate(24 46 235.5)"/></g>
+    <g class="comi-confetti cf8"><rect x="355" y="210" width="12" height="30" rx="5" fill="#E5B3A1" transform="rotate(-18 361 225)"/></g>
+  </g>
+</svg>

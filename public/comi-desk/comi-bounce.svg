@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">COMI — Bounce</title>
+  <desc id="desc">COMI does one small, gentle bounce, then settles before repeating.</desc>
+  <defs>
+    <path id="comi-body-shape" d="M190 40C92 40 20 111 20 207C20 306 98 360 205 360C283 360 343 326 378 277C389 262 384 250 368 249C349 248 342 239 340 218C331 119 280 40 190 40Z"/>
+    <style>
+      .comi-bounce-anim {
+        transform-origin: 200px 200px;
+        animation: comi-bounce 2.6s cubic-bezier(.34, 1.2, .64, 1) infinite;
+      }
+      @keyframes comi-bounce {
+        0%, 100% { transform: translateY(0) scale(1, 1); }
+        40% { transform: translateY(-8px) scale(0.98, 1.03); }
+        55% { transform: translateY(2px) scale(1.02, 0.97); }
+        70%, 90% { transform: translateY(0) scale(1, 1); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .comi-bounce-anim { animation: none; }
+      }
+    </style>
+  </defs>
+  <g id="comi-pose" transform="translate(0 -25) translate(200 200) scale(.97 1.04) translate(-200 -200)">
+    <g class="comi-bounce-anim">
+      <use id="comi-body" href="#comi-body-shape" fill="#FDDB88"/>
+      <g id="comi-eyes" fill="#FFFDF8">
+        <rect id="eye-left" x="114" y="142" width="28" height="68" rx="14"/>
+        <rect id="eye-right" x="182" y="142" width="28" height="68" rx="14"/>
+      </g>
+    </g>
+  </g>
+</svg>

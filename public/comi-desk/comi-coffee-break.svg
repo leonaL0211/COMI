@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">COMI — Coffee Break</title>
+  <desc id="desc">COMI quietly leans toward a tiny rounded coffee cup, breathing and swaying softly.</desc>
+  <defs>
+    <path id="comi-body-shape" d="M190 40C92 40 20 111 20 207C20 306 98 360 205 360C283 360 343 326 378 277C389 262 384 250 368 249C349 248 342 239 340 218C331 119 280 40 190 40Z"/>
+    <style>
+      .comi-sway-breathe {
+        transform-origin: 205px 344px;
+        animation: comi-sway-breathe 4.2s ease-in-out infinite;
+      }
+      @keyframes comi-sway-breathe {
+        0%, 100% { transform: rotate(0deg) scale(1, 1); }
+        50% { transform: rotate(1.5deg) scale(1.015, 0.99); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .comi-sway-breathe { animation: none; }
+      }
+    </style>
+  </defs>
+  <g id="comi-pose">
+    <g id="comi-character" transform="translate(7 7) rotate(2.5 205 344) translate(200 360) scale(.99 .97) translate(-200 -360)">
+      <g class="comi-sway-breathe">
+        <use id="comi-body" href="#comi-body-shape" fill="#FDDB88"/>
+        <g id="comi-eyes" fill="#FFFDF8" transform="translate(8 7)">
+          <rect id="eye-left" x="114" y="142" width="28" height="64" rx="14"/>
+          <rect id="eye-right" x="182" y="142" width="28" height="64" rx="14"/>
+        </g>
+      </g>
+    </g>
+    <g id="prop-coffee" aria-label="small coffee cup">
+      <path d="M248 258L229 204" fill="none" stroke="#B7AFA6" stroke-width="8" stroke-linecap="round"/>
+      <rect x="210" y="258" width="108" height="90" rx="20" fill="#E7E1D9"/>
+      <ellipse cx="264" cy="268" rx="48" ry="13" fill="#F7F3EE"/>
+      <ellipse cx="264" cy="269" rx="38" ry="8" fill="#B99678" opacity=".82"/>
+      <path d="M318 281H327C346 281 350 319 326 326H318" fill="none" stroke="#E7E1D9" stroke-width="12" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

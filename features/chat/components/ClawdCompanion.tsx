@@ -41,15 +41,21 @@ type DragState = {
   hasDragged: boolean;
 };
 
+// COMI-on-Desk pose set (public/comi-desk/) — replaces the earlier Clawd
+// character. Same 8 ClawdAction slots as before; two poses are reused for
+// two slots each (comi-peek for reading/shy, comi-sleepy for yawn/sleeping)
+// since the source pose set doesn't have a distinct pose for every slot —
+// see the AUDIT report this mapping came from. The old Clawd files remain
+// in public/clawd/ (unreferenced, not deleted) in case of rollback.
 const clawdAssets: Record<ClawdAction, string> = {
-  idle: "/clawd/clawd-idle-follow.svg",
-  typing: "/clawd/clawd-working-typing.svg",
-  reading: "/clawd/clawd-idle-reading.svg",
-  "coffee-hand": "/clawd/clawd-coffee-hand.svg",
-  shy: "/clawd/clawd-aegyo-shy.svg",
-  dizzy: "/clawd/clawd-dizzy.svg",
-  yawn: "/clawd/clawd-idle-yawn.svg",
-  sleeping: "/clawd/clawd-sleeping.svg",
+  idle: "/comi-desk/comi-default.svg",
+  typing: "/comi-desk/comi-typing.svg",
+  reading: "/comi-desk/comi-peek.svg",
+  "coffee-hand": "/comi-desk/comi-coffee-break.svg",
+  shy: "/comi-desk/comi-peek.svg",
+  dizzy: "/comi-desk/comi-error-melt.svg",
+  yawn: "/comi-desk/comi-sleepy.svg",
+  sleeping: "/comi-desk/comi-sleepy.svg",
 };
 
 const idleActions: ClawdAction[] = [
@@ -513,7 +519,7 @@ export function ClawdCompanion({
           isDragging ? "clawd-companion-dragging" : "",
         ].join(" ")}
         type="button"
-        aria-label="Drag Clawd to move it"
+        aria-label="Drag COMI to move it"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={(event) => finishPointerInteractionById(event.pointerId)}

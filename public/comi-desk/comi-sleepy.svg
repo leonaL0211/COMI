@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">COMI — Sleepy / Rest</title>
+  <desc id="desc">COMI rests low, breathing slowly with three quiet Z marks drifting up.</desc>
+  <defs>
+    <path id="comi-body-shape" d="M190 40C92 40 20 111 20 207C20 306 98 360 205 360C283 360 343 326 378 277C389 262 384 250 368 249C349 248 342 239 340 218C331 119 280 40 190 40Z"/>
+    <style>
+      .comi-breathe-slow {
+        transform-origin: 200px 360px;
+        animation: comi-breathe-slow 4.6s ease-in-out infinite;
+      }
+      @keyframes comi-breathe-slow {
+        0%, 78%, 100% { transform: scale(1, 1); }
+        35%, 45% { transform: scale(1.02, 1.06); }
+      }
+      .comi-z { opacity: 0; }
+      .comi-z1 { animation: comi-zfloat 5.4s ease-in-out infinite; animation-delay: 0s; }
+      .comi-z2 { animation: comi-zfloat 5.4s ease-in-out infinite; animation-delay: 1.8s; }
+      .comi-z3 { animation: comi-zfloat 5.4s ease-in-out infinite; animation-delay: 3.6s; }
+      @keyframes comi-zfloat {
+        0% { transform: translate(0, 10px) scale(0.7); opacity: 0; }
+        15% { opacity: 1; }
+        80% { opacity: .85; }
+        100% { transform: translate(6px, -14px) scale(1.05); opacity: 0; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .comi-breathe-slow, .comi-z1, .comi-z2, .comi-z3 { animation: none; }
+        .comi-z { opacity: .7; }
+      }
+    </style>
+  </defs>
+  <g id="comi-pose">
+    <g class="comi-breathe-slow">
+      <use id="comi-body" href="#comi-body-shape" fill="#FDDB88" transform="translate(200 360) scale(1.015 .90) translate(-200 -360) rotate(1.5 200 340)"/>
+    </g>
+    <g id="comi-eyes" fill="#FFFDF8" transform="translate(0 45) rotate(1 162 190)">
+      <rect id="eye-left" x="114" y="142" width="28" height="30" rx="14"/>
+      <rect id="eye-right" x="182" y="142" width="28" height="30" rx="14"/>
+    </g>
+  </g>
+  <g id="sleep-zs" fill="none" stroke="#FFFDF8" stroke-linecap="round" stroke-linejoin="round">
+    <path class="comi-z comi-z1" d="M270 151H289L270 174H291" stroke-width="7"/>
+    <path class="comi-z comi-z2" d="M302 109H326L303 137H329" stroke-width="8"/>
+    <path class="comi-z comi-z3" d="M334 64H363L335 98H366" stroke-width="9"/>
+  </g>
+</svg>

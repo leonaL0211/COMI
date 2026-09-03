@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">COMI — Melt / Error</title>
+  <desc id="desc">A centered red ERROR label pulses above COMI, harmlessly melted low to the ground.</desc>
+  <defs>
+    <path id="comi-body-shape" d="M190 40C92 40 20 111 20 207C20 306 98 360 205 360C283 360 343 326 378 277C389 262 384 250 368 249C349 248 342 239 340 218C331 119 280 40 190 40Z"/>
+    <style>
+      .comi-melt {
+        transform-origin: 200px 360px;
+        animation: comi-melt 5s ease-in-out infinite;
+      }
+      @keyframes comi-melt {
+        0%, 100% { transform: scaleY(1); }
+        50% { transform: scaleY(1.015); }
+      }
+      .comi-label-pulse {
+        animation: comi-label-pulse 3.4s ease-in-out infinite;
+      }
+      @keyframes comi-label-pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .55; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .comi-melt, .comi-label-pulse { animation: none; }
+      }
+    </style>
+  </defs>
+  <text id="error-label" class="comi-label-pulse" x="200" y="76" fill="#D75B57" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" letter-spacing="3" text-anchor="middle">ERROR</text>
+  <g id="comi-pose">
+    <g class="comi-melt">
+      <use id="comi-body" href="#comi-body-shape" fill="#FDDB88" transform="translate(200 360) scale(1.035 .52) translate(-200 -360)"/>
+    </g>
+    <g id="comi-eyes" fill="#FFFDF8">
+      <rect id="eye-left" x="111" y="262" width="29" height="34" rx="14.5" transform="rotate(7 125.5 279)"/>
+      <rect id="eye-right" x="182" y="267" width="29" height="31" rx="14.5" transform="rotate(-5 196.5 282.5)"/>
+    </g>
+  </g>
+</svg>

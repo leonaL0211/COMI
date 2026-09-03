@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">COMI — Typing / AI Thinking</title>
+  <desc id="desc">COMI leans toward a small rounded computer, gently bobbing and blinking.</desc>
+  <defs>
+    <path id="comi-body-shape" d="M190 40C92 40 20 111 20 207C20 306 98 360 205 360C283 360 343 326 378 277C389 262 384 250 368 249C349 248 342 239 340 218C331 119 280 40 190 40Z"/>
+    <style>
+      .comi-float {
+        transform-origin: 200px 360px;
+        animation: comi-float 2.4s ease-in-out infinite;
+      }
+      .comi-blink {
+        transform-origin: 162px 169px;
+        animation: comi-blink 3.4s ease-in-out infinite;
+      }
+      @keyframes comi-float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+      }
+      @keyframes comi-blink {
+        0%, 88%, 100% { transform: scaleY(1); }
+        94% { transform: scaleY(0.12); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .comi-float, .comi-blink { animation: none; }
+      }
+    </style>
+  </defs>
+  <g id="comi-pose">
+    <g id="comi-character" transform="translate(0 13) translate(200 360) scale(.97 .94) translate(-200 -360)">
+      <g class="comi-float">
+        <use id="comi-body" href="#comi-body-shape" fill="#FDDB88"/>
+        <g id="comi-eyes" fill="#FFFDF8" transform="translate(10 10)">
+          <g class="comi-blink">
+            <rect id="eye-left" x="114" y="142" width="28" height="54" rx="14" transform="rotate(4 128 169)"/>
+            <rect id="eye-right" x="182" y="142" width="28" height="54" rx="14" transform="rotate(4 196 169)"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="prop-computer">
+      <rect x="92" y="210" width="224" height="119" rx="24" fill="#515B66"/>
+      <rect x="114" y="230" width="180" height="72" rx="13" fill="#E8ECEB"/>
+      <path d="M70 329H338C343 329 347 333 347 338C347 350 337 360 325 360H83C71 360 61 350 61 338C61 333 65 329 70 329Z" fill="#66717C"/>
+      <rect x="176" y="337" width="56" height="7" rx="3.5" fill="#E8ECEB" opacity=".72"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">COMI — Idle / Default</title>
+  <desc id="desc">COMI in the neutral master pose, breathing quietly and blinking.</desc>
+  <defs>
+    <path id="comi-body-shape" d="M190 40C92 40 20 111 20 207C20 306 98 360 205 360C283 360 343 326 378 277C389 262 384 250 368 249C349 248 342 239 340 218C331 119 280 40 190 40Z"/>
+    <style>
+      .comi-breathe {
+        transform-origin: 200px 360px;
+        animation: comi-breathe 3.6s ease-in-out infinite;
+      }
+      .comi-blink {
+        transform-origin: 162px 176px;
+        animation: comi-blink 4.6s ease-in-out infinite;
+      }
+      @keyframes comi-breathe {
+        0%, 100% { transform: scale(1, 1); }
+        50% { transform: scale(1.015, 0.985); }
+      }
+      @keyframes comi-blink {
+        0%, 90%, 100% { transform: scaleY(1); }
+        95% { transform: scaleY(0.12); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .comi-breathe, .comi-blink { animation: none; }
+      }
+    </style>
+  </defs>
+  <g id="comi-pose">
+    <g class="comi-breathe">
+      <use id="comi-body" href="#comi-body-shape" fill="#FDDB88"/>
+      <g id="comi-eyes" fill="#FFFDF8">
+        <g class="comi-blink">
+          <rect id="eye-left" x="114" y="142" width="28" height="68" rx="14"/>
+          <rect id="eye-right" x="182" y="142" width="28" height="68" rx="14"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
