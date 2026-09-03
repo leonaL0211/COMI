@@ -7,6 +7,19 @@ import { SupabaseMemoryRepository } from "@/server/repositories/supabase-memory-
 import { SupabaseMessageRepository } from "@/server/repositories/supabase-message-repository";
 import { buildChatContext } from "@/server/summary/context-builder";
 import { SummaryService } from "@/server/summary/summary-service";
+import {
+  deleteImage,
+  uploadImage,
+  ImageStorageError,
+} from "@/server/attachments/image-storage";
+import {
+  processUploadedImage,
+  ImageProcessingError,
+} from "@/server/attachments/image-processing";
+import {
+  createImageToken,
+  stripImageToken,
+} from "@/shared/attachments/image-catalog";
 import type {
   Conversation,
   ConversationRepository,
@@ -18,8 +31,15 @@ import type {
 import type { MemoryRepository } from "@/server/repositories/memory-repository";
 import { resolveChatProviderModelId } from "@/server/providers/chat-model-resolver";
 import type { ChatMessage } from "@/shared/chat-types";
+import type { ChatProviderImageInput } from "@/server/providers/chat-provider";
 import type { ChatModelKey } from "@/shared/chat-models";
 import type { MemoryExtractionResult } from "@/server/memory/memory-types";
+
+export type PersistentChatImageInput = {
+  mimeType: string;
+  /** Raw base64, no `data:` prefix. */
+  data: string;
+};
 
 export type PersistentChatResult = {
   conversation: Conversation;
@@ -47,7 +67,7 @@ export class PersistentChatService {
    * their own repository instances can ignore it.
    */
   constructor(
-    ownerId: string,
+    private readonly ownerId: string,
     private readonly conversations: ConversationRepository =
       new SupabaseConversationRepository(undefined, ownerId),
     private readonly messages: MessageRepository = new SupabaseMessageRepository(
@@ -68,6 +88,7 @@ export class PersistentChatService {
     content: string;
     model: ChatModelKey;
     clientMessageId?: string | null;
+    image?: PersistentChatImageInput;
   }): Promise<PersistentChatResult> {
     const existingConversation = await this.conversations.findById(
       input.conversationId,
@@ -77,11 +98,37 @@ export class PersistentChatService {
       throw new PersistentChatServiceError("Conversation not found.", 404);
     }
 
-    const userMessage = await this.messages.createUserMessage({
-      conversationId: input.conversationId,
-      content: input.content,
-      clientMessageId: input.clientMessageId ?? null,
-    });
+    if (!input.content.trim() && !input.image) {
+      throw new PersistentChatServiceError("content cannot be empty.", 400);
+    }
+
+    const uploadedImage = input.image
+      ? await this.uploadTurnImage(input.conversationId, input.image)
+      : null;
+    const finalContent = uploadedImage
+      ? [createImageToken(uploadedImage.storageKey), input.content.trim()]
+          .filter(Boolean)
+          .join(" ")
+      : input.content;
+
+    let userMessage: PersistedMessage;
+
+    try {
+      userMessage = await this.messages.createUserMessage({
+        conversationId: input.conversationId,
+        content: finalContent,
+        clientMessageId: input.clientMessageId ?? null,
+      });
+    } catch (error) {
+      // The message row never made it into the DB — don't leave the
+      // upload orphaned in Storage with nothing referencing it.
+      if (uploadedImage) {
+        await deleteImage(uploadedImage.storageKey);
+      }
+
+      throw error;
+    }
+
     const userTouchedConversation =
       (await this.conversations.touch(input.conversationId, {
         lastMessageAt: userMessage.createdAt,
@@ -97,10 +144,33 @@ export class PersistentChatService {
       currentUserMessageId: userMessage.id,
       summaryResult,
     });
+
+    // context-builder.ts already reduced every message — including this
+    // one — to a safe, text-only description. Only now, for this one
+    // live request, do we swap the current turn's entry back to the
+    // user's actual caption and hand the real image bytes to the
+    // provider layer separately. Older turns are never touched: their
+    // images are never re-sent, only ChatContext's neutral placeholder
+    // text about them survives into later turns.
+    let providerImage: ChatProviderImageInput | undefined;
+
+    if (uploadedImage && chatContext.length > 0) {
+      const lastIndex = chatContext.length - 1;
+      chatContext[lastIndex] = {
+        ...chatContext[lastIndex],
+        content: stripImageToken(finalContent) || "（用户发送了一张图片，没有附加文字）",
+      };
+      providerImage = {
+        mimeType: uploadedImage.mimeType,
+        base64: uploadedImage.buffer.toString("base64"),
+      };
+    }
+
     const memoryContextMessage = await this.loadMemoryContextMessage();
     const completion = await this.createCompletion(
       [...(memoryContextMessage ? [memoryContextMessage] : []), ...chatContext],
       resolveChatProviderModelId(input.model),
+      providerImage,
     );
     const assistantContent = completion.text.trim();
 
@@ -137,11 +207,56 @@ export class PersistentChatService {
     };
   }
 
-  private async createCompletion(messages: ChatMessage[], model: string) {
+  private async uploadTurnImage(
+    conversationId: string,
+    image: PersistentChatImageInput,
+  ) {
+    let raw: Buffer;
+
+    try {
+      raw = Buffer.from(image.data, "base64");
+    } catch {
+      throw new PersistentChatServiceError("Image data is not valid base64.", 400);
+    }
+
+    try {
+      const processed = await processUploadedImage(raw, image.mimeType);
+      const storageKey = await uploadImage({
+        ownerId: this.ownerId,
+        conversationId,
+        buffer: processed.buffer,
+      });
+
+      return {
+        storageKey,
+        buffer: processed.buffer,
+        mimeType: processed.mimeType,
+      };
+    } catch (error) {
+      if (error instanceof ImageProcessingError) {
+        throw new PersistentChatServiceError(error.message, error.status);
+      }
+
+      if (error instanceof ImageStorageError) {
+        throw new PersistentChatServiceError(
+          "Image upload failed. Please try again.",
+          error.status,
+        );
+      }
+
+      throw error;
+    }
+  }
+
+  private async createCompletion(
+    messages: ChatMessage[],
+    model: string,
+    image?: ChatProviderImageInput,
+  ) {
     try {
       return await (this.chatService ?? new ChatService()).sendMessage(
         messages,
-        { model },
+        { model, image },
       );
     } catch (error) {
       if (error instanceof ChatProviderError) {

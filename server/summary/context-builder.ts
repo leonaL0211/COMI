@@ -2,6 +2,7 @@ import type { ChatMessage } from "@/shared/chat-types";
 import type { PersistedMessage } from "@/server/repositories/message-repository";
 import type { SummaryServiceResult } from "./types";
 import { describeStickerContentForModel } from "@/shared/stickers/sticker-catalog";
+import { describeImageContentForModel } from "@/shared/attachments/image-catalog";
 
 export function buildChatContext(input: {
   messages: PersistedMessage[];
@@ -50,6 +51,15 @@ export function buildChatContext(input: {
 function toChatMessages(messages: PersistedMessage[]): ChatMessage[] {
   return messages.map((message) => ({
     role: message.role,
-    content: describeStickerContentForModel(message.content, message.role),
+    // Default/safe shape for every message, including the current turn's:
+    // image tokens become neutral placeholder text here. When the current
+    // turn actually has a fresh image to send, persistent-chat-service.ts
+    // overwrites just the last entry's content with the real caption (and
+    // passes the image bytes separately) — this function never sends raw
+    // image bytes anywhere.
+    content: describeImageContentForModel(
+      describeStickerContentForModel(message.content, message.role),
+      message.role,
+    ),
   }));
 }

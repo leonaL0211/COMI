@@ -4,6 +4,8 @@ import {
   PersistentChatServiceError,
 } from "@/server/chat/persistent-chat-service";
 import { resolveOwnerId } from "@/server/auth/owner-context";
+import { isAllowedImageMimeType } from "@/server/attachments/image-processing";
+import { attachImageDisplayUrl } from "@/server/attachments/image-message-view";
 import {
   handlePersistenceError,
   jsonError,
@@ -19,6 +21,10 @@ import {
 export const dynamic = "force-dynamic";
 
 const maxContentLength = 8000;
+// Roughly maxUploadBytes (15MB) as base64 text length (~4/3 expansion),
+// with headroom. server/attachments/image-processing.ts re-validates the
+// decoded byte length; this is just a cheap early reject.
+const maxImageBase64Length = 21 * 1024 * 1024;
 
 type ValidationResult =
   | {
@@ -27,6 +33,7 @@ type ValidationResult =
       content: string;
       model: ChatModelKey;
       clientMessageId: string | null;
+      image: { mimeType: string; data: string } | null;
     }
   | {
       ok: false;
@@ -53,9 +60,19 @@ export async function POST(request: Request) {
       content: validation.content,
       model: validation.model,
       clientMessageId: validation.clientMessageId,
+      image: validation.image ?? undefined,
     });
 
-    return NextResponse.json(result);
+    const [userMessage, assistantMessage] = await Promise.all([
+      attachImageDisplayUrl(result.userMessage, ownerId),
+      attachImageDisplayUrl(result.assistantMessage, ownerId),
+    ]);
+
+    return NextResponse.json({
+      ...result,
+      userMessage,
+      assistantMessage,
+    });
   } catch (error) {
     if (error instanceof PersistentChatServiceError) {
       return jsonError(error.message, error.status);
@@ -90,10 +107,6 @@ function validateChatRequest(body: Record<string, unknown>): ValidationResult {
 
   const content = body.content.trim();
 
-  if (!content) {
-    return { ok: false, response: jsonError("content cannot be empty.", 400) };
-  }
-
   if (content.length > maxContentLength) {
     return {
       ok: false,
@@ -102,6 +115,16 @@ function validateChatRequest(body: Record<string, unknown>): ValidationResult {
         400,
       ),
     };
+  }
+
+  const imageValidation = validateImageField(body.image);
+
+  if (!imageValidation.ok) {
+    return imageValidation;
+  }
+
+  if (!content && !imageValidation.image) {
+    return { ok: false, response: jsonError("content cannot be empty.", 400) };
   }
 
   const model = body.model ?? DEFAULT_CHAT_MODEL;
@@ -138,5 +161,50 @@ function validateChatRequest(body: Record<string, unknown>): ValidationResult {
     model,
     clientMessageId:
       typeof clientMessageId === "string" ? clientMessageId.trim() : null,
+    image: imageValidation.image,
   };
+}
+
+function validateImageField(
+  value: unknown,
+):
+  | { ok: true; image: { mimeType: string; data: string } | null }
+  | { ok: false; response: NextResponse } {
+  if (typeof value === "undefined" || value === null) {
+    return { ok: true, image: null };
+  }
+
+  if (typeof value !== "object") {
+    return { ok: false, response: jsonError("image must be an object.", 400) };
+  }
+
+  const record = value as Record<string, unknown>;
+  const mimeType = record.mimeType;
+  const data = record.data;
+
+  if (!isAllowedImageMimeType(mimeType)) {
+    return {
+      ok: false,
+      response: jsonError(
+        "image.mimeType must be image/jpeg, image/png, or image/webp.",
+        400,
+      ),
+    };
+  }
+
+  if (typeof data !== "string" || data.length === 0) {
+    return {
+      ok: false,
+      response: jsonError("image.data must be a non-empty base64 string.", 400),
+    };
+  }
+
+  if (data.length > maxImageBase64Length) {
+    return {
+      ok: false,
+      response: jsonError("Image is too large.", 400),
+    };
+  }
+
+  return { ok: true, image: { mimeType, data } };
 }

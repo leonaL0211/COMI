@@ -34,6 +34,7 @@ export async function sendChatMessage(
   content: string,
   model: ChatModelKey,
   clientMessageId: string,
+  image?: { mimeType: string; data: string } | null,
 ) {
   return fetchJson<ChatResponse>("/api/chat", {
     method: "POST",
@@ -45,6 +46,7 @@ export async function sendChatMessage(
       content,
       model,
       clientMessageId,
+      ...(image ? { image } : {}),
     }),
   });
 }

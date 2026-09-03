@@ -1,5 +1,8 @@
 import type { ChatCompletionResult, ChatMessage } from "@/shared/chat-types";
-import type { ChatProvider } from "@/server/providers/chat-provider";
+import type {
+  ChatProvider,
+  ChatProviderImageInput,
+} from "@/server/providers/chat-provider";
 import { OriginRouterProvider } from "@/server/providers/originrouter-provider";
 import { berryChatSystemPrompt } from "./system-prompt";
 
@@ -8,7 +11,7 @@ export class ChatService {
 
   async sendMessage(
     messages: ChatMessage[],
-    options: { model?: string } = {},
+    options: { model?: string; image?: ChatProviderImageInput } = {},
   ): Promise<ChatCompletionResult> {
     return this.provider.createChatCompletion({
       messages: [
@@ -19,6 +22,7 @@ export class ChatService {
         ...messages,
       ],
       model: options.model,
+      image: options.image,
     });
   }
 }

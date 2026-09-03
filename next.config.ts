@@ -15,6 +15,16 @@ const revalidateHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Default is 10mb. proxy.ts runs as middleware on every path
+    // (matcher: "/:path*"), so it enforces this cap on /api/chat too —
+    // raised to fit the Image Input MVP's base64 image payload (up to
+    // ~15MB raw upload => ~20MB base64, see server/attachments/
+    // image-processing.ts's maxUploadBytes) with headroom for JSON
+    // overhead. This is the current (non-deprecated) Next.js 16 config
+    // key — `middlewareClientMaxBodySize` was renamed to this.
+    proxyClientMaxBodySize: "24mb",
+  },
   async headers() {
     return [
       {

@@ -2,6 +2,7 @@ import type { ChatMessage } from "@/shared/chat-types";
 import type { PersistedMessage } from "@/server/repositories/message-repository";
 import type { ConversationSummary } from "@/server/repositories/summary-repository";
 import { describeStickerContentForModel } from "@/shared/stickers/sticker-catalog";
+import { describeImageContentForModel } from "@/shared/attachments/image-catalog";
 
 export function buildSummaryPrompt(input: {
   previousSummary: ConversationSummary | null;
@@ -41,8 +42,8 @@ function formatMessages(messages: PersistedMessage[]) {
   return messages
     .map(
       (message) =>
-        `${message.role.toUpperCase()}: ${describeStickerContentForModel(
-          message.content,
+        `${message.role.toUpperCase()}: ${describeImageContentForModel(
+          describeStickerContentForModel(message.content, message.role),
           message.role,
         )}`,
     )

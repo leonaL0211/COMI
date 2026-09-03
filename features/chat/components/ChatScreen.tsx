@@ -275,6 +275,8 @@ export function ChatScreen({
           selectedModel={selectedModel}
           isModelSelectorDisabled={chat.isSending}
           isStickerPickerOpen={isStickerPickerOpen}
+          pendingImage={chat.pendingImage}
+          imageError={chat.imageError}
           onChange={chat.setInput}
           onSubmit={handleSubmit}
           onSelectModel={setSelectedModel}
@@ -283,6 +285,8 @@ export function ChatScreen({
           }
           onCloseStickerPicker={() => setIsStickerPickerOpen(false)}
           onSendSticker={handleSendSticker}
+          onSelectImage={chat.selectImage}
+          onRemoveImage={chat.removeImage}
         />
       }
       memoryPanel={

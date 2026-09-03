@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
 import { SupabaseMessageRepository } from "@/server/repositories/supabase-message-repository";
 import { resolveOwnerId } from "@/server/auth/owner-context";
+import { attachImageDisplayUrls } from "@/server/attachments/image-message-view";
 import {
   handlePersistenceError,
   jsonError,
@@ -35,10 +36,11 @@ export async function GET(_request: Request, { params }: MessagesRouteContext) {
       return jsonError("Conversation not found.", 404);
     }
 
-    const messages = await new SupabaseMessageRepository(
+    const rawMessages = await new SupabaseMessageRepository(
       undefined,
       ownerId,
     ).listByConversation(conversationId);
+    const messages = await attachImageDisplayUrls(rawMessages, ownerId);
 
     return NextResponse.json({ messages });
   } catch (error) {

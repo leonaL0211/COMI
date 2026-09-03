@@ -1,7 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState } from "react";
-import type { CSSProperties, FormEvent, Ref } from "react";
+import type { ChangeEvent, CSSProperties, FormEvent, Ref } from "react";
 import { StickerPicker } from "@/features/stickers/StickerPicker";
 import {
   CHAT_MODEL_OPTIONS,
@@ -9,6 +9,9 @@ import {
   type ChatModelKey,
 } from "@/shared/chat-models";
 import type { StickerId } from "@/shared/stickers/sticker-catalog";
+import type { PendingImage } from "../pending-image";
+import { ComposerAttachMenu } from "./ComposerAttachMenu";
+import { ComposerImagePreview } from "./ComposerImagePreview";
 
 type ChatComposerProps = {
   value: string;
@@ -19,12 +22,16 @@ type ChatComposerProps = {
   selectedModel: ChatModelKey;
   isModelSelectorDisabled: boolean;
   isStickerPickerOpen: boolean;
+  pendingImage: PendingImage | null;
+  imageError: string | null;
   onChange: (value: string) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   onSelectModel: (model: ChatModelKey) => void;
   onToggleStickerPicker: () => void;
   onCloseStickerPicker: () => void;
   onSendSticker: (stickerId: StickerId) => void;
+  onSelectImage: (file: File) => void;
+  onRemoveImage: () => void;
 };
 
 const minTextareaHeight = 24;
@@ -44,17 +51,23 @@ export function ChatComposer({
   selectedModel,
   isModelSelectorDisabled,
   isStickerPickerOpen,
+  pendingImage,
+  imageError,
   onChange,
   onSubmit,
   onSelectModel,
   onToggleStickerPicker,
   onCloseStickerPicker,
   onSendSticker,
+  onSelectImage,
+  onRemoveImage,
 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const skipStickerClickRef = useRef(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(minTextareaHeight);
+  const [attachView, setAttachView] = useState<"menu" | "stickers">("menu");
 
   useLayoutEffect(() => {
     const textarea = textareaRef.current;
@@ -91,13 +104,18 @@ export function ChatComposer({
     )}px`,
   };
 
+  function openAttachPanel() {
+    setAttachView("menu");
+    onToggleStickerPicker();
+  }
+
   function handleStickerTriggerPointerUp() {
     if (isDisabled) {
       return;
     }
 
     skipStickerClickRef.current = true;
-    onToggleStickerPicker();
+    openAttachPanel();
   }
 
   function handleStickerTriggerClick() {
@@ -106,17 +124,61 @@ export function ChatComposer({
       return;
     }
 
-    onToggleStickerPicker();
+    openAttachPanel();
   }
+
+  function handlePickImage() {
+    onCloseStickerPicker();
+    fileInputRef.current?.click();
+  }
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (file) {
+      onSelectImage(file);
+    }
+  }
+
+  const isAttachMenuOpen = isStickerPickerOpen && attachView === "menu";
+  const isStickerGridOpen = isStickerPickerOpen && attachView === "stickers";
 
   return (
     <div className="composer-dock" style={composerStyle}>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="sr-only"
+        aria-label="选择图片"
+        onChange={handleFileChange}
+      />
+      <ComposerAttachMenu
+        isOpen={isAttachMenuOpen}
+        isDisabled={isDisabled}
+        onClose={onCloseStickerPicker}
+        onPickImage={handlePickImage}
+        onPickStickers={() => setAttachView("stickers")}
+      />
       <StickerPicker
-        isOpen={isStickerPickerOpen}
+        isOpen={isStickerGridOpen}
         isDisabled={isDisabled}
         onClose={onCloseStickerPicker}
         onSelect={onSendSticker}
       />
+      {/* Positioned to float above the composer (like the pickers above),
+          not inside the form — .chat-composer/.composer-dock have a
+          JS-driven fixed height tied to textarea growth only, so anything
+          added to their normal flow would get clipped. */}
+      {pendingImage ? (
+        <ComposerImagePreview
+          previewUrl={pendingImage.previewUrl}
+          isDisabled={isDisabled}
+          onRemove={onRemoveImage}
+        />
+      ) : null}
+      {imageError ? <p className="composer-image-error">{imageError}</p> : null}
       <form
         ref={composerRef}
         className="chat-composer"
@@ -143,7 +205,7 @@ export function ChatComposer({
               className="sticker-trigger-button"
               type="button"
               disabled={isDisabled}
-              aria-label="Open stickers"
+              aria-label="添加图片或表情包"
               aria-expanded={isStickerPickerOpen}
               onPointerDown={(event) => event.stopPropagation()}
               onPointerUp={(event) => {

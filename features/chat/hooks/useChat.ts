@@ -12,6 +12,11 @@ import {
   DEFAULT_CHAT_MODEL,
   type ChatModelKey,
 } from "@/shared/chat-models";
+import {
+  readFileAsBase64,
+  validateImageFile,
+  type PendingImage,
+} from "../pending-image";
 
 type UseChatInput = {
   conversationId: string | null;
@@ -39,6 +44,10 @@ export function useChat({
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingImage, setPendingImageState] = useState<PendingImage | null>(
+    null,
+  );
+  const [imageError, setImageError] = useState<string | null>(null);
   const loadRequestIdRef = useRef(0);
   const loadAbortRef = useRef<AbortController | null>(null);
   const sendInFlightRef = useRef(false);
@@ -57,6 +66,35 @@ export function useChat({
   const updateInput = useCallback((value: string) => {
     retryDraftRef.current = null;
     setInput(value);
+  }, []);
+
+  const selectImage = useCallback((file: File) => {
+    const validationError = validateImageFile(file);
+
+    if (validationError) {
+      setImageError(validationError);
+      return;
+    }
+
+    setImageError(null);
+    setPendingImageState((current) => {
+      if (current) {
+        URL.revokeObjectURL(current.previewUrl);
+      }
+
+      return { file, previewUrl: URL.createObjectURL(file) };
+    });
+  }, []);
+
+  const removeImage = useCallback(() => {
+    setImageError(null);
+    setPendingImageState((current) => {
+      if (current) {
+        URL.revokeObjectURL(current.previewUrl);
+      }
+
+      return null;
+    });
   }, []);
 
   useEffect(() => {
@@ -126,8 +164,11 @@ export function useChat({
   }, [conversationId]);
 
   const canSend = useMemo(
-    () => input.trim().length > 0 && !isSending && !isLoadingMessages,
-    [input, isLoadingMessages, isSending],
+    () =>
+      (input.trim().length > 0 || pendingImage !== null) &&
+      !isSending &&
+      !isLoadingMessages,
+    [input, isLoadingMessages, isSending, pendingImage],
   );
 
   const refreshMessages = useCallback(async (targetConversationId: string) => {
@@ -149,14 +190,22 @@ export function useChat({
     ) => {
       const isOverrideSend = typeof contentOverride === "string";
       const content = (contentOverride ?? input).trim();
+      // Stickers (contentOverride) never carry the pending image — the
+      // attach menu treats "image" and "sticker" as separate choices.
+      const imageToSend = isOverrideSend ? null : pendingImage;
 
-      if (!content || sendInFlightRef.current || isLoadingMessages) {
+      if (
+        (!content && !imageToSend) ||
+        sendInFlightRef.current ||
+        isLoadingMessages
+      ) {
         return;
       }
 
       sendInFlightRef.current = true;
       setIsSending(true);
       setError(null);
+      setImageError(null);
 
       let targetConversationId = currentConversationIdRef.current;
       const temporaryUserId = createId();
@@ -188,6 +237,7 @@ export function useChat({
             id: temporaryUserId,
             role: "user",
             content,
+            imageUrl: imageToSend?.previewUrl ?? null,
           },
           {
             id: temporaryAssistantId,
@@ -201,11 +251,23 @@ export function useChat({
           setInput("");
         }
 
+        if (imageToSend) {
+          setPendingImageState(null);
+        }
+
+        const imagePayload = imageToSend
+          ? {
+              mimeType: imageToSend.file.type,
+              data: await readFileAsBase64(imageToSend.file),
+            }
+          : null;
+
         const result = await sendChatMessage(
           targetConversationId,
           content,
           model,
           clientMessageId,
+          imagePayload,
         );
 
         retryDraftRef.current = null;
@@ -259,6 +321,7 @@ export function useChat({
       isLoadingMessages,
       onConversationChanged,
       onMemoryExtracted,
+      pendingImage,
       refreshMessages,
     ],
   );
@@ -272,6 +335,10 @@ export function useChat({
     error,
     canSend,
     sendMessage,
+    pendingImage,
+    imageError,
+    selectImage,
+    removeImage,
   };
 }
 
@@ -280,6 +347,7 @@ function toUiMessage(message: PersistedChatMessage): UiChatMessage {
     id: message.id,
     role: message.role,
     content: message.content,
+    imageUrl: message.imageUrl ?? null,
     createdAt: message.createdAt,
     model: message.model,
     stopReason: message.stopReason ?? undefined,

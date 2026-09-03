@@ -2,6 +2,7 @@ import type { PersistedMessage } from "@/server/repositories/message-repository"
 import type { ChatMessage } from "@/shared/chat-types";
 import type { MemoryExtractionPromptMemory } from "./memory-types";
 import { describeStickerContentForModel } from "@/shared/stickers/sticker-catalog";
+import { describeImageContentForModel } from "@/shared/attachments/image-catalog";
 
 export function buildMemoryExtractionPrompt(input: {
   existingMemories: MemoryExtractionPromptMemory[];
@@ -15,6 +16,7 @@ export function buildMemoryExtractionPrompt(input: {
         "You decide whether one completed chat turn should update a private long-term memory library.",
         "Only use information explicitly stated by CURRENT USER MESSAGE as a user fact.",
         "CURRENT ASSISTANT MESSAGE is context only and is not a source of user facts.",
+        "[用户发送了一张图片] / [助手发送了一张图片] means an image was attached — you were not shown the image and must not guess, infer, or state anything about what it depicts. That marker by itself is never a reason to create or update a memory. Only the user's own written words are a source of user facts, even in a turn that included an image.",
         "Save only stable, long-term, reusable information.",
         "Return ignore for greetings, temporary emotions, one-off tasks, daily schedules, temporary locations, weather, roleplay, fiction, guesses, diagnoses, or assistant suggestions.",
         "Never infer, diagnose, complete missing details, or turn speculation into fact.",
@@ -36,11 +38,17 @@ export function buildMemoryExtractionPrompt(input: {
         JSON.stringify(input.existingMemories),
         "",
         "CURRENT USER MESSAGE",
-        describeStickerContentForModel(input.userMessage.content, "user"),
+        describeImageContentForModel(
+          describeStickerContentForModel(input.userMessage.content, "user"),
+          "user",
+        ),
         "",
         "CURRENT ASSISTANT MESSAGE",
-        describeStickerContentForModel(
-          input.assistantMessage.content,
+        describeImageContentForModel(
+          describeStickerContentForModel(
+            input.assistantMessage.content,
+            "assistant",
+          ),
           "assistant",
         ),
       ].join("\n"),

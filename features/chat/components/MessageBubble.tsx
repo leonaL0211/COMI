@@ -1,9 +1,16 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import type { UiChatMessage } from "../types";
 import {
   getSingleStickerFromContent,
   parseStickerContent,
 } from "@/shared/stickers/sticker-catalog";
+import {
+  isImageOnlyContent,
+  parseImageContent,
+} from "@/shared/attachments/image-catalog";
 
 type MessageBubbleProps = {
   message: UiChatMessage;
@@ -13,6 +20,7 @@ type MessageBubbleProps = {
 export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
   const isUser = message.role === "user";
   const singleSticker = getSingleStickerFromContent(message.content);
+  const isImageOnly = !singleSticker && isImageOnlyContent(message.content);
 
   return (
     <article
@@ -42,6 +50,7 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
           "message-bubble",
           isUser ? "message-bubble-user" : "message-bubble-assistant",
           singleSticker ? "message-bubble-sticker-only" : "",
+          isImageOnly ? "message-bubble-image-only" : "",
         ].join(" ")}
       >
         {singleSticker ? (
@@ -69,7 +78,19 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
                   onLoad={onStickerLoad}
                 />
               ) : (
-                <span key={`text-${index}`}>{part.content}</span>
+                parseImageContent(part.content).map((imagePart, imageIndex) =>
+                  imagePart.type === "image" ? (
+                    <MessageImage
+                      key={`${imagePart.token}-${index}-${imageIndex}`}
+                      imageUrl={message.imageUrl ?? null}
+                      onLoad={onStickerLoad}
+                    />
+                  ) : imagePart.content ? (
+                    <span key={`text-${index}-${imageIndex}`}>
+                      {imagePart.content}
+                    </span>
+                  ) : null,
+                )
               ),
             )}
           </div>
@@ -82,5 +103,31 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
         ) : null}
       </div>
     </article>
+  );
+}
+
+function MessageImage({
+  imageUrl,
+  onLoad,
+}: {
+  imageUrl: string | null;
+  onLoad?: () => void;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  if (!imageUrl || failed) {
+    return <p className="message-image-unavailable">图片已不可用</p>;
+  }
+
+  return (
+    // Signed Supabase Storage URL, not a local/static asset next/image can optimize.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      className="message-image"
+      src={imageUrl}
+      alt="用户发送的图片"
+      onLoad={onLoad}
+      onError={() => setFailed(true)}
+    />
   );
 }

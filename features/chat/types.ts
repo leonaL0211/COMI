@@ -14,6 +14,8 @@ export type UiChatMessage = ChatMessage & {
   status?: "pending";
   stopReason?: ChatStopReason;
   usage?: ChatUsage;
+  /** Signed, short-lived display URL — null if this message has no image. */
+  imageUrl?: string | null;
 };
 
 export type PersistedChatMessage = {
@@ -27,6 +29,8 @@ export type PersistedChatMessage = {
   inputTokens: number | null;
   outputTokens: number | null;
   createdAt: string;
+  /** Signed, short-lived display URL — null if this message has no image. */
+  imageUrl?: string | null;
 };
 
 /**
