@@ -154,8 +154,8 @@ export function ClawdCompanion({
     const root = overlay.closest<HTMLElement>(".chat-main") ?? overlay;
     const rootRect = root.getBoundingClientRect();
     const clawdRect = clawd.getBoundingClientRect();
-    const clawdWidth = clawdRect.width || 88;
-    const clawdHeight = clawdRect.height || 88;
+    const clawdWidth = clawdRect.width || 58;
+    const clawdHeight = clawdRect.height || 58;
     const minX = edgePadding;
     const maxX = Math.max(minX, rootRect.width - clawdWidth - edgePadding);
     const minY = edgePadding;
@@ -175,8 +175,8 @@ export function ClawdCompanion({
     const root = overlay.closest<HTMLElement>(".chat-main") ?? overlay;
     const rootRect = root.getBoundingClientRect();
     const clawdRect = clawd.getBoundingClientRect();
-    const clawdWidth = clawdRect.width || 88;
-    const clawdHeight = clawdRect.height || 88;
+    const clawdWidth = clawdRect.width || 58;
+    const clawdHeight = clawdRect.height || 58;
     const header = root.querySelector<HTMLElement>(".chat-header");
     const composer = root.querySelector<HTMLElement>(".composer-dock");
     const headerRect = header?.getBoundingClientRect();
