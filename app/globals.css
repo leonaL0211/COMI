@@ -1007,7 +1007,11 @@ select:focus-visible {
  */
 
 .theme-mode-toggle {
-  position: fixed;
+  /* Anchored to .chat-main rather than the true viewport, same reasoning
+   * as .composer-dock above — also fixes the toggle drifting to the
+   * real browser window's right edge instead of the narrow chat column
+   * on a wide desktop window. */
+  position: absolute;
   right: max(16px, env(safe-area-inset-right));
   bottom: calc(
     var(--composer-height, 56px) + max(12px, env(safe-area-inset-bottom)) +
@@ -2080,7 +2084,11 @@ select:focus-visible {
 }
 
 .memory-toast-layer {
-  position: fixed;
+  /* Anchored to .chat-main rather than the true viewport, same reasoning
+   * as .composer-dock above — also fixes the toast centering across the
+   * real browser window instead of the narrow chat column on a wide
+   * desktop window. */
+  position: absolute;
   right: 0;
   bottom: calc(
     var(--composer-height, 56px) + max(12px, env(safe-area-inset-bottom)) +
@@ -3603,15 +3611,40 @@ html[data-theme="sakura-night"] .figma-topbar-icon {
 }
 
 .composer-dock {
-  position: fixed;
+  /*
+   * Anchored to .chat-main (position:relative, height:100% of
+   * .app-shell's 100dvh) instead of the true device viewport.
+   *
+   * This used to be `position: fixed` with a hand-computed left/right
+   * `calc((100vw - var(--figma-frame-width)) / 2 + 16px)` to fake being
+   * centered inside the narrow chat column, because fixed positioning
+   * escapes .chat-main entirely. That's also the root cause of the
+   * "composer doesn't reach the true bottom on mobile / PWA" bug: fixed
+   * positioning's containing block is the layout viewport, and mobile
+   * browsers/PWA standalone mode do not all agree on what that means
+   * once dynamic toolbars or safe areas are involved — hence the long
+   * history of "fix iOS composer" commits that never fully stuck.
+   * .chat-main's box is what every other overlay in this screen (header,
+   * message list, Clawd, memory toast, theme toggle) already anchors to
+   * successfully; making the composer consistent with that removes the
+   * one piece that was tracking a different, less reliable reference
+   * point. left/right can now just be plain insets from .chat-main's own
+   * edges — no more 100vw math needed.
+   */
+  position: absolute;
   z-index: 30;
-  left: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
-  right: max(16px, calc((100vw - var(--figma-frame-width)) / 2 + 16px));
+  left: 16px;
+  right: 16px;
   top: auto;
   bottom: 0;
   box-sizing: content-box;
   width: auto;
-  padding: 0 0 var(--composer-bottom-offset);
+  /* Composer's own bottom clearance was a flat 16px with no safe-area
+   * term — on a device with a home-indicator inset that left the
+   * composer sitting too close to it. max() keeps the 16px look on
+   * devices with no inset (unchanged there) while giving real clearance
+   * on ones that have it. */
+  padding: 0 0 max(var(--composer-bottom-offset), env(safe-area-inset-bottom));
   pointer-events: none;
 }
 
