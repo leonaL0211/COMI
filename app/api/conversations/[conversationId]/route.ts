@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
 import { resolveOwnerId } from "@/server/auth/owner-context";
+import { deleteConversationImages } from "@/server/attachments/image-storage";
 import {
   handlePersistenceError,
   jsonError,
@@ -78,6 +79,11 @@ export async function DELETE(
     if (!deleted) {
       return jsonError("Conversation not found.", 404);
     }
+
+    // Best-effort — the conversation is already gone at this point; see
+    // deleteConversationImages' doc comment for why a Storage failure
+    // here must not turn this into an error response.
+    await deleteConversationImages(ownerId, conversationId);
 
     return NextResponse.json({ ok: true });
   } catch (error) {

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getSupabaseAdminClient } from "@/server/supabase/admin-client";
 import { getImageStorageKeyOwnerId, isImageStorageKey } from "@/shared/attachments/image-catalog";
+import { isValidUuid } from "@/server/supabase/config";
 
 /**
  * Private Supabase Storage bucket for chat image messages. Created once as
@@ -57,6 +58,53 @@ export async function deleteImage(storageKey: string): Promise<void> {
   } catch {
     // Best-effort cleanup only — never let a cleanup failure mask the
     // original error that triggered it.
+  }
+}
+
+/**
+ * Removes every image object under one conversation's storage prefix.
+ * Called only from the conversation DELETE route, and only AFTER the
+ * conversation row itself was actually deleted — `ownerId` there comes
+ * from resolveOwnerId() (never the client) and the DB delete is already
+ * scoped `.eq("owner_id", ownerId)`, so by the time this runs we already
+ * know the caller owned this conversation. The prefix is built here from
+ * those two trusted values only; nothing accepts a client-supplied path.
+ *
+ * Best-effort, matching deleteImage above: the conversation is already
+ * gone from the database at this point, which is the operation the
+ * caller actually asked for and already got confirmed. A Storage failure
+ * here (network blip, object already gone, etc.) must not turn that
+ * already-succeeded delete into an error response — it would be
+ * misleading (the conversation *is* deleted) and there's nothing left to
+ * roll back to. Worst case on failure is a harmless orphaned image
+ * object with no database row pointing at it — no broken reference, no
+ * cross-account exposure, just reclaimable storage space.
+ */
+export async function deleteConversationImages(
+  ownerId: string,
+  conversationId: string,
+): Promise<void> {
+  if (!isValidUuid(ownerId) || !isValidUuid(conversationId)) {
+    return;
+  }
+
+  const prefix = `${ownerId}/${conversationId}`;
+
+  try {
+    const client = getSupabaseAdminClient();
+    const { data: files, error: listError } = await client.storage
+      .from(imageBucket)
+      .list(prefix, { limit: 1000 });
+
+    if (listError || !files || files.length === 0) {
+      return;
+    }
+
+    const paths = files.map((file) => `${prefix}/${file.name}`);
+
+    await client.storage.from(imageBucket).remove(paths);
+  } catch {
+    // Best-effort — see doc comment above.
   }
 }
 
