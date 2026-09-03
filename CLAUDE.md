@@ -4,6 +4,27 @@
 
 COMI is an independent Personal Context AI product derived from BerryChat V2. Treat this directory as the active COMI product workspace, not as BerryChat V2.
 
+## Development Workflow (read first, every task)
+
+Full SOP: [`docs/DEVELOPMENT_WORKFLOW.md`](docs/DEVELOPMENT_WORKFLOW.md).
+Short form: [`docs/DEVELOPMENT_CHECKLIST.md`](docs/DEVELOPMENT_CHECKLIST.md).
+
+Every task in this repo starts by declaring a mode:
+
+- **`Mode: AUDIT`** — for "帮我看看 / 查一下 / 分析一下 / look into / check whether"
+  requests. Flow: `READ ONLY → FINDINGS → RISKS → RECOMMENDATION → STOP`. No code
+  changes, no commit, no push, no deploy. Ends with `Mode: AUDIT` /
+  `Code modified: NO`.
+- **`Mode: DELIVERY`** — for "实施 / 修改 / 修复 / 上线 / 部署 / implement / fix / ship"
+  requests. Flow: `SCOPE → INSPECT → IMPLEMENT → LOCAL VERIFY → DIFF REVIEW → COMMIT
+  → PUSH → DEPLOY → PRODUCTION VERIFY → FINAL REPORT`. Unless the user says
+  "local only, no commit/push/deploy," the default target is the full chain through
+  production verification — local success alone is never reported as "done." Ends
+  with the `## Delivery Status` block defined in `docs/DEVELOPMENT_WORKFLOW.md`.
+
+This supersedes the old blanket "do not commit or push" line further below — see
+`docs/DEVELOPMENT_WORKFLOW.md` §6 for how the two relate.
+
 ## Tech Stack
 
 - Next.js App Router
@@ -72,7 +93,9 @@ Do not break these existing capabilities:
 
 ## Working Rules
 
-- Do not commit or push unless the user explicitly confirms.
+- Follow `docs/DEVELOPMENT_WORKFLOW.md` for commit/push/deploy defaults — in Delivery
+  Mode, commit and push are the default unless the user says "local only"; in Audit
+  Mode, never commit, push, or deploy.
 - Do not execute SQL.
 - Do not expand the change scope without user approval.
 - Desktop responsive simulation is not a substitute for real iPhone Safari / PWA validation.
