@@ -1891,6 +1891,75 @@ select:focus-visible {
   color: var(--foreground);
 }
 
+/* About Me (formerly the "长期记忆" list) — presentation only, same
+ * memories data/category grouping as before. */
+
+.about-me-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-large);
+  background: var(--surface-soft);
+  padding: 14px;
+}
+
+.about-me-group-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.about-me-group-title {
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.about-me-group-subtitle {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.about-me-card {
+  background: var(--surface-strong);
+}
+
+.about-me-category-tag {
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  padding: 2px 9px;
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 16px;
+}
+
+.about-me-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--radius-large);
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.about-me-empty-title {
+  color: var(--foreground);
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.about-me-empty-subtitle {
+  max-width: 320px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 20px;
+}
+
 .memory-toast-layer {
   position: fixed;
   right: 0;

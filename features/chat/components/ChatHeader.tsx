@@ -109,9 +109,9 @@ export function ChatHeader({
               onClick={openMemoryPanel}
             >
               <span>
-                <span className="more-menu-item-title">Memory</span>
+                <span className="more-menu-item-title">关于我</span>
                 <span className="more-menu-item-subtitle">
-                  View and manage what COMI remembers.
+                  看看 COMI 从对话里记住的关于你的事。
                 </span>
               </span>
               <span className="more-menu-item-arrow" aria-hidden="true">

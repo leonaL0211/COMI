@@ -25,10 +25,10 @@ export function MemoryPanel({ isOpen, onClose }: MemoryPanelProps) {
         <header className="flex items-start justify-between gap-4 border-b border-[var(--border)] p-4">
           <div>
             <h2 className="text-lg font-semibold text-[var(--foreground)]">
-              长期记忆
+              关于我
             </h2>
             <p className="mt-1 text-sm leading-6 text-[var(--muted-foreground)]">
-              长期记忆会在不同会话之间使用，你可以随时查看、修改或删除。
+              COMI 在持续对话中逐渐形成的关于你的理解，你可以随时查看、修改或删除。
             </p>
           </div>
           <button className="ui-button ui-button-secondary" type="button" onClick={onClose}>
@@ -39,7 +39,9 @@ export function MemoryPanel({ isOpen, onClose }: MemoryPanelProps) {
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-[var(--muted-foreground)]">
-              共 {memories.memories.length} 条记忆
+              {memories.memories.length > 0
+                ? `已经记住 ${memories.memories.length} 件关于你的事`
+                : "还没有记住任何事"}
             </p>
             <button
               className="ui-button ui-button-primary disabled:bg-[var(--muted)] disabled:text-[var(--muted-foreground)]"
@@ -47,7 +49,7 @@ export function MemoryPanel({ isOpen, onClose }: MemoryPanelProps) {
               disabled={memories.isSaving}
               onClick={() => setIsCreating(true)}
             >
-              新增记忆
+              手动记一件事
             </button>
           </div>
 
@@ -74,27 +76,23 @@ export function MemoryPanel({ isOpen, onClose }: MemoryPanelProps) {
 
           {memories.isLoading ? (
             <p className="text-sm text-[var(--muted-foreground)]">
-              正在加载长期记忆...
+              正在加载关于你的理解...
             </p>
           ) : memories.memories.length === 0 ? (
-            <div className="rounded-[var(--radius-medium)] border border-dashed border-[var(--border-strong)] p-4">
-              <p className="text-sm font-medium text-[var(--foreground)]">
-                还没有保存长期记忆。
-              </p>
-              <p className="mt-1 text-sm leading-6 text-[var(--muted-foreground)]">
-                长期记忆会在不同会话之间使用，你可以手动添加第一条。
+            <div className="about-me-empty-state">
+              <p className="about-me-empty-title">我们还在慢慢认识。</p>
+              <p className="about-me-empty-subtitle">
+                和 COMI 多聊一会儿，值得记住的事情会逐渐出现在这里。你也可以手动记一件事。
               </p>
             </div>
           ) : (
             <div className="flex flex-col gap-5">
               {groupMemoriesForDisplay(memories.memories).map(
                 ({ group, memories: groupMemories }) => (
-                  <section key={group.id} className="flex flex-col gap-3">
-                    <header>
-                      <h3 className="text-sm font-semibold text-[var(--foreground)]">
-                        {group.label}
-                      </h3>
-                      <p className="text-xs text-[var(--muted-foreground)]">
+                  <section key={group.id} className="about-me-group">
+                    <header className="about-me-group-header">
+                      <h3 className="about-me-group-title">{group.label}</h3>
+                      <p className="about-me-group-subtitle">
                         {group.description}
                       </p>
                     </header>

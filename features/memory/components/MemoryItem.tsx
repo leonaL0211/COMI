@@ -39,7 +39,7 @@ export function MemoryItem({
 
   async function handleDelete() {
     const confirmed = window.confirm(
-      "确定删除这条长期记忆吗？删除后，Berry Chat 不会再从记忆库中读取它。",
+      "确定删除这条关于你的理解吗？删除后 COMI 不会再记得这件事。",
     );
 
     if (!confirmed) {
@@ -69,13 +69,13 @@ export function MemoryItem({
   }
 
   return (
-    <li className="memory-card p-3">
+    <li className="memory-card about-me-card p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-sm font-semibold text-[var(--foreground)]">
-              {memory.title}
-            </h3>
+            <span className="about-me-category-tag">
+              {categoryLabels[memory.category]}
+            </span>
             {memory.isPinned ? (
               <span className="rounded-[var(--radius-pill)] bg-[var(--accent)] px-2 py-0.5 text-xs text-[var(--accent-foreground)]">
                 已置顶
@@ -136,14 +136,24 @@ export function MemoryItem({
         </Popover>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-2 text-xs text-[var(--muted-foreground)]">
-        <span>{categoryLabels[memory.category]}</span>
-        <span>重要度 {memory.importance} 级</span>
-        <span className="memory-source-badge">
-          {memory.source === "auto" ? "自动记住" : "手动添加"}
+      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-[var(--muted-foreground)]">
+        <span>
+          {memory.source === "auto" ? "来自对话" : "手动记录"}
+          {" · "}
+          {formatMemoryDate(memory.createdAt)}
         </span>
         {isDeleting ? <span>删除中...</span> : null}
       </div>
     </li>
   );
+}
+
+function formatMemoryDate(iso: string) {
+  const date = new Date(iso);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return `${date.getMonth() + 1}月${date.getDate()}日`;
 }
