@@ -3297,6 +3297,26 @@ body {
   width: 14px;
 }
 
+/*
+ * home-menu.svg / home-more.svg (the left/right topbar button glyphs)
+ * are static files loaded via <img>, so their stroke/fill color
+ * (#6D6460, baked into the SVG) can't respond to currentColor or theme
+ * variables the way an inline SVG could — recoloring them would mean
+ * duplicating the files. In sakura-night the button's own background
+ * darkens (--figma-topbar-button-bg) but the glyph doesn't, so that
+ * fixed medium-brown-gray ends up low-contrast against a dark button.
+ * brightness(0) collapses the glyph to solid black while preserving its
+ * original stroke/fill alpha shape, then invert(1) flips that to white;
+ * the trailing opacity keeps it soft/muted rather than stark white, in
+ * keeping with how quiet the button is meant to look. Only the glyph is
+ * touched — button background/border/shadow, hover/active states, and
+ * icon size are untouched, and Light mode never matches this selector.
+ */
+html[data-theme="sakura-night"] .figma-topbar-icon {
+  filter: brightness(0) invert(1);
+  opacity: 0.82;
+}
+
 .message-list-shell,
 .message-list {
   position: absolute;
