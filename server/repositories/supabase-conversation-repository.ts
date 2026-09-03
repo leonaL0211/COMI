@@ -19,9 +19,9 @@ export class SupabaseConversationRepository implements ConversationRepository {
   private readonly client: SupabaseClient;
   private readonly ownerId: string;
 
-  constructor(client = getSupabaseAdminClient()) {
+  constructor(client = getSupabaseAdminClient(), ownerId?: string) {
     this.client = client;
-    this.ownerId = getSupabaseServerConfig().ownerId;
+    this.ownerId = ownerId ?? getSupabaseServerConfig().ownerId;
   }
 
   async list() {

@@ -14,6 +14,10 @@ export function LoginForm() {
     () => normalizeNextPath(searchParams.get("next")),
     [searchParams],
   );
+  // Only ever forwarded as a plain label (e.g. "P01") for the login route
+  // to validate against its own server-side whitelist. The frontend never
+  // knows the participant's actual owner_id.
+  const testUser = searchParams.get("testUser") ?? undefined;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -28,13 +32,15 @@ export function LoginForm() {
     setError("");
 
     try {
-      const result = await login(trimmedAccessCode);
+      const result = await login(trimmedAccessCode, testUser);
 
       if (!result.ok) {
         setError(
-          result.status === 503
-            ? "私人访问暂未配置，请稍后再试。"
-            : "访问码不正确，请重试。",
+          result.error === "invalid_test_participant"
+            ? "测试链接无效。"
+            : result.status === 503
+              ? "私人访问暂未配置，请稍后再试。"
+              : "访问码不正确，请重试。",
         );
         return;
       }

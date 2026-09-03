@@ -4,6 +4,7 @@ import { validateMemoryUpdateRequest } from "@/server/memory/memory-api-validati
 import { RepositoryError } from "@/server/repositories/repository-error";
 import { SupabaseMemoryRepository } from "@/server/repositories/supabase-memory-repository";
 import { isValidUuid, SupabaseConfigError } from "@/server/supabase/config";
+import { resolveOwnerId } from "@/server/auth/owner-context";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,8 @@ export async function PATCH(request: Request, { params }: MemoryRouteContext) {
   }
 
   try {
-    const memory = await new SupabaseMemoryRepository().update(
+    const ownerId = await resolveOwnerId();
+    const memory = await new SupabaseMemoryRepository(undefined, ownerId).update(
       memoryId,
       validation.input,
     );
@@ -55,7 +57,8 @@ export async function DELETE(
   }
 
   try {
-    await new SupabaseMemoryRepository().delete(memoryId);
+    const ownerId = await resolveOwnerId();
+    await new SupabaseMemoryRepository(undefined, ownerId).delete(memoryId);
 
     return NextResponse.json({ deleted: true });
   } catch (error) {

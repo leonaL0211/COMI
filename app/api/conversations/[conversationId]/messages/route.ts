@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
 import { SupabaseMessageRepository } from "@/server/repositories/supabase-message-repository";
+import { resolveOwnerId } from "@/server/auth/owner-context";
 import {
   handlePersistenceError,
   jsonError,
@@ -24,17 +25,20 @@ export async function GET(_request: Request, { params }: MessagesRouteContext) {
   }
 
   try {
-    const conversation = await new SupabaseConversationRepository().findById(
-      conversationId,
-    );
+    const ownerId = await resolveOwnerId();
+    const conversation = await new SupabaseConversationRepository(
+      undefined,
+      ownerId,
+    ).findById(conversationId);
 
     if (!conversation) {
       return jsonError("Conversation not found.", 404);
     }
 
-    const messages = await new SupabaseMessageRepository().listByConversation(
-      conversationId,
-    );
+    const messages = await new SupabaseMessageRepository(
+      undefined,
+      ownerId,
+    ).listByConversation(conversationId);
 
     return NextResponse.json({ messages });
   } catch (error) {

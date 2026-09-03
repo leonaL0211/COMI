@@ -7,6 +7,7 @@ import {
   sessionMaxAgeSeconds,
 } from "@/server/auth/auth-config";
 import { createSessionToken } from "@/server/auth/session";
+import { isTestParticipantId } from "@/server/auth/participants";
 import { readJsonObject } from "@/server/api/persistence-route-utils";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +25,20 @@ export async function POST(request: Request) {
     return noStoreJson({ error: "Private access is not configured." }, 503);
   }
 
+  // Whitelist check happens before the access code is even verified, and
+  // before any session can be created: an unrecognized testUser must never
+  // reach a state where a session (real-account or otherwise) gets issued.
+  if (
+    typeof body.testUser !== "undefined" &&
+    !isTestParticipantId(body.testUser)
+  ) {
+    return noStoreJson({ error: "invalid_test_participant" }, 400);
+  }
+
+  const participant = isTestParticipantId(body.testUser)
+    ? body.testUser
+    : undefined;
+
   if (!safeAccessCodeEqual(body.accessCode.trim(), config.accessCode)) {
     return noStoreJson({ error: "Invalid access code." }, 401);
   }
@@ -31,6 +46,7 @@ export async function POST(request: Request) {
   const token = await createSessionToken({
     secret: config.sessionSecret,
     maxAgeSeconds: sessionMaxAgeSeconds,
+    participant,
   });
   const response = noStoreJson({ authenticated: true }, 200);
 
@@ -47,8 +63,14 @@ export async function POST(request: Request) {
 
 function isLoginRequest(
   body: Record<string, unknown> | null,
-): body is { accessCode: string } {
-  if (!body || Object.keys(body).length !== 1) {
+): body is { accessCode: string; testUser?: unknown } {
+  if (!body) {
+    return false;
+  }
+
+  const allowedKeys = new Set(["accessCode", "testUser"]);
+
+  if (!Object.keys(body).every((key) => allowedKeys.has(key))) {
     return false;
   }
 

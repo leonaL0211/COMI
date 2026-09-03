@@ -23,9 +23,11 @@ type SummaryCompletionResult =
     };
 
 export class SummaryService {
+  /** See PersistentChatService — `ownerId` must be resolved by the caller. */
   constructor(
+    ownerId?: string,
     private readonly summaries: SummaryRepository =
-      new SupabaseSummaryRepository(),
+      new SupabaseSummaryRepository(undefined, ownerId),
     private readonly provider: ChatProvider = new OriginRouterProvider(),
   ) {}
 

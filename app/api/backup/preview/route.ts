@@ -2,10 +2,18 @@ import { NextResponse } from "next/server";
 import { BackupImportService } from "@/server/backup/backup-import-service";
 import { BackupImportError } from "@/server/backup/backup-import-types";
 import { readBackupJsonRequest } from "@/server/backup/backup-request";
+import { isCurrentSessionTestParticipant } from "@/server/auth/owner-context";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+  if (await isCurrentSessionTestParticipant()) {
+    return noStoreJson(
+      { error: "Backup is not available for test participant sessions." },
+      403,
+    );
+  }
+
   try {
     const backup = await readBackupJsonRequest(request);
     const preview = await new BackupImportService().preview(backup);

@@ -19,11 +19,13 @@ import type { MemoryRepository } from "@/server/repositories/memory-repository";
 import { resolveChatProviderModelId } from "@/server/providers/chat-model-resolver";
 import type { ChatMessage } from "@/shared/chat-types";
 import type { ChatModelKey } from "@/shared/chat-models";
+import type { MemoryExtractionResult } from "@/server/memory/memory-types";
 
 export type PersistentChatResult = {
   conversation: Conversation;
   userMessage: PersistedMessage;
   assistantMessage: PersistedMessage;
+  memoryExtraction: MemoryExtractionResult;
 };
 
 export class PersistentChatServiceError extends Error {
@@ -37,13 +39,27 @@ export class PersistentChatServiceError extends Error {
 }
 
 export class PersistentChatService {
+  /**
+   * `ownerId` must be resolved by the caller (see
+   * server/auth/owner-context.ts `resolveOwnerId()`) and passed in
+   * explicitly — this class never reads cookies/session state itself. It
+   * only feeds the default repository instances below; callers that pass
+   * their own repository instances can ignore it.
+   */
   constructor(
+    ownerId: string,
     private readonly conversations: ConversationRepository =
-      new SupabaseConversationRepository(),
-    private readonly messages: MessageRepository = new SupabaseMessageRepository(),
+      new SupabaseConversationRepository(undefined, ownerId),
+    private readonly messages: MessageRepository = new SupabaseMessageRepository(
+      undefined,
+      ownerId,
+    ),
     private readonly chatService?: ChatService,
-    private readonly summaryService: SummaryService = new SummaryService(),
-    private readonly memories: MemoryRepository = new SupabaseMemoryRepository(),
+    private readonly summaryService: SummaryService = new SummaryService(ownerId),
+    private readonly memories: MemoryRepository = new SupabaseMemoryRepository(
+      undefined,
+      ownerId,
+    ),
     private readonly memoryService?: MemoryService,
   ) {}
 
@@ -108,12 +124,16 @@ export class PersistentChatService {
         lastMessageAt: assistantMessage.createdAt,
       })) ?? userTouchedConversation;
 
-    await this.extractMemoryFromTurn({ userMessage, assistantMessage });
+    const memoryExtraction = await this.extractMemoryFromTurn({
+      userMessage,
+      assistantMessage,
+    });
 
     return {
       conversation,
       userMessage,
       assistantMessage,
+      memoryExtraction,
     };
   }
 
@@ -146,13 +166,14 @@ export class PersistentChatService {
   private async extractMemoryFromTurn(input: {
     userMessage: PersistedMessage;
     assistantMessage: PersistedMessage;
-  }) {
+  }): Promise<MemoryExtractionResult> {
     try {
-      await (this.memoryService ?? new MemoryService(this.memories)).extractFromTurn(
-        input,
-      );
+      return await (
+        this.memoryService ?? new MemoryService(this.memories)
+      ).extractFromTurn(input);
     } catch {
       // Automatic memory extraction must never affect the completed chat turn.
+      return { status: "fallback" };
     }
   }
 }

@@ -4,12 +4,14 @@ import { validateMemoryCreateRequest } from "@/server/memory/memory-api-validati
 import { RepositoryError } from "@/server/repositories/repository-error";
 import { SupabaseMemoryRepository } from "@/server/repositories/supabase-memory-repository";
 import { SupabaseConfigError } from "@/server/supabase/config";
+import { resolveOwnerId } from "@/server/auth/owner-context";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const memories = await new SupabaseMemoryRepository().list();
+    const ownerId = await resolveOwnerId();
+    const memories = await new SupabaseMemoryRepository(undefined, ownerId).list();
 
     return NextResponse.json({ memories });
   } catch {
@@ -31,7 +33,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const memory = await new SupabaseMemoryRepository().create({
+    const ownerId = await resolveOwnerId();
+    const memory = await new SupabaseMemoryRepository(undefined, ownerId).create({
       ...validation.input,
       source: "manual",
     });

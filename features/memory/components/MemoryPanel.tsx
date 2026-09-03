@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MemoryForm } from "./MemoryForm";
 import { MemoryItem } from "./MemoryItem";
 import { useMemories } from "../hooks/useMemories";
+import { groupMemoriesForDisplay } from "../category-mapping";
 
 type MemoryPanelProps = {
   isOpen: boolean;
@@ -85,20 +86,36 @@ export function MemoryPanel({ isOpen, onClose }: MemoryPanelProps) {
               </p>
             </div>
           ) : (
-            <ul className="flex flex-col gap-3">
-              {memories.memories.map((memory) => (
-                <MemoryItem
-                  key={memory.id}
-                  memory={memory}
-                  isSaving={memories.isSaving}
-                  isDeleting={memories.deletingMemoryId === memory.id}
-                  isActive={memories.activeMemoryId === memory.id}
-                  onUpdate={memories.update}
-                  onTogglePin={memories.togglePin}
-                  onDelete={memories.delete}
-                />
-              ))}
-            </ul>
+            <div className="flex flex-col gap-5">
+              {groupMemoriesForDisplay(memories.memories).map(
+                ({ group, memories: groupMemories }) => (
+                  <section key={group.id} className="flex flex-col gap-3">
+                    <header>
+                      <h3 className="text-sm font-semibold text-[var(--foreground)]">
+                        {group.label}
+                      </h3>
+                      <p className="text-xs text-[var(--muted-foreground)]">
+                        {group.description}
+                      </p>
+                    </header>
+                    <ul className="flex flex-col gap-3">
+                      {groupMemories.map((memory) => (
+                        <MemoryItem
+                          key={memory.id}
+                          memory={memory}
+                          isSaving={memories.isSaving}
+                          isDeleting={memories.deletingMemoryId === memory.id}
+                          isActive={memories.activeMemoryId === memory.id}
+                          onUpdate={memories.update}
+                          onTogglePin={memories.togglePin}
+                          onDelete={memories.delete}
+                        />
+                      ))}
+                    </ul>
+                  </section>
+                ),
+              )}
+            </div>
           )}
         </div>
       </section>

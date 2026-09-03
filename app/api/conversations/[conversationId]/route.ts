@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
+import { resolveOwnerId } from "@/server/auth/owner-context";
 import {
   handlePersistenceError,
   jsonError,
@@ -40,10 +41,11 @@ export async function PATCH(
   }
 
   try {
-    const conversation = await new SupabaseConversationRepository().rename(
-      conversationId,
-      title.title,
-    );
+    const ownerId = await resolveOwnerId();
+    const conversation = await new SupabaseConversationRepository(
+      undefined,
+      ownerId,
+    ).rename(conversationId, title.title);
 
     if (!conversation) {
       return jsonError("Conversation not found.", 404);
@@ -67,9 +69,11 @@ export async function DELETE(
   }
 
   try {
-    const deleted = await new SupabaseConversationRepository().delete(
-      conversationId,
-    );
+    const ownerId = await resolveOwnerId();
+    const deleted = await new SupabaseConversationRepository(
+      undefined,
+      ownerId,
+    ).delete(conversationId);
 
     if (!deleted) {
       return jsonError("Conversation not found.", 404);

@@ -2,7 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listMessages, sendChatMessage } from "../api";
-import type { PersistedChatMessage, UiChatMessage } from "../types";
+import type {
+  MemoryExtractionStatus,
+  PersistedChatMessage,
+  UiChatMessage,
+} from "../types";
 import type { ConversationSummary } from "@/features/conversations/types";
 import {
   DEFAULT_CHAT_MODEL,
@@ -13,6 +17,7 @@ type UseChatInput = {
   conversationId: string | null;
   ensureConversation: () => Promise<ConversationSummary | null>;
   onConversationChanged: () => Promise<void>;
+  onMemoryExtracted?: (status: MemoryExtractionStatus) => void;
 };
 
 const createId = () => {
@@ -27,6 +32,7 @@ export function useChat({
   conversationId,
   ensureConversation,
   onConversationChanged,
+  onMemoryExtracted,
 }: UseChatInput) {
   const [messages, setMessages] = useState<UiChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -219,6 +225,10 @@ export function useChat({
             }),
           );
         }
+
+        if (result.memoryExtraction) {
+          onMemoryExtracted?.(result.memoryExtraction.status);
+        }
       } catch (sendError) {
         if (targetConversationId) {
           retryDraftRef.current = {
@@ -248,6 +258,7 @@ export function useChat({
       input,
       isLoadingMessages,
       onConversationChanged,
+      onMemoryExtracted,
       refreshMessages,
     ],
   );

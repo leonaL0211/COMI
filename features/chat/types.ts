@@ -28,3 +28,10 @@ export type PersistedChatMessage = {
   outputTokens: number | null;
   createdAt: string;
 };
+
+/**
+ * Mirrors server MemoryExtractionResult["status"]. Kept as a local type
+ * (rather than importing the server module) so this file stays a plain
+ * client-safe type file.
+ */
+export type MemoryExtractionStatus = "created" | "updated" | "ignored" | "fallback";

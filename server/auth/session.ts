@@ -5,17 +5,26 @@ const textDecoder = new TextDecoder();
 type SessionPayload = {
   v: typeof sessionVersion;
   exp: number;
+  /**
+   * Optional test-participant tag (e.g. "P01"). Only ever set by the login
+   * route after whitelist validation (see server/auth/participants.ts);
+   * never trust this field without re-checking it against the whitelist at
+   * the point of use.
+   */
+  participant?: string;
 };
 
 export async function createSessionToken(input: {
   secret: string;
   maxAgeSeconds: number;
   now?: Date;
+  participant?: string;
 }) {
   const now = input.now ?? new Date();
   const payload: SessionPayload = {
     v: sessionVersion,
     exp: Math.floor(now.getTime() / 1000) + input.maxAgeSeconds,
+    ...(input.participant ? { participant: input.participant } : {}),
   };
   const encodedPayload = base64UrlEncode(
     textEncoder.encode(JSON.stringify(payload)),
@@ -30,29 +39,50 @@ export async function verifySessionToken(
   secret: string,
   now = new Date(),
 ) {
+  const payload = await verifySessionPayload(token, secret, now);
+
+  return payload !== null;
+}
+
+/**
+ * Same verification as verifySessionToken, but returns the verified
+ * payload (including the optional participant tag) instead of a boolean.
+ * Used by server/auth/owner-context.ts to resolve which owner_id a
+ * request belongs to. Returns null for any missing/malformed/expired/
+ * mis-signed token — identical rejection behavior to verifySessionToken.
+ */
+export async function verifySessionPayload(
+  token: string | undefined,
+  secret: string,
+  now = new Date(),
+): Promise<SessionPayload | null> {
   if (!token) {
-    return false;
+    return null;
   }
 
   const [encodedPayload, signature, extra] = token.split(".");
 
   if (!encodedPayload || !signature || extra) {
-    return false;
+    return null;
   }
 
   const expectedSignature = await sign(encodedPayload, secret);
 
   if (!constantTimeEqual(signature, expectedSignature)) {
-    return false;
+    return null;
   }
 
   const payload = parsePayload(encodedPayload);
 
   if (!payload || payload.v !== sessionVersion) {
-    return false;
+    return null;
   }
 
-  return payload.exp > Math.floor(now.getTime() / 1000);
+  if (payload.exp <= Math.floor(now.getTime() / 1000)) {
+    return null;
+  }
+
+  return payload;
 }
 
 async function sign(payload: string, secret: string) {
@@ -89,6 +119,9 @@ function parsePayload(encodedPayload: string): SessionPayload | null {
     return {
       v: sessionVersion,
       exp: payload.exp,
+      ...(typeof payload.participant === "string"
+        ? { participant: payload.participant }
+        : {}),
     };
   } catch {
     return null;

@@ -17,6 +17,7 @@ type ConversationSidebarProps = {
   onRename: (conversation: ConversationSummary) => void;
   onDelete: (conversation: ConversationSummary) => void;
   onClose?: () => void;
+  isTestParticipant: boolean;
 };
 
 export function ConversationSidebar({
@@ -31,6 +32,7 @@ export function ConversationSidebar({
   onRename,
   onDelete,
   onClose,
+  isTestParticipant,
 }: ConversationSidebarProps) {
   return (
     <aside className="conversation-sidebar">
@@ -99,7 +101,7 @@ export function ConversationSidebar({
       {error ? <p className="text-sm text-[var(--danger)]">{error}</p> : null}
 
       <div className="sidebar-utility-area">
-        <DataBackupPopover />
+        {isTestParticipant ? null : <DataBackupPopover />}
         <LogoutButton />
       </div>
     </aside>

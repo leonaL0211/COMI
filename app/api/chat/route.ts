@@ -3,6 +3,7 @@ import {
   PersistentChatService,
   PersistentChatServiceError,
 } from "@/server/chat/persistent-chat-service";
+import { resolveOwnerId } from "@/server/auth/owner-context";
 import {
   handlePersistenceError,
   jsonError,
@@ -46,7 +47,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result = await new PersistentChatService().sendMessage({
+    const ownerId = await resolveOwnerId();
+    const result = await new PersistentChatService(ownerId).sendMessage({
       conversationId: validation.conversationId,
       content: validation.content,
       model: validation.model,

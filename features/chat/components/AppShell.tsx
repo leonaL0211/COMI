@@ -10,6 +10,7 @@ type AppShellProps = {
   clawd: ReactNode;
   composer: ReactNode;
   memoryPanel: ReactNode;
+  memoryToast: ReactNode;
   headerHeight: number;
   composerHeight: number;
   isSidebarOpen: boolean;
@@ -24,6 +25,7 @@ export function AppShell({
   clawd,
   composer,
   memoryPanel,
+  memoryToast,
   headerHeight,
   composerHeight,
   isSidebarOpen,
@@ -87,6 +89,7 @@ export function AppShell({
         {messageList}
         {clawd}
         {composer}
+        {memoryToast}
       </section>
       {memoryPanel}
     </main>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { SupabaseConversationRepository } from "@/server/repositories/supabase-conversation-repository";
+import { resolveOwnerId } from "@/server/auth/owner-context";
 import {
   handlePersistenceError,
   jsonError,
@@ -11,7 +12,11 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const conversations = await new SupabaseConversationRepository().list();
+    const ownerId = await resolveOwnerId();
+    const conversations = await new SupabaseConversationRepository(
+      undefined,
+      ownerId,
+    ).list();
 
     return NextResponse.json({ conversations });
   } catch (error) {
@@ -33,7 +38,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    const conversation = await new SupabaseConversationRepository().create({
+    const ownerId = await resolveOwnerId();
+    const conversation = await new SupabaseConversationRepository(
+      undefined,
+      ownerId,
+    ).create({
       title: title.title,
     });
 

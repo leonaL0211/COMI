@@ -11,7 +11,12 @@ import {
 import { ConversationSidebar } from "@/features/conversations/components/ConversationSidebar";
 import { useConversations } from "@/features/conversations/hooks/useConversations";
 import { MemoryPanel } from "@/features/memory/components/MemoryPanel";
+import {
+  MemoryToast,
+  type MemoryToastState,
+} from "@/features/memory/components/MemoryToast";
 import type { ConversationSummary } from "@/features/conversations/types";
+import type { MemoryExtractionStatus } from "../types";
 import { useChat } from "../hooks/useChat";
 import { useModelPreference } from "../hooks/useModelPreference";
 import { useThemePreference } from "../hooks/useThemePreference";
@@ -25,14 +30,20 @@ import { ChatHeader } from "./ChatHeader";
 import { ClawdCompanion } from "./ClawdCompanion";
 import { MessageList } from "./MessageList";
 
-export function ChatScreen() {
+export function ChatScreen({
+  isTestParticipant,
+}: {
+  isTestParticipant: boolean;
+}) {
   const [isMemoryPanelOpen, setIsMemoryPanelOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isStickerPickerOpen, setIsStickerPickerOpen] = useState(false);
   const [headerHeight, setHeaderHeight] = useState(76);
   const [composerHeight, setComposerHeight] = useState(56);
+  const [memoryToast, setMemoryToast] = useState<MemoryToastState | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
   const composerRef = useRef<HTMLFormElement | null>(null);
+  const memoryToastIdRef = useRef(0);
   const { selectedModel, setSelectedModel } = useModelPreference();
   const { selectedTheme, setSelectedTheme } = useThemePreference();
   const conversations = useConversations();
@@ -53,10 +64,28 @@ export function ChatScreen() {
     () => refreshConversations({ keepCurrent: true }),
     [refreshConversations],
   );
+  const handleMemoryExtracted = useCallback(
+    (status: MemoryExtractionStatus) => {
+      if (status !== "created" && status !== "updated") {
+        return;
+      }
+
+      memoryToastIdRef.current += 1;
+      setMemoryToast({
+        id: memoryToastIdRef.current,
+        message:
+          status === "created"
+            ? "COMI 记住了一件关于你的事"
+            : "关于你的理解更新了",
+      });
+    },
+    [],
+  );
   const chat = useChat({
     conversationId: currentConversationId,
     ensureConversation: createConversation,
     onConversationChanged: refreshConversationList,
+    onMemoryExtracted: handleMemoryExtracted,
   });
   const isConversationInteractionDisabled = chat.isSending || isCreating;
   const currentConversationTitle = useMemo(
@@ -192,6 +221,7 @@ export function ChatScreen() {
           isCreating={isCreating}
           isInteractionDisabled={isConversationInteractionDisabled}
           error={error}
+          isTestParticipant={isTestParticipant}
           onCreate={() => {
             handleCreateConversation();
           }}
@@ -260,6 +290,12 @@ export function ChatScreen() {
         <MemoryPanel
           isOpen={isMemoryPanelOpen}
           onClose={() => setIsMemoryPanelOpen(false)}
+        />
+      }
+      memoryToast={
+        <MemoryToast
+          toast={memoryToast}
+          onDismiss={() => setMemoryToast(null)}
         />
       }
     />

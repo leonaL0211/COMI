@@ -1,6 +1,6 @@
 import type { ConversationSummary } from "@/features/conversations/types";
 import type { ChatModelKey } from "@/shared/chat-models";
-import type { PersistedChatMessage } from "./types";
+import type { MemoryExtractionStatus, PersistedChatMessage } from "./types";
 
 type ApiError = {
   error: string;
@@ -14,6 +14,7 @@ type ChatResponse = {
   conversation: ConversationSummary;
   userMessage: PersistedChatMessage;
   assistantMessage: PersistedChatMessage;
+  memoryExtraction?: { status: MemoryExtractionStatus };
 };
 
 export async function listMessages(
