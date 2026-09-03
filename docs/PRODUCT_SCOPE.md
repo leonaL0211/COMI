@@ -15,11 +15,31 @@ The first release keeps the product intentionally focused. It includes:
 - Automatic summaries
 - Long-term memory library
 - Backup, export, restore, and migration
+- Image messages (see below)
 - Clawd desktop pet
 - Three themes: milk tea, strawberry bavarois, and night sakura
 - Transparent and open-feeling chat interface
 - Top and bottom fading glass areas without obvious hard dividers
 - Reusable spring Popover menu component
+
+### Image Messages
+
+Implemented and live in production: users can attach one JPG, PNG, or WebP
+image per message (with or without accompanying text), see it persist and
+redisplay across sessions, and get a real answer from the model about what
+the image shows (multimodal vision, not just storage/display).
+
+Deliberately bounded — this is a chat attachment, not a general file system:
+
+- One image per message. No multi-image messages.
+- No PDF, Word, or video attachments.
+- No in-app image editing or cropping.
+- The image itself never directly produces a long-term memory entry; only
+  the user's own written words in that turn can. (See memory-boundary
+  behavior in server/memory/memory-prompt.ts.)
+- Only the turn that just attached an image sends the actual image to the
+  model; earlier turns are represented in later requests by a neutral
+  text description, not by resending the raw image.
 
 ## Explicitly Removed
 
@@ -36,7 +56,6 @@ The following features are intentionally removed from Berry Chat v2 and should n
 
 The following features are not part of the first implementation phase. They may be reconsidered after the core chat, persistence, summary, memory, backup, UI, and stability phases are complete:
 
-- Image messages
 - Sticker messages
 - Quoted replies
 - Regenerate response
