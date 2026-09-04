@@ -20,6 +20,14 @@ export type ChatModelProvider = "anthropic" | "openai" | "google";
  *   model id, not the registry `key` — that's why Sonnet/Opus map to
  *   `claude-sonnet-4-6.png` / `claude-opus-4-6.png` below instead of
  *   reusing their `key`.
+ * - `providerModelId` is the literal id OriginRouter returns and
+ *   PersistentChatService stores in `messages.model` for every assistant
+ *   reply (see server/providers/chat-model-resolver.ts's default ids,
+ *   which this mirrors). It exists ONLY to let already-persisted
+ *   messages be matched back to a registry entry after the fact — e.g.
+ *   for picking a per-message avatar from message.model. Never use this
+ *   to pick what to send in a new chat request; that's still
+ *   `resolveChatProviderModelId(key)` server-side.
  */
 export type ChatModelOption = {
   key: ChatModelKey;
@@ -29,6 +37,7 @@ export type ChatModelOption = {
   providerLabel: string;
   supportsVision: boolean;
   avatarSrc: string;
+  providerModelId: string;
 };
 
 export const DEFAULT_CHAT_MODEL: ChatModelKey = "sonnet";
@@ -42,6 +51,7 @@ export const CHAT_MODEL_OPTIONS: readonly ChatModelOption[] = [
     providerLabel: "Anthropic",
     supportsVision: true,
     avatarSrc: "/model-avatars/claude-sonnet-4-6.png",
+    providerModelId: "claude-sonnet-4-6",
   },
   {
     key: "opus",
@@ -51,6 +61,7 @@ export const CHAT_MODEL_OPTIONS: readonly ChatModelOption[] = [
     providerLabel: "Anthropic",
     supportsVision: true,
     avatarSrc: "/model-avatars/claude-opus-4-6.png",
+    providerModelId: "claude-opus-4-6",
   },
   {
     key: "gpt-5.6-sol",
@@ -60,6 +71,7 @@ export const CHAT_MODEL_OPTIONS: readonly ChatModelOption[] = [
     providerLabel: "OpenAI",
     supportsVision: true,
     avatarSrc: "/model-avatars/gpt-5.6-sol.png",
+    providerModelId: "gpt-5.6-sol",
   },
   {
     key: "gemini-3.6-flash",
@@ -69,6 +81,7 @@ export const CHAT_MODEL_OPTIONS: readonly ChatModelOption[] = [
     providerLabel: "Google",
     supportsVision: true,
     avatarSrc: "/model-avatars/gemini-3.6-flash.png",
+    providerModelId: "gemini-3.6-flash",
   },
 ];
 
@@ -93,4 +106,31 @@ export function getChatModelShortLabel(model: ChatModelKey) {
 
 export function getChatModelAvatarSrc(model: ChatModelKey) {
   return getChatModelOption(model).avatarSrc;
+}
+
+/**
+ * Resolves a per-message avatar from the raw provider model id already
+ * persisted on that message (`message.model`, e.g. "gpt-5.6-sol") — NOT
+ * from the registry `key` and NOT from whatever the composer's current
+ * model selection happens to be. This is what makes each assistant
+ * bubble show the model that actually generated it, even after the
+ * conversation's active model has since changed.
+ *
+ * Returns null for a null/unrecognized id (older messages predating
+ * model tracking, or any id this registry doesn't know) — callers
+ * should fall back to COMI's own avatar in that case, never to a
+ * guessed model.
+ */
+export function getChatModelAvatarSrcForModelId(
+  rawModelId: string | null | undefined,
+): string | null {
+  if (!rawModelId) {
+    return null;
+  }
+
+  const option = CHAT_MODEL_OPTIONS.find(
+    (candidate) => candidate.providerModelId === rawModelId,
+  );
+
+  return option?.avatarSrc ?? null;
 }

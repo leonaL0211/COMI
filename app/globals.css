@@ -3556,6 +3556,20 @@ html[data-theme="sakura-night"] .figma-topbar-icon {
   pointer-events: none;
 }
 
+/* Per-message model avatar — fills the same 28px slot as the COMI
+   mascot it replaces (see message-avatar above), one shared rule for
+   all four models rather than a per-model override. */
+.message-avatar-model {
+  position: absolute;
+  inset: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
 .message-bubble {
   margin: 0;
   font-family: var(--figma-font);

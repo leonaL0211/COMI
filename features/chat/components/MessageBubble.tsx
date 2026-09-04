@@ -11,6 +11,7 @@ import {
   isImageOnlyContent,
   parseImageContent,
 } from "@/shared/attachments/image-catalog";
+import { getChatModelAvatarSrcForModelId } from "@/shared/chat-models";
 
 type MessageBubbleProps = {
   message: UiChatMessage;
@@ -21,6 +22,13 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
   const isUser = message.role === "user";
   const singleSticker = getSingleStickerFromContent(message.content);
   const isImageOnly = !singleSticker && isImageOnlyContent(message.content);
+  // The model that actually generated THIS reply — from the persisted
+  // message, never from the composer's current selection. A null/
+  // unrecognized id (older messages, unexpected data) falls back to
+  // COMI's own mascot below, not to a guessed model.
+  const modelAvatarSrc = isUser
+    ? null
+    : getChatModelAvatarSrcForModelId(message.model);
 
   return (
     <article
@@ -31,18 +39,29 @@ export function MessageBubble({ message, onStickerLoad }: MessageBubbleProps) {
     >
       {!isUser ? (
         <span className="message-avatar" aria-hidden="true">
-          <img
-            className="message-avatar-bg"
-            src="/comi/figma/chat-avatar-bg.svg?v=20260813-cache-fix"
-            alt=""
-            draggable={false}
-          />
-          <img
-            className="message-avatar-logo"
-            src="/comi/figma/chat-comi-avatar.png?v=20260813-cache-fix"
-            alt=""
-            draggable={false}
-          />
+          {modelAvatarSrc ? (
+            <img
+              className="message-avatar-model"
+              src={modelAvatarSrc}
+              alt=""
+              draggable={false}
+            />
+          ) : (
+            <>
+              <img
+                className="message-avatar-bg"
+                src="/comi/figma/chat-avatar-bg.svg?v=20260813-cache-fix"
+                alt=""
+                draggable={false}
+              />
+              <img
+                className="message-avatar-logo"
+                src="/comi/figma/chat-comi-avatar.png?v=20260813-cache-fix"
+                alt=""
+                draggable={false}
+              />
+            </>
+          )}
         </span>
       ) : null}
       <div
