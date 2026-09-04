@@ -15,6 +15,11 @@ export type ChatModelProvider = "anthropic" | "openai" | "google";
  * - `shortLabel` is the compact text shown in the always-visible composer
  *   pill (see ChatComposer.tsx) — keep this short, it renders in a fixed
  *   92px pill next to a "▼" indicator.
+ * - `avatarSrc` is a static file under public/model-avatars/, provided by
+ *   the product owner. Filenames intentionally follow the OriginRouter
+ *   model id, not the registry `key` — that's why Sonnet/Opus map to
+ *   `claude-sonnet-4-6.png` / `claude-opus-4-6.png` below instead of
+ *   reusing their `key`.
  */
 export type ChatModelOption = {
   key: ChatModelKey;
@@ -23,6 +28,7 @@ export type ChatModelOption = {
   provider: ChatModelProvider;
   providerLabel: string;
   supportsVision: boolean;
+  avatarSrc: string;
 };
 
 export const DEFAULT_CHAT_MODEL: ChatModelKey = "sonnet";
@@ -35,6 +41,7 @@ export const CHAT_MODEL_OPTIONS: readonly ChatModelOption[] = [
     provider: "anthropic",
     providerLabel: "Anthropic",
     supportsVision: true,
+    avatarSrc: "/model-avatars/claude-sonnet-4-6.png",
   },
   {
     key: "opus",
@@ -43,6 +50,7 @@ export const CHAT_MODEL_OPTIONS: readonly ChatModelOption[] = [
     provider: "anthropic",
     providerLabel: "Anthropic",
     supportsVision: true,
+    avatarSrc: "/model-avatars/claude-opus-4-6.png",
   },
   {
     key: "gpt-5.6-sol",
@@ -51,6 +59,7 @@ export const CHAT_MODEL_OPTIONS: readonly ChatModelOption[] = [
     provider: "openai",
     providerLabel: "OpenAI",
     supportsVision: true,
+    avatarSrc: "/model-avatars/gpt-5.6-sol.png",
   },
   {
     key: "gemini-3.6-flash",
@@ -59,6 +68,7 @@ export const CHAT_MODEL_OPTIONS: readonly ChatModelOption[] = [
     provider: "google",
     providerLabel: "Google",
     supportsVision: true,
+    avatarSrc: "/model-avatars/gemini-3.6-flash.png",
   },
 ];
 
@@ -79,4 +89,8 @@ export function getChatModelLabel(model: ChatModelKey) {
 
 export function getChatModelShortLabel(model: ChatModelKey) {
   return getChatModelOption(model).shortLabel;
+}
+
+export function getChatModelAvatarSrc(model: ChatModelKey) {
+  return getChatModelOption(model).avatarSrc;
 }
