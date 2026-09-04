@@ -710,6 +710,12 @@ select:focus-visible {
   opacity: 0.46;
 }
 
+.about-me-close {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+}
+
 .ui-button {
   display: inline-flex;
   align-items: center;
