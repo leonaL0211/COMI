@@ -13,6 +13,7 @@ import {
   validateUuid,
 } from "@/server/api/persistence-route-utils";
 import {
+  CHAT_MODEL_OPTIONS,
   DEFAULT_CHAT_MODEL,
   isChatModelKey,
   type ChatModelKey,
@@ -130,9 +131,11 @@ function validateChatRequest(body: Record<string, unknown>): ValidationResult {
   const model = body.model ?? DEFAULT_CHAT_MODEL;
 
   if (!isChatModelKey(model)) {
+    const validKeys = CHAT_MODEL_OPTIONS.map((option) => option.key).join(", ");
+
     return {
       ok: false,
-      response: jsonError("model must be sonnet or opus.", 400),
+      response: jsonError(`model must be one of: ${validKeys}.`, 400),
     };
   }
 

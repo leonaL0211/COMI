@@ -5,7 +5,7 @@ import type { ChangeEvent, CSSProperties, FormEvent, Ref } from "react";
 import { StickerPicker } from "@/features/stickers/StickerPicker";
 import {
   CHAT_MODEL_OPTIONS,
-  getChatModelLabel,
+  getChatModelShortLabel,
   type ChatModelKey,
 } from "@/shared/chat-models";
 import type { StickerId } from "@/shared/stickers/sticker-catalog";
@@ -36,6 +36,23 @@ type ChatComposerProps = {
 
 const minTextareaHeight = 24;
 const maxTextareaRows = 3;
+
+// Grouped by provider for the native <select>'s <optgroup> labels only —
+// this is pure markup structure inside the already-transparent native
+// select; it does not touch the visible pill or its interaction model.
+const modelOptionsByProvider = CHAT_MODEL_OPTIONS.reduce<
+  Map<string, typeof CHAT_MODEL_OPTIONS[number][]>
+>((groups, option) => {
+  const existing = groups.get(option.providerLabel);
+
+  if (existing) {
+    existing.push(option);
+  } else {
+    groups.set(option.providerLabel, [option]);
+  }
+
+  return groups;
+}, new Map());
 
 type ComposerStyle = CSSProperties & {
   "--composer-input-height": string;
@@ -218,8 +235,7 @@ export function ChatComposer({
             </button>
             <label className="composer-model-native">
               <span className="composer-model-pill" aria-hidden="true">
-                Claude
-                <span>{getChatModelLabel(selectedModel)}</span>
+                {getChatModelShortLabel(selectedModel)}
               </span>
               <select
                 className="composer-model-select"
@@ -230,11 +246,17 @@ export function ChatComposer({
                   onSelectModel(event.target.value as ChatModelKey)
                 }
               >
-                {CHAT_MODEL_OPTIONS.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.label}
-                  </option>
-                ))}
+                {Array.from(modelOptionsByProvider.entries()).map(
+                  ([providerLabel, options]) => (
+                    <optgroup key={providerLabel} label={providerLabel}>
+                      {options.map((option) => (
+                        <option key={option.key} value={option.key}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ),
+                )}
               </select>
             </label>
           </div>

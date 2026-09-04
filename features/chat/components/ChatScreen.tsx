@@ -45,7 +45,6 @@ export function ChatScreen({
   const headerRef = useRef<HTMLElement | null>(null);
   const composerRef = useRef<HTMLFormElement | null>(null);
   const memoryToastIdRef = useRef(0);
-  const { selectedModel, setSelectedModel } = useModelPreference();
   const { selectedTheme, setSelectedTheme } = useThemePreference();
   const conversations = useConversations();
   const {
@@ -61,6 +60,9 @@ export function ChatScreen({
     renameConversation,
     deleteConversation,
   } = conversations;
+  const { selectedModel, setSelectedModel } = useModelPreference(
+    currentConversationId,
+  );
   const refreshConversationList = useCallback(
     () => refreshConversations({ keepCurrent: true }),
     [refreshConversations],
