@@ -5,6 +5,7 @@ import type { ChangeEvent, CSSProperties, FormEvent, Ref } from "react";
 import { StickerPicker } from "@/features/stickers/StickerPicker";
 import {
   CHAT_MODEL_OPTIONS,
+  getChatModelAvatarSrc,
   getChatModelShortLabel,
   type ChatModelKey,
 } from "@/shared/chat-models";
@@ -235,7 +236,16 @@ export function ChatComposer({
             </button>
             <label className="composer-model-native">
               <span className="composer-model-pill" aria-hidden="true">
-                {getChatModelShortLabel(selectedModel)}
+                {/* eslint-disable-next-line @next/next/no-img-element -- tiny static icon, not worth next/image here */}
+                <img
+                  className="composer-model-avatar"
+                  src={getChatModelAvatarSrc(selectedModel)}
+                  alt=""
+                  draggable={false}
+                />
+                <span className="composer-model-pill-label">
+                  {getChatModelShortLabel(selectedModel)}
+                </span>
               </span>
               <select
                 className="composer-model-select"

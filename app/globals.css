@@ -3779,7 +3779,7 @@ html[data-theme="sakura-night"] .figma-topbar-icon {
   min-height: 28px;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  gap: 4px;
   border: var(--figma-model-border-width, 0) solid
     var(--figma-model-border, transparent);
   border-radius: 14px;
@@ -3795,6 +3795,21 @@ html[data-theme="sakura-night"] .figma-topbar-icon {
   pointer-events: none;
   backdrop-filter: blur(var(--figma-model-blur, 6px));
   -webkit-backdrop-filter: blur(var(--figma-model-blur, 6px));
+}
+
+.composer-model-avatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.composer-model-pill-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .composer-model-select {
@@ -3820,10 +3835,6 @@ html[data-theme="sakura-night"] .figma-topbar-icon {
 .composer-model-pill::after,
 .chat-send-button::before {
   pointer-events: none;
-}
-
-.composer-model-pill span {
-  display: none;
 }
 
 .chat-send-button {
