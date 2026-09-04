@@ -109,13 +109,10 @@ export function ChatHeader({
               onClick={openMemoryPanel}
             >
               <span>
-                <span className="more-menu-item-title">关于我</span>
+                <span className="more-menu-item-title">关于你</span>
                 <span className="more-menu-item-subtitle">
                   看看 COMI 从对话里记住的关于你的事。
                 </span>
-              </span>
-              <span className="more-menu-item-arrow" aria-hidden="true">
-                -
               </span>
             </button>
           </section>

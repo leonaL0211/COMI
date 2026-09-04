@@ -996,13 +996,6 @@ select:focus-visible {
   line-height: 16px;
 }
 
-.more-menu-item-arrow {
-  flex: 0 0 auto;
-  color: var(--muted-foreground);
-  font-size: 22px;
-  line-height: 22px;
-}
-
 /*
  * Theme system was collapsed to Light (sea-salt) / Dark (sakura-night) —
  * the More-menu "Theme" card grid (theme-card-grid / theme-choice-*) was
