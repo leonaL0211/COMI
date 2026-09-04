@@ -31,8 +31,13 @@ export function MemoryPanel({ isOpen, onClose }: MemoryPanelProps) {
               COMI 在持续对话中逐渐形成的关于你的理解，你可以随时查看、修改或删除。
             </p>
           </div>
-          <button className="ui-button ui-button-secondary" type="button" onClick={onClose}>
-            关闭
+          <button
+            className="ui-icon-button about-me-close"
+            type="button"
+            aria-label="关闭关于我"
+            onClick={onClose}
+          >
+            <span aria-hidden="true">×</span>
           </button>
         </header>
 
