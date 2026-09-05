@@ -87,7 +87,7 @@ export async function normalizeBackupForRestore(
   }
 
   if (!isLegacyV1Backup(input)) {
-    throw new LegacyV1AdapterError("无法识别这个 Berry Chat 备份文件。");
+    throw new LegacyV1AdapterError("无法识别这个 COMI 备份文件。");
   }
 
   const converted = await convertLegacyV1Backup(input);

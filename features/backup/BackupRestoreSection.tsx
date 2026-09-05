@@ -185,7 +185,7 @@ export function BackupRestoreSection() {
       <div className="backup-section-copy">
         <p className="backup-section-title">恢复备份</p>
         <p className="backup-popover-help">
-          选择 Berry Chat v2 导出的 JSON 文件，或旧版 Berry Chat v1 JSON 数据。恢复只会合并缺失数据，不会覆盖或删除当前内容。
+          选择 COMI 导出的 JSON 文件，或旧版 Berry Chat v1 JSON 数据。恢复只会合并缺失数据，不会覆盖或删除当前内容。
         </p>
       </div>
 

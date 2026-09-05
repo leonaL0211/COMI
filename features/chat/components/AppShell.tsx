@@ -85,7 +85,7 @@ export function AppShell({
       <section
         className="chat-main"
         data-comi-state={isHomeState ? "home" : "chat"}
-        aria-label="Berry Chat"
+        aria-label="COMI"
       >
         {header}
         {messageList}

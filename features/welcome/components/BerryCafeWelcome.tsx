@@ -18,7 +18,7 @@ export function BerryCafeWelcome({ onEnter }: BerryCafeWelcomeProps) {
       <button
         className="comi-welcome-frame"
         type="button"
-        aria-label="Enter Berry Chat"
+        aria-label="Enter COMI"
         onClick={handleEnter}
       >
         <span className="comi-welcome-glow comi-welcome-glow-1" aria-hidden="true">

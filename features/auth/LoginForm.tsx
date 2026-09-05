@@ -59,7 +59,7 @@ export function LoginForm() {
       <div className="space-y-2 text-center">
         <p className="chat-header-kicker">Private Space</p>
         <h1 className="text-2xl font-semibold text-[var(--foreground)]">
-          Berry Chat
+          COMI
         </h1>
         <p className="text-sm leading-6 text-[var(--muted-foreground)]">
           请输入私人访问码
@@ -85,7 +85,7 @@ export function LoginForm() {
         type="submit"
         disabled={!accessCode.trim() || isSubmitting}
       >
-        {isSubmitting ? "正在进入..." : "进入 Berry Chat"}
+        {isSubmitting ? "正在进入..." : "进入 COMI"}
       </button>
     </form>
   );

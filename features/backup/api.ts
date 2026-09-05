@@ -194,7 +194,7 @@ export function validateBackupFileSelection(file: File) {
   const type = file.type.toLowerCase();
 
   if (!lowerName.endsWith(".json") && type !== "application/json") {
-    return "请选择 Berry Chat JSON 备份文件。";
+    return "请选择 COMI JSON 备份文件。";
   }
 
   return null;
@@ -317,7 +317,7 @@ function getBackupErrorMessage(status: number) {
     case 413:
       return "转换后的备份仍然过大，暂时无法恢复。";
     case 415:
-      return "请选择 Berry Chat JSON 备份文件。";
+      return "请选择 COMI JSON 备份文件。";
     case 422:
       return "备份结构或引用无效。";
     case 500:
